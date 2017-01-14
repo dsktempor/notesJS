@@ -4,3 +4,4 @@ third change
 successfull soft reset
 fourth commit
 fifth commit
+sixth commit
