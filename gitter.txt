@@ -2,3 +2,4 @@ This is the first ever line
 second change
 third change
 successfull soft reset
+fourth commit
