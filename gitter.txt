@@ -6,3 +6,4 @@ fourth commit
 fifth commit
 sixth commit
 branch1 first commit
+branch1 second commit
