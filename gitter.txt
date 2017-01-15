@@ -2,7 +2,13 @@ This is the first ever line
 second change
 third change
 successfull soft reset
+branch2 first commit
+branch2 second commit
+branch2 third commit
+branch2 fourth commit
 fourth commit
+branch3 first commit YOLO
+branch3 second commit
 fifth commit
 sixth commit
 branch1 first commit
@@ -11,3 +17,4 @@ branch1 third commit
 branch1 fourth commmit
 branch1 fifth commit
 branch1 sixth commit
+
