@@ -19,6 +19,7 @@ seventh commit on master
 eight commit
 ninth commit
 tenth commit
+USER2branch2 commit1
 eleventh commit
 tweltfth commit
 branch1 first commit
