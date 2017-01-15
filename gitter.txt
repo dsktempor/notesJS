@@ -4,8 +4,9 @@ third change
 successfull soft reset
 branch2 first commit
 branch2 second commit
-branch3 third commit
+branch2 third commit
 fourth commit
+branch3 first commit YOLO
 fifth commit
 sixth commit
 branch1 first commit
