@@ -4,7 +4,7 @@ third change
 successfull soft reset
 branch2 first commit
 branch2 second commit
-branch2 third commit
+branch2 third commit 
 branch2 fourth commit
 fourth commit
 branch3 first commit YOLO
@@ -26,3 +26,5 @@ branch1 sixth commit
 branch1 seventh commit
 thirteenth commit
 fourteenth commit
+fifteenth commit
+
