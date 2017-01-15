@@ -12,6 +12,7 @@ branch3 second commit
 commit 20
 commit 21
 commit 22
+USER2- commit1
 fifth commit
 sixth commit
 seventh commit on master
