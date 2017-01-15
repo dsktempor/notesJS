@@ -12,14 +12,15 @@ branch3 second commit
 commit 20
 commit 21
 commit 22
-USER2- commit1
+USER2 commit1
 fifth commit
 sixth commit
 seventh commit on master
 eight commit
 ninth commit
 tenth commit
-USER2branch2 commit1
+USER2branch1 commit1
+USER2branch1 commit1
 eleventh commit
 tweltfth commit
 branch1 first commit
