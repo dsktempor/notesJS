@@ -1,4 +1,6 @@
 // Notes from  https://github.com/getify/You-Dont-Know-JS
+// First Edition of the book
+
 promises 2829  
 #ktek - further reading
 /*
@@ -44,10 +46,19 @@ Array.isArray();
 	4.5:Grammer
 	4.6:Mixed environment javascript
 5. Aysnc & Performance
-	5.1:
-	5.2:
-	5.3:
-	5.4:
+	5.1:Asynchrony- Now and later
+	5.2:Callbacks
+	5.3:Promises
+	5.4:Generators
+	5.5:Program Performance
+	5.6:Benchmarking and tuning
+6. ES6 & beyond
+	6.1:ES? Now and Future
+	6.2:Syntax
+	6.3:Organisation
+	6.4:Aysnc Flow Control
+	6.5:Collections
+	6.6:API Additions
 
 /*
 CHAPTER 1: UP AND GOING
@@ -2155,7 +2166,7 @@ null, undefined
 A "falsy object" is a value that looks and acts like a normal object (properties, etc.), but when you coerce it to a boolean, it coerces to a false value.
 Some browsers have created quirky objects that are not part of the JS spec. (ignore this topic for now)
 
-"false", "0", "'" are all true
+"false", "0", " " are all true
 [], {}, function(){} are all true
 
 Explicit Coercion : The more explicit we are, someone later will be able to read our code and understand without undue effort what our intent was.
