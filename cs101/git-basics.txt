@@ -126,6 +126,8 @@ Notes -
 	git diff --stat --summary <SHA-old> <SHA-new>
 	git diff -b  (or --ignore-space-change)
 	git diff -w  (or --ignore-all-space) (i.e all white space)
+
+
 38) git branch
 	(list all branches in local machine)
 	git branch <new-branch> <optional: where to branch from> (by default it branches from HEAD)
@@ -174,6 +176,8 @@ Notes -
 	git stash drop <stash#>  (to delete a particular stash)
 	git stash clear   (completely deletes all stashes)
 	You can stash changes at any commit point, let the branch move forward, then you can access & apply the stash at a later commit.
+
+
 51) Remote Repository: Git is distributed, so no repository is central.
 	Origin/<branch> is just a local branch that is constantly trying to be in sync with remote. (when a fetch is done origin/master is updated to point to the latest commit that came from remote) (a local cached version of the remote repo) (it is just another local branch! you just can't checkout this branch)
 	Workflow: Make your commit to master, do a fetch so that origin/master has the latest. Merge yourself with origin/master, then push your commit to the remote.
@@ -233,6 +237,8 @@ Notes -
 	That's bcoz the actual way to push is: git push origin myBranch:myBranch  (push local myBranch TO the remote one called myBranch)
 64) fork: To create a whole new github repo in your account with that project. You have read and write access to it now.
 	In open source projects, everybody has read access but only a select few have write access. Once your forked branch is all done. Go back to the main project and submit a "pull request" so the main project head will decide yes/no to take your updates.
+
+
 65) Daily workflow:
 	git checkout master
 	git fetch
@@ -266,3 +272,16 @@ Notes -
 67) These two should point to the same SHA  (if you have fetched origin/master)
 	cat .git/refs/heads/master
 	cat .git/refs/remote/origin/master
+
+
+Pending:
+fork
+Rebase
+cherry picking
+pull request
+reset
+git squash
+
+
+https://itnext.io/become-a-git-pro-in-just-one-blog-a-thorough-guide-to-git-architecture-and-command-line-interface-93fbe9bdb395
+
