@@ -2777,7 +2777,7 @@ function ajaxCallback(data) {
 We ensure a short-running "process," even if that means many more subsequent "processes," as the interleaving onto the event loop queue will give us a much more responsive (performant) site/app.
 setTimeout(..0) (hack) for async scheduling, basically means "stick this function at the end of the current event loop queue."
 
-ES6 Jobs and Job Queue: Each TICK in the event loop has a job queue
+ES6 Jobs and Job Queue: Each TICK in the event loop has it's OWN JOB QUEUE
 Certain async actions that occur during a tick of the event loop will not cause a whole new event to be added to the event loop queue, but will instead add an item (aka Job) to the end of the current tick's Job queue!!
 It's kinda like saying, "oh, here's this other thing I need to do later, but make sure it happens right away before anything else can happen."
 	metaphor- the event loop queue is like an amusement park ride, where once you finish the ride, you have to go to the back of the line to ride again. But the Job queue is like finishing the ride, but then cutting in line and getting right back on.
@@ -2832,7 +2832,7 @@ If all these functions are async: the order of executions is A->F->B->C->E-D
 If all these functions are sync: the order is A->B->C->D->E->F
 
 Inversion of Control: One of the main drawbacks of callbacks.
-You take part of your program and give over control of its execution to another third party
+You take part of your program and give over control of it's execution to another third party
 someThirdPartyFunctionAjaxCall("..some.big...url", yourDefinedCallback);
 You really depend on this func to work and work well. And somewhere inside this function they have to call your callback. What if they screw up in one of their function updates/releases and don't call your func. OR call it multiple times.
 
@@ -2893,51 +2893,77 @@ Here we are assuming that both x and y are already there (variables are already 
 What if x and y are fetched async?
 
 Task -  Add x and y, but if either of them isn't ready yet, just wait until they are. Add them as soon as you can.
-add(fetchX, fetchY, t){
-	//Here fetchX and fetchY are async functions that also take callbacks, t(a,b) takes two args and you can do whatever you want with the two (sum them, multiply them etc)
-	//output the sum
-	//implement this
-});
-
-function add(getX, getY, f) {  //this won't work
-	var x = getX();         //not using any callback, just fetching x.
-	var y = getY();
-	f(x,y);
+this the given addFunc-
+add(x,y) {
+	let z = x + y;
+	console.log(z);
 }
-the above won't work because getX() and getY() are async function, so you need to provide them callbacks,
+You also have fetchX and fetchY
+
+#solution1
+function task (fX, fY, doSomething) {
+	let x = fx();
+	let y = fy();
+	doSomething(x,y);
+}
+task(fetchX, fetchY, add);
+The above won't work because fetchX() and fetchY() are async function, so you need to provide them callbacks,
 Also you can't just add x + y, both x and y may not yet have values.
 
-function addV2(gx, gy, f) {
+#solution2
+function task (fx, fy, doSomething) {
 	var x,y;
-	gx(function(data){
+	fx(function(data){
 		x = data;
-		if(y !== undefined){ f(x,y) }
+		if(y !== undefined){ doSomething(x,y) }
 	});
-	gy(function(data){
+	fy(function(data){
 		y = data;
-		if(x !== undefined){ f(x,y) }
+		if(x !== undefined){ doSomething(x,y) }
 	});
 }
-So now addV2(fetchX, fetchY, function(sum){ } works because a sum is printed out only when both X and Y are there.
-	Now add() doesn't care whether x or y or both are available right away or not.
-	In other words, it normalizes the "now and later", such that we can rely on a predictable outcome of the add(..) operation.
-	You can just start calling addV2() wherever you want, you just pass it a function() that assumes x and y are ready to use for you.
-	addV2(fetchX, fetchY, function(z){console.log(z*100)} );   So now it (x+y) * 100
+task(fetchX, fetchY, add);
+This works because a sum is printed out only when both X and Y are there.
+Now add() doesn't care whether x or y or both are available right away or not.
+In other words, it normalizes the "now and later", such that we can rely on a predictable outcome of the add(..) operation.
+You can just start calling task() wherever you want, you just pass it a doSomething() that assumes x and y are ready to use for you.
 
-Promise syntax -
-var p = new Promise(function(resolve,reject){   //success-first callback pattern (unlike error-first call back pattern and split callback pattern)
-	  do some..
-	  big..
-	  sync task.
-	  // resolve() to resolve and fulfill the promise
-	  // reject() to resolve and reject the promise
+Promise syntax -   success-first callback pattern (unlike error-first call back pattern and split callback pattern)
+p is a promise object that says, i will run the function you have defined right now and i promise to call the two callback args of this function at an appropriate later time. Meanwhile, you can store and define your callback funcs inside my .then() and .catch() hooks. I will call them later.
+p is like a neutral third party between the creation code and the listening code.
+
+p = new Promise(function(resolve,reject){
+	// creation phase
+	// do some big async task
+	// do another huge async task
+	a = 1 + 1;
+	if(a == 2){
+		resolve(4); //i.e now run all the THEN blocks with these args  (resolve and fulfill)
+	} else{
+		reject(10);  //i.e now run all the CATCH blocks with these args  (resolve and reject)
+	}
 });
-You must provide a function callback that is synchronously/immediately executed. i.e "function(res,rej)"
+console.log("this is outputted first");
+p.then( function(x){console.log(x)} )
+ .catch( function(y){console.log(y)} );
+p.then(function(c){console.log(100+c)} );
+
+There are two phases to a promise: creation and observation. Creation code chunk runs first, and it calls the observation chunk of the code later on.
+Here the code inside promise runs first. And then everytime it hits the resolve() call, it executes every then() function out there.
+So here it will print out x=4 and after that 104(100+c)
+Everytime it hits the reject() call, it executes every catch() function.
+
+a Promise's then(..) "registered observation callbacks" ROC are automatically scheduled when either resolve(..) or reject(..) are called by the Promise creation capability.
+when a Promise is resolved, all then(..) registered callbacks on it will be called, in order, immediately at the next asynchronous opportunity.
+If Promise creation code tries to call resolve(..) or reject(..) multiple times, or tries to call both, the Promise will accept only the first resolution, and will silently ignore any subsequent attempts.
+If you call resolve() or reject() with multiple parameters, all subsequent parameters beyond the first will be silently ignored!! Use an object or an array if you really have to send multiple values.
+
+You must provide a function callback that is synchronously/immediately executed. i.e "function(res,rej)".
 	Second argument simply rejects the promise, but first arg can either fulfill the promise or reject it, depending on what is passed to it.
 	If the First argument is passed an immediate, non-Promise, non-thenable value, then the promise is fulfilled with that value.
 	But if First argument is passed a genuine Promise or thenable value, that value is unwrapped recursively, and whatever its final resolution/state is, will be adopted by the promise.
 
-Each Promise instance has then() and catch() methods, which allow registering of fulfillment and rejection handlers for the Promise.
+Each Promise instance has then() and catch() methods, which allow REGISTERING (LISTENING) of fulfillment and rejection handlers for the Promise.
 Once the Promise is resolved, one or the other of these handlers will be called, but not both, and it will always be called asynchronously. (next tick)
 then() takes one or two parameters, the first for the fulfillment callback, and the second for the rejection callback.
 	If either is omitted or is otherwise passed as a non-function value, a default callback is substituted respectively.
@@ -2946,31 +2972,11 @@ then() takes one or two parameters, the first for the fulfillment callback, and 
 catch() takes only the rejection callback as a parameter, it is equivalent to .then(null, errorCb)
 then(..) and catch(..) also create and return a new promise, which can be used to express Promise chain flow control
 
-There are two phases to a promise: creation and observation. Creation code chunk runs first, and it calls the observation chunk of the code later on.
-p = new Promise(function(resolve,reject){
-	//creating phase
-	// do some big async task
-	// do another huge async task
-	a = 1 + 1;
-	if(a == 2){
-		resolve(4);
-	}else{
-		reject(10);
-	}
-});
-console.log("this is outputted first");
-p.then( function(x){console.log(x)} )
- .catch( function(y){console.log(y)} );
-p.then(function(c){console.log(100+c)} );
-Here the code inside promise runs first. And then everytime it hits the resolve() call, it executes every then() function.
-So here it will print out x=4 and after that 104(100+c)
-Everytime it hits the reject() call, it executes every catch() function.
-
-Promise.all([p1,p2,p3]).then(function(x){  });
-	this runs all three promises, and only after they all resolve adn fulfill, then() is executed
-	Here x is an array of the arguments of all the resolve() calls in p1,p2,p3
-Promise.race([p1,p2,p3]).then(function(x){  });
-	This one just wait for the first one among p1,p2,p3 to resolve and fulfill
+Gate: Promise.all([p1,p2,p3]).then(function(x){  });
+			this runs all three promises, and only after they all resolve and fulfill, then() is executed
+			Here x is an array of the arguments of all the resolve() calls in p1,p2,p3
+Latch: Promise.race([p1,p2,p3]).then(function(x){  });
+			This one just wait for the first one among p1,p2,p3 to resolve and fulfill
 
 Promises don't get rid of callbacks at all. They just change where the callback is passed to.
 Instead of passing a callback to foo(..), we get something (hopefully a genuine Promise) back from foo(..), and we pass the callback to that something instead.
@@ -3020,7 +3026,7 @@ t.then(function(arrayOfResolveArgs){  //comes here only when both promises are d
 	console.log(arrayOfResolveArgs[0] + arrayOfResolveArgs[1]);  //this gives 50;
 });
 
-You can chain multiple "then"s and the value caries over from one to the other.
+You can chain multiple "then"s and the RETURN value caries over from one to the other.
 fetchX().then(function(a){return ++a}).then(function(a){return ++a}).then(function(a){return ++a})
 .then(function(t){console.log(t)});
 The first fetchX() gets 20, then it becomes 21,22,23 and then 23 is logged.
@@ -3032,14 +3038,14 @@ function add(xPromise,yPromise) {
 		return arrayOfResolveArgs[0] + arrayOfResolveArgs[1];  // this is now passed to the then below....!!!
 	} );
 }
-The above function returns a promise. But it is also split the then chain in to two parts. So the promise returned here has a latest "then" value of arg[0]+arg[1]
+The above function returns a promise. But it is also split the then chain into two parts. So the promise returned here has a latest "then" value of arg[0]+arg[1]
 add(fetchX(), fetchY()).then(function(sum){
 	console.log(sum);
 });
 
 Once a Promise is resolved, it stays that way forever -- it becomes an immutable value at that point.
 	It's now safe to pass that value around to any party and know for sure that it cannot be modified accidentally or maliciously.
-	There can be multiple parties observing to the resolution of a promise.
+	There can be multiple parties observing the resolution of a promise.
 	An individual Promise behaves as a future value
 
 
@@ -3074,14 +3080,9 @@ In either approach, the promise p that comes back from foo() is used to control 
 
 Apart from the future values and completion events, Promises get back trust.
 >Call the callback too early
-Not possible in promises, because even an immediately fulfilled Promise (like new Promise(function(resolve){ resolve(42); })) cannot be observed synchronously.
-That is, when you call then(..) on a Promise, even if that Promise was already resolved, the callback you provide to then(..) will always be called asynchronously. (on the next tick)
-No need to insert your own setTimeout(..,0) hacks
+Not possible in promises, because even an immediately fulfilled Promise (like new Promise(function(resolve){ resolve(42); })) cannot be observed synchronously, i.e when you call then(..) on a Promise, even if that Promise was already resolved, the callback you provide to then(..) will always be called asynchronously. (on the next tick). No need to insert your own setTimeout(..,0) hacks
 
 >Calling Too Late
-a Promise's then(..) "registered observation callbacks" ROC are automatically scheduled when either resolve(..) or reject(..) are called by the Promise creation capability.
-when a Promise is resolved, all then(..) registered callbacks on it will be called, in order, immediately at the next asynchronous opportunity
-and nothing that happens inside of one of those callbacks can affect/delay the calling of the other callbacks.
 p.then(function(){
 	p.then(function(){
 		console.log( "C" );
@@ -3109,15 +3110,15 @@ whatever JS error happens either your resolve callback or reject callback WILL B
 setup a timeoutPromise against your orignal promise in a race.
 timeoutPromise(delay){
 	return new Promise(function(res,rej){
-		setTimeout(function(){rej('timeout!')}, delay);   //this promise resolved in delay ms. (i mean rejects)
+		setTimeout(function(){rej('timeout!')}, delay);   //this promise resolved in delay ms. (i.e rejects)
 	});
 }
-Promise.race(fetchX(), timeoutPromise(3000)).then(function(){ fetched in under 3000ms}).catch(x => console.log(x));         //either fetchX() failed or it took more than delay ms);
+Promise.race(fetchX(), timeoutPromise(3000)).then(function(){ fetched in under 3000ms}).catch(x => console.log(x));    //either fetchX() failed or it took more than delay ms);
 Essentially we can prevent fetchX() from hanging our program.
 
 >Callback called too many times
-Promises are defined so that they can only be resolved once. If Promise creation code tries to call resolve(..) or reject(..) multiple times, or tries to call both, the Promise will accept only the first resolution, and will silently ignore any subsequent attempts.
-any then(..) registered callbacks will only ever be called once (each).
+Promises are defined so that they can only be resolved once. It will silently ignore extra resolve(), reject() calls in the creation code.
+Any then(..) registered callbacks will only ever be called once (each).
 Of course, if you register the same callback more than once, (e.g., p.then(f); p.then(f);), it'll be called as many times as it was registered.
 
 Promises can have, at most, one resolution value (fulfillment or rejection). If you don't explicitly resolve with a value either way, the value is undefined.But whatever the value, it will always be passed to all registered (and appropriate: fulfillment or rejection) callbacks
@@ -3245,13 +3246,13 @@ When a promise is finished (resolved), it is in either fulfilled on rejected sta
 var fulfilledPr = Promise.resolve(42);      //resolves a promise, but state could either be fulfilled or rejected (if value sent is thenable, described below)
 var rejectedPr = Promise.reject("Oops");    //resolved a promise, state is definately rejected
 
-var rejectedTh = {
+var y = {
 	then: function(resolved,rejected) {
 			rejected( "Oops" );
 	}
 };
-var rejectedPr = Promise.resolve(rejectedTh);
-rejectedPr.then(x => console.log(x),y => console.log(y));  //prints out "oops" i.e the promise finished but it is in the rejected state.
+var p = Promise.resolve(y);
+p.then(x => console.log(x),y => console.log(y));  //prints out "oops" i.e the promise finished but it is in the rejected state.
 
 Promise.resolve(..) will return a received genuine Promise directly, or unwrap a received thenable.
 If that thenable unwrapping reveals a rejected state, the Promise returned from Promise.resolve() is in fact in that same rejected state.
@@ -3267,7 +3268,6 @@ rejectedPr.then(
 
 This is how you should name your cbs in then()
 p.then(fulfilled,rejected);
-
 
 Error Handling -
 try..catch() works only for synchronous code
@@ -3385,18 +3385,10 @@ foo(10,20).then( function(msgs){
 });
 It prints out 200 599
 
->Single Resolution
-Promise can only be resolved once (fulfillment or rejection)
-
->Inertia
-A lot of your code already uses callBacks() so switching to Promises is a huge task
-
->Promise Cancellation
-Once you hookup a .then(), you can't unhook it.  (register a fulfillment and/or rejection handler for it)
-
->Performance
-Promises are slower as compared to naked, untrustable callbacks. It is difficult to say by how much.
-Promises make everything async, which means that some immediately (synchronously) complete steps still defer advancement of the next step to a Job/tick
+>Single Resolution: Promise can only be resolved once (fulfillment or rejection)
+>Inertia : A lot of your code already uses callBacks() so switching to Promises is a huge task
+>Promise Cancellation: Once you hookup a .then(), you can't unhook it.  (register a fulfillment and/or rejection handler for it)
+>Performance: Promises are slower as compared to naked, untrustable callbacks. It is difficult to say by how much. Promises make everything async, which means that some immediately (synchronously) complete steps still defer advancement of the next step to a Job/tick
 
 Promises don't get rid of callbacks, they just redirect the orchestration of those callbacks to a trustable intermediary mechanism that sits between us and another utility.
 
@@ -3412,11 +3404,11 @@ function *foo() {
 	console.log( "x is ", x );
 }
 function bar() { x++; }
-// construct an iterator `it` to control the generator
-var it = foo();     //this does'nt execute foo, but merely returns an iterator that will control it's execution
+
+var it = foo();     //this does'nt execute foo, but merely returns an iterator that will control this generator's execution
 it.next();          //this starts the foo() func, x is now 2.
 bar();              //x now becomes 3
-it.next();		    // logs- 'x is 3'
+it.next();		      // logs- 'x is 3'
 
 .next(), instructs the generator to advance from its current location, stopping either at the next yield or end of the generator.
 The result of .next() call is an object:
@@ -3425,33 +3417,23 @@ The result of .next() call is an object:
 		done: true/false
 	}
 
-the generator has the sole capability to pause itself, using the yield keyword, and yet the iterator that controls the generator has the sole capability (via next(..)) to resume the generator.
+The generator has the sole capability to pause itself, via the yield keyword.
+The iterator that controls the generator has the sole capability (via next(..)) to resume the generator.
+In general, you're going to have one more next(..) call than you have yield statements.
 
-Iteration messaging
-there's an even more powerful and compelling input/output messaging capability built, via yield and next()
-messages can go in both directions -- "yield" as an expression can send out messages in response to next() calls, and next() can send values to a paused "yield" expression.
-A yield .. expression essentially pauses waiting for a value, and the next next(..) call passes a value (or implicit undefined) back to that paused yield expression.
-
-function *foo(x) {
-	var y = x * (yield);
-	return y;
-}
-var it = foo(6); 			//you specify the function arguments over here when creating the iterator
-it.next();                 //starts the func, but in the middle of the assignment, it see yield, so it is now waiting for the next .next() call
-var res = it.next(7);      //this sends 7 to the generator, which replaces yield with 7 and continues execution.
-res.value;                 //42
-
-In general, you're going to have one more next(..) call than you have yield statements
+Iteration messaging :  built-in input/output messaging capability via yield and next()
+A "yeild" can send out a value (default value is undefined).
+It then WAITS for a new value from any next(data) call. (again here default value is undefined).
 
 function *foo(x) {
 	var y = x * (yield "Hello");	// <-- yield a value!
 	return y;
 }
-var it = foo(6);
-var res = it.next();	// first next(), NEVER need to pass anything
-res.value;				// "Hello"
-res = it.next( 7 );		// pass 7 to waiting yield
-res.value;	            //42
+var it = foo(6);       //you specify the function arguments over here when creating the iterator
+var res = it.next();	 // first next(), NEVER need to pass anything. It starts the func, it sees yield, so it is now waiting for the next .next() call
+res.value;				     // "Hello"
+res = it.next( 7 );		 // this sends 7 to the generator, which replaces yield with 7 and continues execution
+res.value;	           //42
 yield .. and next(..) pair together as a two-way message passing system during the execution of the generator.
 
 Multiple iterators
@@ -3469,10 +3451,8 @@ var val1 = it1.next().value;			// 2 <-- yield 2
 var val2 = it2.next().value;			// 2 <-- yield 2
 val1 = it1.next( val2 * 10 ).value;		// 40  <-- x:20,  z:2
 val2 = it2.next( val1 * 5 ).value;		// 600 <-- x:200, z:3
-it1.next( val2 / 2 );					// y:300
-										// 20 300 3
-it2.next( val1 / 4 );					// y:10
-										// 200 10 3
+it1.next( val2 / 2 );					// y:300 (20, 300, 3)
+it2.next( val1 / 4 );					// y:10  (200, 10, 3)
 
 Interleaving generators -
 var a = 1;
@@ -3487,17 +3467,15 @@ function *bar() {
 	b--;
 	yield;
 	a = (yield 8) + b;
-	b = a * (yield 2);        //when it comes here, it is b = a * ?   when the the yield comes back with a value, it does not find a's current value, it just uses its old value.
+	b = a * (yield 2);    //it will do [b = a * ] and the yield... so a is now locked with it's current value (even if a is updated somewhere else, this a is locked)
 }
 function step(g){
 	var it = g();
 	var last;
-	return function(){        //closure over last,it
-		last = it.next(last).value;
+	return function(){                //closure over last,it
+		last = it.next(last).value;     //the previously yielded out value is sent right back in, at the next step.
 	}
 }
-step(..) initializes a generator to create its "it" iterator, then returns a function which, when called, advances the iterator by one step.
-Additionally, the previously yielded out value is sent right back in at the next step.
 var s1 = step(foo);
 var s2 = step(bar);
 s2();
@@ -3509,65 +3487,58 @@ s1();
 s2();
 console.log(a,b);
 a and b are twelve and eighteen
-Note: in *bar(), b = (yield 2)  * a; gives a=12,b=24
+Note: in *bar(): b = (yield 2) * a; gives a=12,b=24 AND b = a * (yield 2); gives a=12,b=18.
 
-Iterator -
-Iterable, an object that contains an iterator that can iterate over its values.
-var something = (function(){
+Iterators
+Every "iterable" object will have a [Symbol.iterator] property, which is a function that should return this object's itertator.
+An iterator gives you values of the object, ONE AT A TIME.
+var a = [1,3,5,7,9];
+var it = a[Symbol.iterator]();
+it.next().value;	// 1
+it.next().value;	// 2
+
+The [ .. ] syntax is called a "computed property name". In an object literal definition, you can specify an expression and use the result of that expression as the name for the property. "Symbol.iterator" is one of ES6's predefined special Symbol values
+
+The ES6 for..of loop -
+It asks for the object's iterator, and automatically uses it to iterate over object's values.
+var a = [1,3,5,7,9];
+for (var v of a) {console.log(v);}
+for (var v of anyObjectOutThere) {console.log(v);}
+for (var keys of Object.keys(myObj)) {     }        //Object.keys(..) does not include properties from the [[Prototype]] chain
+for (var keys in myObj) {  }                        //but this one includes all properties, including the ones from prototype chain
+
+Manually loop over iterables -
+var it = myObject[Symbol.iterator]();
+for(var ret=it.next(); ret.done!==false; ){
+	use ret object here
+}
+
+Simple counter -
+var counter = (function(){
 	var x = 1;
 	return {
 		next: function(){           // standard iterator interface method
 			x++;
 			return { done:false, value:x };
 		},
-		[Symbol.iterator]: function(){   // needed for for..of loops, you are returning the iterator object for this iterable. In this case this=something, it is the iterator and the iterable.
-			return this;
+		[Symbol.iterator]: function(){
+			return this;    //this=counter
 		}
 	};
 })();
-something.next().value;		// 1
-something.next().value;		// 2
-something.next().value;		// 3
-something.next().value;		// 4
-First, the [ .. ] syntax is called a "computed property name". In an object literal definition, you can specify an expression and use the result of that expression as the name for the property.
-Second, Symbol.iterator is one of ES6's predefined special Symbol values
+counter.next().value;		// 1
+counter.next().value;		// 2
+counter.next().value;		// 3
+counter.next().value;		// 4
 
-ES6 also adds the for..of loop, which means that a standard iterator can automatically be consumed with native loop syntax
-for (var v of something) {
-	console.log(v);
-	if (v > 100) {   //because the something iterator never returns {done:false, value:undefined}
-		break;
-	}
-}
-Manually loop over iterators
 for(var ret; ret = something.next(); ){
 	if(ret.value < 100) console.log(ret.value);
 	else break;
 }
-Or if your iterator does return {done:false} -
-for(ret=something.next(); ret.done!==false; ){
-	use ret object here
-}
-
-The for..of loop asks for any iterator, and automatically uses it to iterate over object's values.
-var a = [1,3,5,7,9];
-for (var v of a) {console.log(v);}
-
-To iterate the properties of an object-
-for (var k of Object.keys(obj)) {     }
-Object.keys(..) does not include properties from the [[Prototype]] chain
-for (var k in object1) {  }   this one includes all properties, including the ones from prototype chain
-
-To retrieve an iterator object from an iterable:
-objectName[Symbol.iterator]();    //the iterable has a property called [Symbol.iterator], it is actually a function that returns the iterator object.
-var a = [1,3,5,7,9];
-var it = a[Symbol.iterator]();
-it.next().value;	// 1
-it.next().value;	// 2
 
 Generators and Iterators
 When you execute the generator, you get an iterator back. The generator itself is not an iterable.
-var it = foo();       //the iterator 'it' of a generator is also an iterable!
+var it = foo();       //the iterator 'it' of a generator is an iterable.
 function *foo(){
 	var x = 0;
 	while (true){
@@ -3582,10 +3553,10 @@ for (var v of it) {    //for..of needs an iterator, "it" is an iterable! it has 
 }
 it.next(); //this will not give 101, 102 etc.
 Here it would seem as if the iterator instance of the for..of loop for the *foo() generator was basically left in a suspended state forever. But is the iterator terminated? Yes it is.
-Yes, the iterator is set to {done:true} at the end of the loop
+Yes, the iterator is set to {done:true} at the end of the loop.
 
 Stopping the generator
-The for..of loop always sends a signal to the generator iterator at the normal completion of the loop. (that's essentially a moot operation, as the generator's iterator had to complete first so the for..of loop completed.)
+The for..of loop always sends a signal to the generator iterator at the normal completion of the loop. (essentially moot, as the generator's iterator had to complete first so the for..of loop completed.)
 In abnormal completion (return,break,exception etc), the for..of loop sends a signal to the generator's iterator for it to terminate.
 
 Manually send a signal with the return() in the for..of loop
@@ -4096,19 +4067,18 @@ URL has to be a js file. The browser will then spin up a separate thread and let
 Dedicated Worker: link to an external file like the above
 Inline Worker: providing a blob url.
 
-Workers do not share any scope or resources with each other or the main program -- that would bring all the nightmares of threaded programming to the forefront,
-but instead have a basic event messaging mechanism connecting them.
-w1.addEventListener("message", function(evt){  //main program is listening to a 'message' event from the worker
+Workers do not share any scope or resources with each other or the main program -- that would bring all the nightmares of threaded programming to the forefront, but instead have a basic event messaging mechanism connecting them.
+w1.addEventListener("message", function(evt){  //main program is listening to a 'message' event FROM THE worker
 	// evt.data
 });
-w1.postMessage( "something cool to say" );  //main program is sending the message event to the w1 worker
+w1.postMessage( "something cool to say" );  //main program is sending the message event TO THE w1 worker
 Inside the worker, you will have similar code - one eventListener for message, and one postMessage() call.
 
 Usually the main page application creates the Workers, but a Worker can instantiate its own child Worker(s) -- known as subworkers (possible on firefox, not chrome)
 w1.terminate();  //Terminates a Worker thread, does not give it any chance to finish up its work or clean up any resources. It's akin to you closing a browser tab to kill a page.
 
-Browser:The system is free to decide how many actual threads/CPUs/cores it really wants to create. There's no way to predict or guarantee how many you'll have access to,
-though many people assume it's at least as many as the number of CPUs/cores available. Safest assumption is that there's at least one other thread besides the main UI thread, but that's about it.
+Browser: The browser system is free to decide how many actual threads/CPUs/cores it really wants to create. There's no way to predict or guarantee how many you'll have access to,though many people assume it's at least as many as the number of CPUs/cores available.
+Safest assumption is that there's at least one other thread besides the main UI thread, but that's about it.
 Inside the Worker: cannot access main program's resources  (any of its global vars, page's DOM). It is a totally seperate thread.
 Worker has access to its own copy of: location, navigator, applicationCache
 
@@ -4120,7 +4090,7 @@ Sorting large data sets
 Data operations (compression, audio analysis, image pixel manipulations, etc.)
 High-traffic network communications
 
-Shared Worker: If the same page is opened on mutilple tabs, you main program need not create multiple web workers for each tab, You make it create only one shared worker for all tabs.
+Shared Worker: If the same page is opened on mutilple tabs, your main program need not create multiple web workers for each tab, You make it create only one shared worker for all tabs.
 var w1 = new SharedWorker( "http://some.url.1/mycoolworker.js" );
 The port object of the worker identifies which main program called it (which tab)
 w1.port.start();  // initialize the port for this tab.
@@ -4131,7 +4101,7 @@ SIMD: Single instruction, multiple data (SIMD) is a form of "data parallelism," 
 because the emphasis is not really on program logic chunks being parallelized, but rather multiple bits of data being processed in parallel.
 SIMD proposes to map CPU-level parallel math operations to JavaScript APIs for high-performance data-parallel operations, like number processing on large data sets.
 
-asm.js:a label for a highly optimizable subset of the JavaScript language.
+asm.js: a label for a highly optimizable subset of the JavaScript language.
 By carefully avoiding certain mechanisms and patterns that are hard to optimize (garbage collection, coercion, etc.), asm.js-styled code can be recognized by the JS engine and given special attention with aggressive low-level optimizations.
 One of the biggest detractors to performance in JS is around memory allocation, garbage collection, and scope access and asm.js optimizes this.
 asm.js describes a small subset of JavaScript that avoids the hard-to-optimize parts of JS and lets the JS engine recognize and run such code through aggressive optimizations.
@@ -4316,8 +4286,9 @@ All in all, Promises and generators provide the foundational building blocks upo
 Chapter 6) ES6 & Beyond
 6.1: ES? Now and Future
 
-ECMA Script 1,2 were not used a lot. ES3 was the first widespread baseline for JS. For political reasons ES4 was never released.
-In 2009, ES5 was finalized (later ES5.1 in 2011). ES6 a.k.a ES2015 came out in 2015.
+ECMA Script 1,2 were not used a lot. ES3 (Dec1999) was the first widespread baseline for JS. For political reasons ES4 was never released.
+In Dec2009, ES5 was finalized (later ES5.1 in 2011).
+ES6 a.k.a ES2015 came out in 2015.
 Version labels are not so important moving forward, JS versioning is more like a per-feature rather than per-arbitrary-collection-of-major-features
 Javascript is a living breathing standard, with browsers rolling out support for features continually rather than in large chunks.
 Transpile = transformation + compile
@@ -4362,7 +4333,7 @@ const b = 10;  //this is also a block scoped variable like let.
 b = 5;  //TypeError!
 
 A const declaration must have an explicit initialization. If you wanted a constant with the undefined value, you'd have to declare const a = undefined to get it.
-the value is not frozen or immutable because of const, just the assignment of it to the variable is fixed.
+the VALUE is not frozen or immutable because of const, just the assignment of it to the variable is fixed.
 
 const x = array|object;  x holds a constant reference to that array. the internals of the array|object can be modified though.
 Here the value of x cannot be garbage collected until x's lexical scope goes away.
@@ -4383,7 +4354,7 @@ both declarations of foo are hoisted to the top of the program (or enclosing fun
 Regardless of the value of x, "2" will be printed for sure, because the outside foo() uses the latest funct decleration, which over here is the second foo();
 In ES6 - foo() gives you TypeError!
 
-6.2.4)Spread/gather   (only for arrays not objects)
+6.2.4)Spread/gather   (only for arrays, NOT objects)
 ... used in front of an array spreads out the array-
 foo(...[3,4,5]);   i.e here spreading it out to a list of arguments , foo.apply( null, [1,2,3] );  //does the same thing pre-ES6
 var b = [1,2, ...a];
@@ -4418,7 +4389,7 @@ function foo(x=w+1, y=x+1, z=z+1) {
 }
 foo();
 This errors out. x=w+1, y=x+1 work. But z=z+1, here z is in conflict with the outer z. So it first assumes that you are talking about the new inner z for "z=". So for the RHS z+1, this z is uninitialized (TDZ ,like let, z is declared but uninitialized), so it throws a TDZ reference error.
-Unlike w in x=w+1, it does not even try to find z in the outer scope.
+Unlike w in x=w+1, for z in z=z+1, it does not even try to find the z in the outer scope.
 
 function foo( x = (function(v){return v+11;})(31) ){
 	console.log(x);
@@ -4434,6 +4405,8 @@ Now the LHS of assignment statements for array/objects have changed.
 function foo() {return [1,2,3];}
 function bar() {return {x:1, y:2, z:3}; }
 var [a,b,c] = foo();   variable a is 1
+var {x:a, y:b, z:c} = bar();    a is 1, b is 2, c is 3.
+OR let {x:a, y:b, z:c} = bar();   a,b,c are now block scoped.
 
 Generally in assignment it is of the form: target = source,
 var X = 10, Y = 20;
@@ -4441,7 +4414,7 @@ var o = { a: X, b: Y };  Put X into a, Put Y into b (on the RHS side)
 console.log(o.a, o.b); 10,20
 
 but in destructuring, it is flippped! It is source = target!! So on the LHS side (in destructuring), things are flipped! Which is actually a bad feature now in JS.
-var {x:a, y:b, z:c} = bar();   Put x into a, put y into b, put z into c. so a is 1
+var {x:a, y:b, z:c} = bar();   Put x into a, put y into b, put z into c. so a is 1, b is 2, c is 3.
 console.log(x,y,z);  //referenceError! they don't exist. Only a,b,c are the new variables.
 
 For objects, if the property name being matched is the same as the variable you want to declare, you can actually shorten the syntax:
@@ -4475,7 +4448,7 @@ var a=10,b=20;
 
 var { a:{x:X, x:Y}, a } = { a:{x:1} };    //first of all,the new vars are X,Y,a  and their values are 1,1,{x:1}
 ( {a:X,a:Y,a:[Z]} = {a:[1]} );   //the new vars are X,Y,Z and not[Z]. The values are [1],[1],1
-here X and Y are referencing the same array! VVIP. If you modify X, even Y changes
+here X and Y are referencing the same array- [1]! VVIP. If you modify X, even Y changes
 
 completion value: the completion value of array/object desructuring statment is the RHS object/array!
 [a,b,c] = [1,2,3];
@@ -4510,7 +4483,7 @@ var o1 = { x:{y:42}, z:{y:z} };   so o1 is { x:{y:42}, z:{y:100} }
 ( { z:y={y:z} } = o1 );
 ( { x:z={y:x} } = o1 );                  answer it to the right ->                                 x={y:300},y={y:100},z={y:42}
 
-Destructuring function parameters: Same logic as ALL of the above. Plus, you have ES6 function parameter default values too. So you have paremeter defaults + destructuring defaults
+Destructuring function parameters: Same logic as ALL of the above. Plus, you have ES6 function parameter default values too. So you have func parameter defaults + destructuring defaults
 function f6({x=10} = {}, {y} = {y:10}, z=20, {p:X=10,t=20}) {
 	arg = [].slice.call(arguments);
 	console.log(x,y,z,X,arg[3].t);
@@ -4681,12 +4654,9 @@ Use it for any of the above 3 or if you function is really really small. Bottoml
 6.2.9)for..of loop  -  loops over the set of values produced by an iterator.
 var a = ["a","b","c","d","e"];
 
-for (var idx in a) {      //loops over the keys/indexes
-	console.log(idx);      // 0 1 2 3 4
-}
-for (var val of a) {
-	console.log(val);    // "a" "b" "c" "d" "e"
-}
+for (var idx in a) { }    // 0 1 2 3 4  (keys)
+for (var val of a) { }	  // "a" "b" "c" "d" "e" (values)
+
 a must be an iterable, or a value that can be boxed/coerced into an iterable
 Under the covers, the for..of loop asks the iterable for an iterator (using the built-in Symbol.iterator), then it repeatedly calls the iterator and assigns its produced value to the loop iteration variable.
 
@@ -4694,8 +4664,7 @@ ES5 way of doing it-
 var a = ["a","b","c","d","e"];
 var k = Object.keys(a);
 for (var val, i=0; i<k.length; i++) {
-	val = a[k[i]];
-	console.log(val);
+	console.log( a[k[i]] );
 }
 
 ES6 equivalent-
@@ -4719,6 +4688,10 @@ for ({x: o.a} of [ {x:1}, {x:2}, {x:3} ]) {    //destructuring
   console.log(o.a);     // 1 2 3
 }
 
+function *g() {yield 10; yield 20; yield 30; yield 40};
+for (k of g()) {console.log(k);}
+//this will give 10 20 30 40
+
 for..of loops can be prematurely stopped, just like other loops, with break, continue, return.
 In any of these cases, the iterator's return(..) function is automatically called (if one exists) to let the iterator perform cleanup tasks, if necessary.
 
@@ -4732,7 +4705,7 @@ the "u" flag tells a regular expression to process a string with the interpretat
 𝄞 (the musical symbol G-clef) inside /𝄞/ is normally considered as two characters, it is trying to match 0xD834 and 0xDD1E in the given string.
 /𝄞/u will now try to match only 𝄞 in the string. (/\u{1D11E}/u)
 
-Stick Flag - y
+Sticky Flag - y
 var re1 = /foo/;
 var str = "++foo++";
 re1.lastIndex;      // 0  the .lastIndex property of a regex stores the index of the current location it is going to start searching from.
@@ -4754,8 +4727,8 @@ Read more in the book, if this is really requried.
 Regex Flags
 to examine a regular expression object to see what flags it had applied, use reg.flags();
 var re = /foo+/ig;       in ES5 you have to do- re.toString().match(/\/([gimuy]*)$/)[1]
-re.flags;				// "gi"  regarless of the actual order in the regex, the returned value will have flags in this order - 'gimuy'
-re.source;              // foo+
+re.flags;				// "gi"  regardless of the actual order in the regex, the returned value will have flags in this order - 'gimuy'
+re.source;      // foo+  (i.e the reg expression)
 var re3 = new RegExp(re1,"yig");    the RegExp() constructor is 'flags-aware'
 re3.source;				// "foo+"
 re3.flags;			    // "giy"
@@ -4763,7 +4736,7 @@ re3.flags;			    // "giy"
 6.2.11)Number Literal Expressions
 var dec = 42;         Number("42") gives 42
     oct = 052;      -> this should not be used anymore for octal. ES5 offically does not allow octals. Only few browser allowed it, that's why  Number("052") gives 52 and not 42... In strict mode "octal literals" are not even allowed.
-    hex = 0x2a;		  Number("0x21") gices 42
+    hex = 0x2a;		  Number("0x21") gives 42
 Though you are specifying a number in different bases, the number's mathematic value is what is stored, and the default output interpretation is always base-10
 The three variables in the previous snippet all have the 42 value stored in them.
 
@@ -5652,7 +5625,7 @@ var	y = {id:2};
 m.set( x, "foo" );     //m.x is now "foo", the property x (which is an object) has a value of "foo"
 m.set( y, "bar" );
 m.get(x);
-You can't use m[xyz] to get and set values, you have to use m.get() and m.set()
+You can't use m[x]/m[y]/m[z] to get and set values, you have to use m.get() and m.set()
 
 A map instance is an iterable, and its default iterator is the same as entries().
 Use Maps only if your property names have to be objects, else use normal objects for name-value pairs.
@@ -5666,7 +5639,7 @@ m.delete(propertyName);
 m.clear();  //removes all property-value pairs
 m.size();   /total count of first level properties
 
-m.keys();  an iterator the goes over all the property names
+m.keys();  an iterator that goes over all the property names
 var keys = [...m.keys()];     //produces an array of property names
 
 m.values(); returns an iterator for all the values
