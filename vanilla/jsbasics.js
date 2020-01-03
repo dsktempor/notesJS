@@ -981,6 +981,8 @@ Regexp
 Error
 These may appear like objects, but actually they are just built in global function objects that can be used as constructors
 These built-in native objects are the building blocks of the language. They are used implicity EVERYwhere. (via boxing)
+Remember: objects, arrays, functions, regexpes are all objects, regardless if they are defined by literal form or constructor form.
+The constructed form does offer, in some cases, more options in creation than the literal form counterpart. (use constructor form only in these cases)
 
 var str = "This is the primitive literal string";
 typeof str;						    // "string"
@@ -997,9 +999,6 @@ Boolean,String,Number,Object,Function,Array,Regexp all have literal definition s
 Date can only be defined by using the constructor (new Date())
 And in the 6 primitives, null and undefined don't have any wrapper objects.
 
-Remember: objects, arrays, functions, regexpes are all objects, regardless if they are defined by literal form or constructor form.
-The constructed form does offer, in some cases, more options in creation than the literal form counterpart. (use constructor form only in these cases)
-
 Error objects are rarely created explicitly in code, but usually created automatically when exceptions are thrown.
 construct them using new Error(..) (but very rare use cases)
 
@@ -1013,7 +1012,7 @@ obj[a] = 'bar';  //this mean obj["[object Object]"] is 'bar'
 
 var a = 'bar';
 var obj = {
-	a : 'baz'      //dynamic deceleration of property if it is ES6
+	a : 'baz'      //dynamic decleration of property if it is ES6
 }
 ES5: this is obj.a='baz'
 ES6: this is obj["bar"]='baz'    for es6 a is 'bar'
@@ -1100,7 +1099,6 @@ because all of the above are shallow, you can call freeze() and then recursively
 
 [[Get]] operation belongs to all objects. obj.a/obj['a'] means obj[[Get]](a); If it doesn't find 'a' in obj, it looksup [[Prototype]] chain
 [[Put]] operation is naunced.
-
 Getters & Setters
 ES5 introduced a new way to set and get properties. This is not at an object level, but at per-property level.
 For each property: you can either have 4 property descriptors, or 2 property descriptors and 2 property accessors (get and set)
@@ -1131,7 +1129,7 @@ All other normally created objects have all of the above functions.
 
 Enumeration: If enumerable is true, then use that property.
 for (var k in myObject) {
-	console.log( k, myObject[k] );     //only enumerable properties 'k'
+	console.log( k, myObject[k] );     //only enumerable properties 'k' (look in all its parents too)
 }
 Note: for arrays, even some unwanted properties are marked as 'enumberable:true', so use normal 'for' loops for arrays
 myObject.propertyIsEnumerable("a"); // true or false depending on the enumerable property descriptor of a
@@ -1139,7 +1137,6 @@ myObject.propertyIsEnumerable("a"); // true or false depending on the enumerable
 Object.keys(obj) returns an array of all enumerable properties
 Object.getOwnPropertyNames(obj) returns an array of all properties, enumerable or not.
 Both of these only inspect direct properties! they do not go up the [[Prototype]] chain
-
 There is no built-in way in JS to get ALL the properties (even by looking up the prototype chain)
 
 Array Iteration from ES5-
@@ -1157,7 +1154,7 @@ Note: the order of iteration over an object's properties is not guaranteed and m
 
 ES6: this is for arrays and for objects that have custom iterators
 for (var v of myArray) {
-	console.log( v );  //directly access the values (not the property names like for..in)
+	console.log( v );  //directly access the values (not the property names like for..in) (i.e only enumberable properties)
 }
 arrays have a built-in iterator
 var it = arr[Symbol.iterator]();  //Gives you an obj that has a func that returns the iterator object
@@ -1175,7 +1172,7 @@ Object.defineProperty( myObject, Symbol.iterator, {
 	value: function() {
 		var o = this;
 		var idx = 0;
-		var ks = Object.keys( o );
+		var ks = Object.keys( o );  //meaning only enumerable properties that solely belong to this object and not it's parents.
 		return {
 			next: function() {    //by lexical scope, this func is closing over o,idx,ks.
 				return {
@@ -1207,10 +1204,11 @@ Polymorphism: idea that a general behavior from a parent class can be overridden
 	This is there in JS! (the idea that any method can reference another method (of the same or different name) at a higher level of the inheritance hierarchy)
 	Put another way, the definition for the method xyz() polymorphs (changes) depending on which class (level of inheritance) you are referencing an instance of.
 Inheritance: we define Car, we indicate that it "inherits" (or "extends") the base definition from Vehicle. The definition of Car is said to specialize the general Vehicle definition.
-	The child class contains an initial copy of the behavior from the parent, but can then override any inherited behavior and even define new behavior
+	The child class contains an INITIAL copy of the behavior from the parent, but can then override any inherited behavior and even define new behavior
 	There is no 'linking' between the parent and child. The child is just a COPY of the parent. Class inheritance implies "copies". So when you use super() it is just accessing within the same class, what is copied (inherited), it is not linking and going up to the parent, there is no link.
+	So further down the line if the parent changes, the child will not be affected (i think)
 	Only child classes 'relatively reference' their parent class. Child instances do not do this to parent instances.
-	Abstract class: A parent class that you would never instantiate. You make child classes of these and then instantiate those.
+Abstract class: A parent class that you would never instantiate. You make child classes of these and then instantiate those.
 	JS does not have multiple inheritance at all. (we are lucky)
 
 JS does NOT have classes. (provides seemingly class-like syntax, but JS engine works differently)
@@ -1252,7 +1250,7 @@ So car is actually -  {
 		console.log( "Rolling on all " + this.wheels + " wheels!" );
 	}
 }
-Technically, functions are not actually duplicated (if property already exists, then ignore the copy), but rather references to the functions are copied.
+Technically, functions are not actually duplicated, but rather references to the functions are copied.
 So, Car now has a property called ignition, which is a copied reference to the ignition() function,
 as well as a property called engines with the copied value of 1 from Vehicle.
 
@@ -1344,6 +1342,7 @@ JS developers also give the function name a captial letter to pretend as if it i
 
 In JS, a "constructor" is ANY function called with the new keyword in front of it. Functions aren't constructors, but function calls are "constructor calls" if and only if new is used.
 
+//How JS devs create "classes" - 
 function Foo(name) {
 	this.name = name;
 }
@@ -1362,7 +1361,7 @@ a1.constructor === Object; // true!
 So here a1 anyways never had a property called constructor, so it goes to it's parent foo.prototype, even this NOW, does not have a property called contructor, so it
 goes to it's parent Object.prototype, now this one has a constructor property that points to the function Object();
 
-The best thing to do is remind yourself, "constructor does not mean constructed by". It just ANOTHER propery out there.
+The best thing to do is remind yourself, "constructor does not mean constructed by". It just ANOTHER property out there.
 It is by default, a non-enumerable, writable and configurable property. How ordinary can it get?
 The result? Some arbitrary object-property reference like a1.constructor cannot actually be trusted to be the assumed default function reference.
 The fact is: .constructor on an object arbitrarily points to a function who has a reference back to the object's parent -- a reference which it calls .prototype
@@ -1387,7 +1386,7 @@ var a = new Bar( "a", "obj a" );
 a.myName();
 a.myLabel();
 This gives a, obj a
-So in the above, the chain is {a} -> [[Prototype]] -> {bar.prototype} -> [[Prototype]] -> {foo.prototype}
+So in the above, the chain is {a} -> [[Prototype]] -> {bar.prototype} -> [[Prototype]] -> {foo.prototype} -> [[Prototype]] -> {Object.prototype}
 
 Bar.prototype = Object.create( Foo.prototype ) is different from Bar.prototype = Foo.prototype
 	Here you are not making new object called bar.prototype a child of Foo.prototype, you are just creating a new reference for Foo.prototype (a ref call bar.prototype)
@@ -1401,6 +1400,8 @@ a instanceof Foo;   LHS must be object, RHS must be a function
 
 a.isPrototypeOf(b); in the entire [[Prototype]] chain of b, does a ever appear
 
+Object.getPrototypeOf(a); // gives Foo.prototype object
+
 function isChildOf(o1, o2) {  //This is how isPrototypeOf() is implemented by JS
 	function F(){}
 	F.prototype = o2;         //make use of the fact that funcName.prototype is a writable untrustable value
@@ -1409,8 +1410,6 @@ function isChildOf(o1, o2) {  //This is how isPrototypeOf() is implemented by JS
 var a = {};
 var b = Object.create(a);
 isChildOf(b,a); // true
-
-Object.getPrototypeOf(a); // gives Foo.prototype object
 
 a.__proto__;   //this is Foo.prototype (only few browsers have this non-standard property called __proto__)
 __proto__ is like a getter/setter. It is not an actual property func of a, but is a func of Object.prototype
@@ -1661,12 +1660,12 @@ Behavior delegation suggests objects as peers of each other, which delegate amon
 JavaScript's [[Prototype]] mechanism is, by its very designed nature, a behavior delegation mechanism.
 OLOO quite naturally implements [[Prototype]]-based behavior delegation.
 
-
 If there's any take-away message, it's that classes are an optional design pattern for code (not a necessary given), and that furthermore  they are often quite awkward to implement in a [[Prototype]] language like JavaScript.
 Syntax is pretty bad - things like .prototype, explicit pseudo-polymorphism, .constructor etc. And mainly, there are no copies, only delegations.
 
 ES6 Class
 Class is, mostly, just syntactic sugar on top of the existing [[Prototype]] (delegation!) mechanism.
+IMP: A class can only have functions, it cannot have properties (data) in it.
 
 Syntax - class, constructor(), extends, super()
 class Widget {
@@ -1715,7 +1714,6 @@ var c2 = new C();
 c2.rand(); // "Some new string"
 c1.rand(); // "Some new string"  //even c1's rand is changed
 
-IMP: A class can only have functions, it cannot have properties (data) in it.
 If you have to add a state, it will be shared across all instances
 class C {
 	constructor() { C.prototype.count++ }
@@ -1946,7 +1944,7 @@ function Number(x){
 	this.toFixed = function() { }
 }
 Number.prototype.toPrecison = function() { }       //a function
-Number.NEGATIVE_INFINITY = -Infinity;              //a property
+Number.NEGATIVE_INFINITY = -Infinity;              //a static property
 var x = new Number(5);
 So protypal inheritance: x -> Number.prototype -> Object.prototype
 Number.__proto__ is Function.prototype
@@ -2017,7 +2015,7 @@ var e = new Function( "a", "return a * 2;" );
 var f = function(a) { return a * 2; };
 function g(a) { return a * 2; }
 
->RegExp(pattern,flag)
+>RegExp(pattern,mode)
 var h = new RegExp( "^a*b+", "g" );
 var i = /^a*b+/g;
 
@@ -2045,7 +2043,8 @@ This stack context includes the function call-stack and the line-number where th
 throw operator -
 throw new Error( "x wasn't provided" );
 Error object instance have atleast the "message" property, they may have others too.
-Other than the general Error(), there also, rarely used ones like - EvalError(), RangeError(), ReferenceError(), SyntaxError(), TypeError() and URIError()
+Other than the general Error(), there also, rarely used ones like - TypeError(), ReferenceError(), EvalError(), RangeError(), SyntaxError(), and URIError()
+try{throw new Error();}catch(b){console.log(b)}
 
 >Symbol()
 Symbols are special "unique" values that can be used as properties on objects.
@@ -2211,12 +2210,12 @@ var currentTimestamp = Date.now(); //added in ES5
 Date.now = function() {
 		return +new Date();
 };
-var someOtherTimestamp = new Date('08-12-2015').getTime();    user getTime to conver to milliseconds since epoch
+var someOtherTimestamp = new Date('08-12-2015').getTime();   for any Date object, use getTime() to convert it to milliseconds since epoch
 
-> ~ | & operators
+> ~ | & operators  (BITWISE NOT, OR, AND)
 bitwise operators in JS are defined only for 32-bit operations, which means they force their operands to conform to 32-bit value representations
 first they call the internal toInt32 which inturn first calls Number();
-So ~ operator first "coerces" to a 32-bit number value, and then performs a bitwise negation (flipping each bit's parity).
+So ~ operator first "coerces" to a 32-bit NUMBER value, and then performs a bitwise negation (flipping each bit's parity).
 Note: This is very similar to how ! not only coerces its value to boolean but also flips its parity
 ~42;	// -(42+1) ==> -43     (~x is roughly the same as -(x+1)). Now only x=-1 will make ~x as a falsy value! (0)
 Sentinel value: a normal value given a special meaning in a language. In JS it is is -1. A lot of string funcs return -1 as a flag for false
@@ -2232,6 +2231,9 @@ this uses the ToBoolean operation, so anything not in the falsy list, is truthy.
 if(!abc) { }    only if abc is falsy
 !! converts to boolean (without flipping it)  (just like ~~ does for positive numbers)
 if(!!abc) { }   only if abc is truthy
+
+Implicit coercion is there in if(), while(), doWhile(), for(;middle-part;), ternary(?:)
+All of these use the ToBoolean operation
 
 Implicit Coercion
 type conversions that are hidden, with non-obvious side-effects.
@@ -2255,6 +2257,9 @@ String to number
 "42" - 0 is 42
 The - operator is defined only for numeric subtraction, so both operands are converted to numbers. (same with * and /)
 [3] - [2] is 1, here both arrays converted to strings and then to numbers
+Number([3]) is 3
+Number([3,4,5]) is NaN
+Number({'0':3}) is NaN  (i.e any object)
 
 >boolean and number
 write a func that takes x args and returns true only if one of the args is true and all other args are false
@@ -2270,10 +2275,6 @@ function onlyOne(args) {
 to do it explicitly do - sum += Number(!!args[i]);   convert it to boolean and then convert it to number
 You can obviously edit the abov func to look for only 5 truths or only 10 truths etc.  (just change the sum value ===, part)
 
->anything to boolean
-Implicit coercion is there in if(), while(), doWhile(), for(;middle-part;), ternary(?:)
-All of these use the ToBoolean operation
-
 || && are'nt exactly logical operators in JS, they are more like 'operand selector operators', they return one of the two operands.
 ES5 spec: The value produced by &&,|| operator is not necessarily of type Boolean. The value produced will always be the value of one of the two operand expressions.
 42 || "abc"  is 42            42 && "abc"  is "abc"
@@ -2285,6 +2286,7 @@ So if(), while() etc, they implicitly coerce the final selected operand value to
 if (!!a && (!!b || !!c)) {    /this is truly explicit
 	console.log( "yep" );
 }
+In this one - if (a && b && c && d && e && f && g), if b is false it returns b (the LHS) and does not look at the rest. Only if all are true, it returns g
 
 IN JS, developers initialize vars with default values using the selector operands
 var c = a || "some default value";
@@ -2299,11 +2301,11 @@ String( s1 );					// "Symbol(cool)"  Explicit is allowed
 var s2 = Symbol("not cool");
 s2 + "";						// TypeError   Implicit is not allowed
 
-to number- not possible, error
+to number- not possible, TypeError
 to boolean - always true
 
 Loose EQUALS and strict EQUALS
-== allows coercion in the equality comparison and === disallows coercion. So == does more work than ===
+== allows coercion in the equality comparison and === disallows coercion. So == does more work than ===. == is just a LOOSE comparison between things
 both of them check the type of the operand and then decide what to do (one tries coercion, the other compares the type with the other side)
 
 x == y Algorithm:
@@ -2316,17 +2318,19 @@ else
 	Return false.   (you will use this one a lot! because the top 4 comparisons dont cover all combinations)
 
 "42" == 50  //false, it compares 42 and 50
-false == "70" // false, it compares 0 and 70  ("70" is converted to 70, becuase the boolean became a number, so string must now convert to number)
-true == "abc" //false, it compares 1 and NaN
+false == "70" // false, it compares 0 and 70  ("70" is converted to 70, becaase the boolean became a number, so string must now convert to number)
+true == "abc" //FALSE, it compares 1 and NaN
 
 var a = "42";
 if (a == true) { }     //false
 if (a === true) { }    //false
-if (a) { }      	   //true, explicit
+if (a) { }      	   //true, implicit 
 if (!!a) { }           //true, a better explicit form
 if (Boolean(a)) { }    //true, a better explicit form
 
 Null and undefined give true only with each other, with any other value, they give false.
+null === undefined  - false
+null == undefined  - true
 
 42 == [42];  //true, array object is coerced to primitive (toString() for array and valueOf() for object) "42", which is then coerced to 42
 "abc" == Object("abc");  //true, it is unwrapped from object
@@ -2374,7 +2378,7 @@ false == {};			// false     		false={} to 0={} to 0=="[object Object]" to 0==NaN
 0 == [];				// true -- UH OH!   0=[] to 0="" to 0=0
 0 == {};				// false			0=={} to 0==NaN
 
-[] == ![]               // true -- UH OH!   []=![] to []=!true to []=false to []=0 to ""=0 to 0=0  (first, the ! operator applies, coerces to boolean)
+[] == ![]               // true -- UH OH!   []=![] to []=!true to []=false to []=0 to ""=0 to 0=0  (FIRST, the ! operator applies, coerces to boolean)
 2 == [2];		        // true             2=[2] to 2="2" to 2=2
 "" == [null];	        // true             ""=[null] to ""=""    [null].toString() is ""
 "42" == ["42"];          // true            "42"=["42"] to "42"="42"
@@ -2397,12 +2401,12 @@ Implicit coercion must be used responsibly and consciously. Know why you're writ
 
 4.5)Grammar  (core JS syntax)
 Statements and Expressions
-English: A "sentence" is one complete formation of words, it is comprised of one or more "phrases", each of which can be connected with punctuation marks or conjunction words ("and," "or," etc).
+English: A "sentence" is one complete formation of words, it is comprised of one or more "phrases", each of which can be connected with punctuation marks or conjunction words ("and," "or," etc), just like this whole sentence.
 	A phrase can itself be made up of smaller phrases. Some phrases are incomplete and don't accomplish much by themselves, while other phrases can stand on their own
 JavaScript: Statements are sentences, expressions are phrases, and operators are conjunctions/punctuation.
 var a = 3 * 6;     3 * 6 is an expression.
 var b = a;         a = 3 * 6 and b = a are called assignment expressions...
-b;                 expression b is a statment by itself
+b;                 expression b is a statement by itself
 ALL statements have a completion value (default value is undefined)  (browser by default, return the completion value of the last statement executed)
 for a { }block, it is the completion value of the last statement in the block
 
@@ -2451,7 +2455,7 @@ bar: {
 		console.log( "never runs" );
 }
 JSON is truly a subset of JS syntax, but JSON is not valid JS grammar by itself.
-{"a":42} is not allowed in JS.   That's because statement labels cannot have quotes around them, so "a" is not a valid label, and thus : can't come right after it.
+{"a":42} is not allowed in JS.   That's because statement LABELs cannot have quotes around them, so "a" is not a valid label, and thus : can't come right after it.
 
 >code block
 [] + {}; // "[object Object]"
@@ -2460,7 +2464,7 @@ JSON is truly a subset of JS syntax, but JSON is not valid JS grammar by itself.
 >object destructuring
 var { a, b } = getData();       //return {a: 42,b: "foo"};
 function otherData({a,c}) { use a and c values here }
-  otherData({a:10,b:20,c:30});
+otherData({a:10,b:20,c:30});
 
 Operator Precedence:  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 b = a++, a;     //the , operator has a lower precedence than the =, so it does b=a++ and then a;
@@ -2533,7 +2537,7 @@ function foo( a = 42, b = a + 1 ) {
 }
 foo();					// 42 43
 foo(undefined);		    // 42 43
-foo(5 );				// 5 6
+foo(5);				// 5 6
 foo(void 0, 7);		    // 42 7
 foo(null);			    // null 1   (null + 1 is 1)
 
@@ -2560,7 +2564,7 @@ function foo() {
 	console.log("never runs");
 }
 console.log(foo());    Prints out "Hello" followed by Uncaught Exception: 42
-So here when it see return42, it determines that the completion time is here, so it runs the finally{} block and THEN returns the completion value of 42
+So when it see return42, it determines that the completion time is here, so it runs the finally{} block and THEN returns the completion value of 42
 
 function foo() {
 	try {
@@ -2574,7 +2578,6 @@ Here, in the finally{} if an exception is thrown, it will abandon the completion
 Similarly, a return 100 in the finally block will override the return value in the try block, and only 100 will be returned.
 The omission of return in a function is the same as return; or even return undefined;
 
-
 continue and break have the same effects like return and throw.
 for (var i=0; i<10; i++) {
 	try {
@@ -2583,6 +2586,7 @@ for (var i=0; i<10; i++) {
 	finally {
 		console.log( i );
 	}
+	console.log('never comes here');
 } // prints out 0 to 9.  In each iteration, the continue triggers the end of the block, so it goes to finally and executes it. It then does i++ and starts the next iteration.
 
 Switch Statement
@@ -2657,7 +2661,7 @@ etc. etc. It's not very common at all to run into these limits, but limits do ex
 JavaScript rarely runs in isolation. It runs in an environment mixed in with code from third-party libraries,
 and sometimes it even runs in engines/environments that differ from those found in browsers.
 
-----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 Chapter 5: Aysnc & Performance
 5.1)Asynchrony- Now and later
 Time is an important axis in your program execution
