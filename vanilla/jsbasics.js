@@ -163,7 +163,7 @@ If Type(x) is the same as Type(y), then
 	If Type(x) is Null, return true.             (means null==null)
 	If Type(x) is Number, then
 			If x or/and y is NaN, return false.     (so no number is equal to NaN, even NaN itself)
-			If x is the same Number value as y, return true. Also, 0 and -0 are the same value.
+			If x is the same Number value as y, return true. Also, 0 and -0 are the same value. (i.e 0 === 0)
 			Else return false.
 	If Type(x) is String, then return true if x and y are exactly the same sequence of characters (same length and same characters in corresponding positions). Otherwise, return false.
 	If Type(x) is Boolean, return true if x and y are both true or both false. Otherwise, return false.
@@ -519,6 +519,10 @@ The first statement, var a, the declaration, is processed during the compilation
 The second statement, a=2, the assignment, is left in place for the execution phase. (the var part is not even there in the executable, only a=2 is there)
 Only the declarations themselves are hoisted, while any assignments or other executable logic are left in place. Obviously.
 Hoisting is done, for each scope. i.e the scope is informed that these variables exist for these blocks. The JS Engine, during execution will ask for these (LHS or RHS references)
+So, variable decleration is done during compilation and not run time! (HOISTING). During run time, it is essentially a NO OP!
+var baz = 2; 
+typeof baz;    //'number'
+var baz;       //this line is ignored, it is a NO OP.
 
 foo();
 function foo(){ }
@@ -931,12 +935,18 @@ The lexical binding of an arrow-function cannot be overridden (even with new!!!)
 
 function foo() {
 	var self = this;
+	setTimeout( function(){console.log(this.a);}, 1000 );    //in this anonymous function, 'this' is just window
+}
+foo.call({a:2});      // 2
+
+function foo() {
+	var self = this;
 	setTimeout( function(){console.log(self.a);}, 1000 );    //here the function closes on the variable self
 }
 foo.call({a:2});      // 2
 
 function foo() {
-	setTimeout( () => {console.log(this.a);},  1000);    //static scope, arrow function closes on the "this" object of foo.
+	setTimeout( () => {console.log(this.a);},  1000);    //static scope, arrow function closes on the "this" object of foo. (lexical scope)
 }
 foo.call({a:2});      // 2
 
@@ -1898,6 +1908,11 @@ Object.is = function(v1, v2) {
 		return v1 === v2;     // everything else
 };
 
+In ES6 the most preferred way to test for NaN or -0 is Object.is()
+Object.is(NaN, NaN); //true
+Object.is(-0, -0); //true
+Object.is(0, -0); //false
+
 Pass By Value
 Simple values (aka scalar primitives) are always assigned/passed by value-copy:
 null, undefined, string, number, boolean, and symbol.
@@ -2113,6 +2128,9 @@ true -> "true"
 100000000000000000000 -> "1e21"
 { } -> "[object Object]"  (returns the internal [[Class]] unless the Object has toString defined)
 [1,2,3] -> "1,2,3"   (arrays have toString defined)
+[] -> ""
+[null,undefined] is ","  (very weird, it should have been "null, undefined")
+-0 is "0"
 
 JSON.stringify can only take JSON safe values (not undefined, function, symbol, malformed object, objects with circular references (infinite loop))
 JSON.stringify( 42 );	// "42"
@@ -2152,8 +2170,13 @@ any string -> digits or NaN
 "0x5423" -> 0   (not treated as octal)
 for an object -> whatever .valueOf() returns
 {} -> NaN
-[] -> 0
+[] -> 0  (even [""] is 0)
 [1,2,3] -> NaN
+["0"] is 0 
+"-0" is -0   ("0" is 0)
+" 0009  " is 9
+".0" is 0
+Objects - it tries .valueOf(), if it exists and returns a primitive value (BONS), then converts that to number. then it tries .toString()
 
 >ToBoolean operation
 Only these will convert to false (falsy), rest ALL are true
@@ -2200,6 +2223,7 @@ parseInt( parseInt, 16 );	// 15  ("f" from "function..")
 parseInt( "0x10" );			// 16
 parseInt( "103", 2 );		// 2
 
+var baz = '123' - '3'; //120  - works only for numbers, so instead of throwing errors like JAVA, JS converts lhs and rhs to numbers.
 
 >date and number
 var d = new Date();
@@ -2386,6 +2410,11 @@ false == {};			// false     		false={} to 0={} to 0=="[object Object]" to 0==NaN
 You can safely use == when one of the operands is "typeof x", because typeof always returns one of 7 strings. You don't need ===
 good tool: https://github.com/dorey/JavaScript-Equality-Table
 
+//Double EQUAL issues
+foo = [];
+if(foo);            //true  Empty array is true. Period. It is not on the 'false' list for the toBoolean() function. 
+if(foo == false);   //true. == algo says use the to primitive algo, so it does toString(). you get empty string. 
+
 Relational Comparison > and < Algorithm -
 x > y
 First convert both to do ToPrimitive
@@ -2398,6 +2427,15 @@ If both are strings, which alphabets/digits came first?
 {b:42} < {b:43}         //false    [object Object] < [object Object]
 
 Implicit coercion must be used responsibly and consciously. Know why you're writing the code you're writing, and how it works. Strive to write code that others will easily be able to learn from and understand as well.
+
+//Some extras
+parseInt('08');              //0 it sees 0 and thinks it is octal, so 8 is not there in octal, hence 0.
+parseInt(1/0,19);            //paresInt takes a string and a base and spits out a number. Infinity -> "Infinity" -> I is 18, n does'nt exist in base19, so 18. 
+String('abc') instanceof String;                 //false. it is of type string
+(new String ('abc')) instanceof String;          //true, this is a String native object
+String('abc') == (new String('abc'));            //true Comapring string and Object. Object calls .toString() so abc is abc
+3 > 2 > 1;                                       //false  3>2 is true.   True > 1 is : 1>1 is false
+Array(5).join('wat'-1) + "Batman!";              // Empty array of size 5 is joined on NaN, so 4 NaNs in total : NaNNaNNaNNaN Batman!
 
 4.5)Grammar  (core JS syntax)
 Statements and Expressions
@@ -5628,11 +5666,12 @@ var x = {id:1};
 var	y = {id:2};
 m.set( x, "foo" );     //m.x is now "foo", the property x (which is an object) has a value of "foo"
 m.set( y, "bar" );
-m.get(x);
+m.get(x);           
 You can't use m[x]/m[y]/m[z] to get and set values, you have to use m.get() and m.set()
 
 A map instance is an iterable, and its default iterator is the same as entries().
 Use Maps only if your property names have to be objects, else use normal objects for name-value pairs.
+Unlike an object, an iterator will iterate a map's keys in the insertion order and not some random alphabetical order
 
 Constructor variations-
 var m = new Map([ [x,"foo"], [y,"bar"] ]);      You send an array of arrays. Each sub-array is [name,value]
@@ -5704,7 +5743,7 @@ s.size;							// 0
 There is add()/delete(), there is no set()/get()
 
 Constructor-
-var s = new Set([x,y]);   //expects a values list
+var s = new Set([1,2,2,3,3,4,5,6,7,7]);   //expects a values list (it de-duplicates values in the array!)
 The Set() constuctor can also receive an iterable, like another set
 
 s.has(x);    //true or false
@@ -5779,7 +5818,11 @@ var t = Array.from(arrLike, function mapper(val,idx){
 	}
 }, optionalObjectForThisInsideTheCallback);  //t is [0,1,FOO,3]
 
+string.repeat(); 
 
+Fetch function. Works natively with browsers to fetch data.
+fetch('http://api.open-notify.org/astros.json').then(console.log); //it outputs the entire response object.
+it has a then function that runs as soon as the fetch resolves
 */
 
 Useful -
@@ -5799,15 +5842,17 @@ Object.getOwnPropertyNames(obj);
 Object.getPrototypeOf(a)
 Object.setPrototypeOf( child, parent );  //es6
 Object.getPrototypeOf(a);
+Object.is(x,y);  //check for equality for any two variable types
 a.isPrototypeOf(b);
 a instanceof Foo;
 
 arr.forEach(g)
 arr.every(g)
 arr.some(g)
+arr.map(g)/filter(g)/reduce(g)
 
 str.charAt(5)
 num.toPrecison(x)
 num.toFixed(x)
 
-Object.is(x,y);  //check for equality for any two variable types
+
