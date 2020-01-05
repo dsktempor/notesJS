@@ -1,0 +1,156 @@
+List of commands covered:
+whoami
+pwd
+cd
+mkdir,rmdir,cp,mv,rm
+ls
+touch,nano,pico
+cat,less,more
+file
+
+echo
+history
+df
+groups
+chmod
+grep
+man, apropos
+>> > < | & ? *
+
+env
+wc
+who
+passwd
+su, sudo
+ps, jobs, fg, kill
+
+--------------------------------------------------------------------------------
+
+Basic syntax: command [arguments] -OPTIONS
+Unix is case sensitive!
+
+whoami
+folder = directory, sub-directory
+/  is the root
+absolute path starts with /, rest are relative paths
+..  (parent directory)
+pwd   (print working directory)
+cd []    plain cd takes you back to home (desiraju). (from wherever you are)
+mkdir []
+~            cd ~ takes you to desiraju home
+ls
+
+--------------------------------------------------------------------------------
+
+touch []     creates a text file      
+ls -F             see if directorys are there, there will be a / before name
+nano [] , pico [ ]      file editor
+cat []          spills out entire content to terminal in one shot.
+less and more are paging spells, spills out one page at a time.
+less []        same as cat but :use arrows, space (next page) and q to quit
+more []             less than less
+cp [src] [dst]
+mv [src] [renameIfuWant]
+.                means current directory
+cp srcfile ./folder (same as folder)
+rm []   (permanently deletes the file)
+rmdir []          opposite to mkdir
+rm -rf []        recursive force, for directories & subdirectories (not rmdir)
+cp -r [dirName] [newDirName]   : recursive copy dir
+file [filename]   tells you what type of file it is
+
+---------------------------------------------------------------------------------
+
+echo $shell (for tcsh,csh) $SHELL (for bash) : shell is interface with OS
+history
+press tab or (tabtab) to complete commands
+PS1 =  "my new prompt>"   (PS1 stores your prompt, do echo $PS1 to see your current prompt)
+
+---------------------------------------------------------------------------------
+
+df  -h            disk filesystems partitions, human readable
+Partitions help disk space from overflowing into one another. Make sure your "home" partition has enough space for your stuff.
+If you fill up your partition, the others will be free for the computer to continue working normally
+
+All files/folders in UNIX have permissions. When you belong to a group, all users in the group have the same permissions.
+groups              see what groups you belong to
+
+ls -l              shows lots of details (permissions,#links,owner,group the file belongs to, size,create time,filename)
+(4)R-read
+(2)W-create,edit,delete
+(1)X-execute as a command
+UGO: user, group, other. Example: -rwx-wx-r-x (734)
+The first letter is: - for files and d for directory
+
+chmod (-d|UGO|RWX)         change mode, you need to be the owner/user of the file to do chmod
+chmod u+x,g+rw,og-r []     (add x to u, add rw to g, remove r from o&g) for a particular filename
+chmod 746 []          111,100,110 (rwx are 421)
+chmod 004 [] is -------r-- 
+
+Unix has 6 file types
+-  Plain old file
+d  Directory (which is basically just a file)
+l  Link  (hard link (copy) & soft link (pointer))
+p  Pipe
+b  Block device (like hard drive, has a buffer for I/O)
+c  Character device (like modem, uses a stream)
+
+----------------------------------------------------------------------------------
+ 
+echo $path   (a variable that holds paths, example: /bin/ls)
+cal                   calendar
+man [spell]           manual
+apropos xyz        (command to search all man pages)          
+grep temp .         grabs all files/dirs that have 'temp' in their name
+ls -l | grep d         pipe is a filter
+>                   redirection, the destination file is overwritten. It is basically "->"
+cal > july.txt       copies the output into a file
+grep 8 < july.txt   This is basically "<-". Take july.txt and feed it to grep 8.
+?                   (ls /bin/l? )
+*                   (ls /bin/l* ,lists all files file that start with l)            
+env 			 (list all environment variables)		
+>>              append to end of the file
+wc [file]   (count of lines,words, bytes for a file) (ls /bin | grep o | wc  : gives count of "o" commands)
+
+---------------------------------------------------------------------------------
+
+who                who else is logged into unix
+cat /etc/passwd        List of all registered system users
+cat /etc/group          groups info
+passwd              to change passwd
+su                     to become root, you need the root password. (root has rwx permission for everything!!!)
+su - [otherUserName]         to become another user, u first need to be the root
+sudo [command]        to just run a root-only command without actually being the root
+
+---------------------------------------------------------------------------------
+
+ps                 all your process status
+ps -a              all processes by current users
+ps -ax           all processes by all users, and all daemon process
+ps -aux           all processes by all users, and all daemon process, along with memory info
+jobs                shows current foreground, background spells cast along with PID
+nano & [some-big-file]     to run the spell in the background. Your terminal prompt is ready to use.
+ls /bin &          (this would end right way, will hardly be in the background)                
+fg [process ID]   (bring a job to foreground)
+kill [PID]
+kill -9 [PID]    if kill doesnt work
+
+----------------------------------------------------------------------------------
+
+Directories:
+First Floor----------
+/   The root of the entire file system
+/bin  Contains all unix command files (binary executables)
+/dev  Contains all connected devices (these are device files that can talk to the harware device)
+/etc  Contains config files for the entire file system (rules and regulation of the file system)
+/home  Contains all the users. In MacOS it is /users
+/lib  Contains all info and libraries for the executables in /bin to run. In MacOS, this is /usr/lib
+/sbin Contains all unix command files that only Admins can use. 
+/var  Contains a set of variables that change with time
+All the above folders are read only. Only Admins can write to them most of the time.
+
+Second Floor------------
+/usr/<same name from above>    This contains another set of bin,dev,etc,lib,sbin etc. Can be used by any user
+
+Third Floor and above---------
+All user directories
