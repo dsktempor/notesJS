@@ -3624,6 +3624,28 @@ for (var v of it) {
 }
 it.next();  //nothing is printed out, the iterator was finished in the for..of loop. It gives you {done:true}
 
+function *genex(){
+	console.log('hello');
+	yield 10;
+	console.log('hello2');
+	yield 6;       //value is 6 in the iterator returned object
+	console.log('hello3');
+	return 20;     //if there is nothing returned, value will be undefined
+}
+for (v of genex()){
+	console.log(v);  // it will give hello, 10, hello2, 6, hello3. It will not print 20! Only if the last line was yield 20, then it would print it. 
+}
+The last iteration returns {value:20, done:true}, since done is true, it won't go inside the for loop at all (and console log v=20)
+
+//Use case of generators - 
+function *uniqID(){
+	while(true){
+		yield Math.random();
+	}
+}
+var numbers = uniqID();
+numbers.next().value; // use this to create a unique id. 
+
 Generators AND Asynchrony
 Usual callback way:
 function foo(x,y,cb) {
@@ -4369,7 +4391,7 @@ for (let i = 0; i < 5; i++) {
 }
 In ES5 you would do  var j = i inside the iteration, and then console.log(j). Explicitly forcing the closure to close over j.
 
-6.2.2)Constants
+6.2.2)Constants  (a fixed reference to a mutable value.)
 a variable that's read-only after its initial value is set during decleration.
 const b = 10;  //this is also a block scoped variable like let.
 b = 5;  //TypeError!
@@ -4379,6 +4401,13 @@ the VALUE is not frozen or immutable because of const, just the assignment of it
 
 const x = array|object;  x holds a constant reference to that array. the internals of the array|object can be modified though.
 Here the value of x cannot be garbage collected until x's lexical scope goes away.
+
+var y = Object.freeze([1,2,4]);  // if you use this, then even the internals of the array can't be changed. (shallow freeze)
+
+var x = [1,2,3,4 ...];     //some 100Mb array
+x = null;                  //you can do this to clear the variable and clear memory.
+const x = [1,2,3,4 ...];   //100Mb array
+x = null;                  //Not allowed. So now you can't clear memory. You have to do x.length = 0;
 
 6.2.3)Block Scoped Functions
 Function declared inside a  { } can only be called from inside the  { }
@@ -4396,13 +4425,17 @@ both declarations of foo are hoisted to the top of the program (or enclosing fun
 Regardless of the value of x, "2" will be printed for sure, because the outside foo() uses the latest funct decleration, which over here is the second foo();
 In ES6 - foo() gives you TypeError!
 
-6.2.4)Spread/gather   (only for arrays, NOT objects)
+6.2.4)Spread/gather   (only for arrays or anything that is iterable)
 ... used in front of an array spreads out the array-
 foo(...[3,4,5]);   i.e here spreading it out to a list of arguments , foo.apply( null, [1,2,3] );  //does the same thing pre-ES6
 var b = [1,2, ...a];
 
 ... gathers a set of values into an array
 function foo(x,y,...z){ }   gather the rest of the args in to an array z, in ES5 you would have to z = Array.prototype.slice.call(arguments).slice(2);
+
+var str = "string";
+...str; // this  is [s,t,r,i,n,g]
+
 
 6.2.5)Default Parameter Values and Parameter Value Expressions
 function foo(x,y) {   ES5 code
@@ -4417,12 +4450,13 @@ function foo(x = 100, y = 20) {    ES6 code   The assignment actually does this-
 }
 foo() gives 120, foo(0,5) gives 5
 foo(5,undefined); gives 5+20
-foo(5,null);	gives 5+0     null is a value and in the addition step, it coerces to 0
+foo(5,null);	gives 5+0     null is a value and in the addition step, it coerces to 0  (only if x is exactly undefined, then x is set to 100)
 
 A gather value cannot have a default value - foo(x,y,...z=[10,20,30]){   }    -not allowed
 
 A default "value" can even be a "value expression"- function foo(x=y+3, z=bar(x)) {  }
-The default "value expressions" are lazily evaluated, meaning they're only executed if and when they're needed
+The default "value expressions" are lazily evaluated, meaning they're only executed if and when they're needed. So bar(x) runs only if z is undefined.
+function foo(x=45, y=x+3, z=y/2){}    //you can do stuff like this
 
 The formal parameters in a function declaration are in their own scope, in the () brackets, not in the function body's scope.
 var w = 1, z = 2;
@@ -4441,6 +4475,32 @@ Here too, if the IIFE tried to access the x inside it (from x=), then it would b
 
 note: Function.prototype is the same as function(){}  //empty function. This is a JS quirk.
 
+//What is the output
+var x = 1;
+function foo( x=2, f=function(){return x;} ){
+	console.log(f());          //inside here x is 2 and f is a function that closes over this x. So if it called , it will called on the latest value of x.
+}
+foo(); // will give 2
+foo(3); // will give 3
+foo(5,function(){return x;}); //will give 1 . Here you are passing the global x. 
+
+//What is the output
+var x = 1;
+function foo( x = 2, f = function (){ return x;}){
+	var x = 5;
+	console.log(f());
+}
+foo(); //this will give 5. Because the function closed on x. x had 2 first. but then it changed to 5 when the closure f() was executed.
+//chrome currently gives 2 and it is a bug in chrome. Chrome is declaring two var x . one has 2 and one has 5. Which is WRONG.
+//remember a closure is a live-link of the variables. It is not a snap-shot of the variables. 
+//all the function parameters are in the same scope as the function itself. Think of them as the first lines of the function itself..
+function foo(){
+	var x = 2;
+	var f = function (){ return x;} //this x is closing all the latest value of the x that belong to the foo function scope
+	var x = 5; //this var is basically a NO OP. it is just x = 5
+	console.log(f());
+}
+
 6.2.6)Array/Object Destructuring (structural assignment)
 Now the LHS of assignment statements for array/objects have changed.
 
@@ -4455,7 +4515,7 @@ var X = 10, Y = 20;
 var o = { a: X, b: Y };  Put X into a, Put Y into b (on the RHS side)
 console.log(o.a, o.b); 10,20
 
-but in destructuring, it is flippped! It is source = target!! So on the LHS side (in destructuring), things are flipped! Which is actually a bad feature now in JS.
+but in destructuring, it is flipped! It is source = target!! So on the LHS side (in destructuring), things are flipped! Which is actually a bad feature now in JS.
 var {x:a, y:b, z:c} = bar();   Put x into a, put y into b, put z into c. so a is 1, b is 2, c is 3.
 console.log(x,y,z);  //referenceError! they don't exist. Only a,b,c are the new variables.
 
@@ -4484,9 +4544,14 @@ var a1 = [1,2,3],
 a2 = [];
 [a2[2], a2[0], a2[1]] = a1;
 
+var abc = [1,2,3,4,5,6]; 
+[,,...abc] = [...abc, 7];   abc is now changed to [3,4,5,6,7] !
+
 Swap two vars-
 var a=10,b=20;
 [a,b]=[b,a];
+
+[a,b,c] = null;  //referenceError, it is trying to do a=null[0]; so do [a,b,c] = null | [];
 
 var { a:{x:X, x:Y}, a } = { a:{x:1} };    //first of all,the new vars are X,Y,a  and their values are 1,1,{x:1}
 ( {a:X,a:Y,a:[Z]} = {a:[1]} );   //the new vars are X,Y,Z and not[Z]. The values are [1],[1],1
@@ -4512,6 +4577,9 @@ var [,b] = [1,2,3];   b=2 , the others are skipped
 ... on the LHS (destructuring) does a gather, on the RHS it does a spread.
 var a = [2,3,4];
 var [b, ...c ] = a;  b=2,c=[3,4]
+
+var x = [a,b] = [1,2,3,[4,5,6]];   //x is the whole array, a=1,b=2
+[,,,[c,,d]] = [a,b,...rest] = [1,2,3,[4,5,6]];  c=4,d=6, a=1,b=2,rest=[3,[4,5,6]];
 
 default values in destructuring
 var [a=3, b=6, c=9, d=12 ] = [4,5,8]   if arr[0] is not undefined,put arr[0] into a, else put 4 into a.
@@ -4541,6 +4609,9 @@ f6({x:5}, {p:20}, 50, {p:100,t:40});					   x=5, y=undefined, z=50, X=100, arg[3
 
 function f3([ x, y, ...z], ...w) { }
 foo([]);   x=y=undefined, z=w=[]   empty array is the default gather value!!! not undefined
+
+JS does not make it mandatory to have a default value for nested destructuring of arrays or objects. But you should do it. So add a linter rule.
+({ d:{ e: xy, f:yz} = {} } = foo());     //Always keeps a {} on the LHS, because foo might return null or undefined or some number/string/boolean (non object)
 
 Merging huge objects with their default objects: Destructuring and then restructuring using those temporary variables
 var defaults = {
@@ -4604,6 +4675,30 @@ var o = {
 Any valid expression can appear inside the [ .. ], this is all for that particular property name of the object
 This is most used with Symbol-  {[Symbol.toStringTag]: "really cool thing"}
 
+//ES5 way
+var a = 1;
+var d = 'hello';
+var obj = {
+	a: a,               
+	b: function(){},    
+	c: function c(){ 
+			c();         //gave it a name because i want to self call it
+		},
+	foo: function* (){} 
+}
+obj[d] = 45;  //inside the object you can't do d:45
+//ES6 way
+var obj = {
+	a,
+	b(){},             //this is lexically anonymous. You can't call it from inside it. //this will appear as b in the stack trace though
+	                   //you can't do the same for c. c needs to have a name to call itself!
+	[d] : 45,          //now obj['hello'] = 45;
+	[d.toUpperCase()] : 19,      //obj['HELLO'] = 19
+	[d+'fn'](){},               //this is now a concise method
+	*foo(){}         
+	*[c+'gn'](){}       //a concise computed generator!
+ }	
+
 __proto__ property
 var o1 = {  };
 var o2 = { __proto__: o1  };
@@ -4629,16 +4724,18 @@ string can now be embeded with expressions that are automatically parsed and eva
 var name = "Kyle";
 var greeting = `Hello ${name}!`;                  //"Hello Kyle!"  this is still a string type
 var greeting = `Hello ${convertUpper(name)}!`;    //a function
-Line breaks (newlines) in the interpolated string literal are preserved in the string value.
+Line breaks (newlines) and spaces in the interpolated string literal are preserved in the string value.
 
 Tagged template literals (should have been called tagged string literals)
-This is a new function invocation way, called Tag.
+This is a new function invocation way, called Tag. (tag functions)
 function foo(strings, ...values) {
 	console.log(strings);
 	console.log(values);
 }
-var desc = "awesome";
+var desc = "awesome"; 
 foo`Everything is ${desc}!`;   prints out [ "Everything is ", "!"], [ "awesome" ]
+var a=10,b='desi',c=20;
+foo`${a}${b}${c}`;      prints out ["","","",""] and [10,desi,20]   SO the template literal starts and ends with ""
 
 The first argument that a tag function accepts is- everything in between the ${} (call it string, it is an array of strings)
 The rest of the arguments that it accepts are all the computed values inside each of the ${}  (use ..values to put them into an array of values)
@@ -4648,6 +4745,11 @@ function tag(strings, ...values) {
 		return s + (idx > 0 ? values[idx-1] : "") + v;
 	}, "" );
 }
+OR
+for(var i=0; i<string.length;i++){
+		if(i>0) str+= values[i-1];     
+		str += strings[i];     // str-(val-str)(val-str)(val-str) 
+}
 tag`Everything is ${desc}!`;
 basically, this is a step in between 2 steps of the string literal: finished evaluating all expressions, time to put them all together.
 
@@ -4656,8 +4758,22 @@ function foo(x,y) {return x+y;}
 var foo = (x,y) => x + y;  //function reference is assigned to the var foo
 var f1 = () => 12;    //returns 12
 var f2 = x => x * 2;   //return x*2
+(() => {})();   //Anonymous func IIFE
 Arrow functions are always 'anonymous' 'function expressions'. (they have no named reference for recursion or event binding/unbinding)
 there is no such thing called arrow function declaration.
+
+if you wrap { } the function body, then you SHOULD put a return statement
+x => { return {x:y} }
+
+function foo(){return 7;}
+var goo = foo;
+goo.name;           //this will give you 'foo'
+var too = () => 7;  //too.name is 'too'
+
+In a huge arrow function, if you really want to remove the curly braces, use ( , , , ) expressions..
+function blah(){ foo(3); goo(4); boo(10); }    //these are three statements. You need to make it to expression chained by comma.
+var blah = () => (foo(3), goo(4), boo(10));    //this is from ES0. THe comma operator can be used to convert a statement to an expression
+//Note: Statements are made up of expressions. In JS, a statement can't be used in place of an expression. An expression can be used in place of a statement.
 
 The longer is your function code, the less use it is, to convert it to ()=> form. Use arrow function form only for really small functions. Then visually, it makes a difference, or else it does'nt.
 ()=> really only saves you from typing function, {} and return. Meh.
@@ -4667,18 +4783,20 @@ var controller = {
 	makeRequest: function(){
 		var self = this;
 		btn.addEventListener( "click", function(){
-			...
+			...                      //over here 'this' is just window. Use 'self' as this function closes over the makeRequest function
 			self.makeRequest();
 		}, false );
 	}
 };
+Or do btn.addEventListener("click", function(){}, false).bind(this);   //explicitly bind this eventlistener function with the "this" that was passed to makeRequest.
+
 We use self, because, inside the click callback, when it is called, the this binding will not be the same as the "this" in the makeRequest();
 Inside arrow functions, the "this" binding is not dynamic, but is instead lexical!!!
 btn.addEventListener( "click", () => {
 			// ..
 			this.makeRequest(..);   //it takes it from the "this" in it's outer scope - makeRequest()
 }, false );
-Essentially, => replaces var self = this or .bind(this)
+Essentially, => replaces var self=this or .bind(this)
 
 So if "this" is going to be bound lexically, then even that is a problem-
 var controller = {
@@ -4717,7 +4835,7 @@ for(var val,it=a[Symbol.iterator](); (ret=it.next() && ret.done!==false){
 }
 
 These are by default iterables - Array, String, Generator, Collections/TypedArrays
-Plain objects are not iterable!
+Plain objects are not iterable! Objects do NOT ship with iterators. They are not iterables. 
 for (var c of "hello") {     //the literal is boxed to the String object, which is an iterable by default.
 	console.log(c);         //gives out each character
 }
@@ -4840,17 +4958,20 @@ Unicode characters can also be used in identifier names (variables, properties, 
 var \u03A9 = 42;    //var Ω = 42
 var \u{2B400} = 42;   //var 𫐀 = 42;  (astral)
 
-6.2.13)Symbols  - new primitive type, it has no literal form
+6.2.13)Symbols  - new primitive type, it has no literal form.
+Technically, the JS engine uses unique numbers .. under the hood to identify a symbol.
 var sym = Symbol("some optional description");
-typeof sym;		 // "symbol"  the primary way to identify a symbol type
-sym instanceof Symbol;		// false
+typeof sym;		             // "symbol"  the primary way to identify a symbol type
+sym instanceof Symbol;		 // false
 var symObj = Object(sym);
-symObj instanceof Symbol;	// true
-symObj.valueOf();         // this is sym
+symObj instanceof Symbol;	 // true
+symObj.valueOf();            // this is sym
 
 You cannot and should not use new with Symbol(), it is not a constuctor. Nor does it produce any object.
 You can only pass a string as a parameter (or send nothing)
 sym.toString();	   //"Symbol(some optional description)"
+
+No two symbols are ever equal to each other. Even if they have the same name
 
 The internal value of a symbol itself -- referred to as its name -- is hidden from the code and cannot be obtained.
 The main point of a symbol is to create a string-like value that can't collide with any other value
@@ -4861,14 +4982,18 @@ read it in the book if required
 Symbols as Object Properties
 var o = {
 	foo: 42,
-	[Symbol("bar")]: "hello world",    //it's stored in a special way so that the property will not show up in a normal enumeration of the object's properties
+	[Symbol("bar")]: "hello world",  //You are calling symbol() over here and then using it as a computed property  
 	baz: true
 };
-Object.getOwnPropertyNames(o);      // ["foo","baz"]
+Object.keys(o);                     // ["foo","baz"]     Symbols are non-enumerable by default.
+Object.getOwnPropertyNames(o);      // ["foo","baz"]       
 Object.getOwnPropertySymbols(o);	// [Symbol(bar)]
 
 Built-in Symbols - They are all properties of the Symbol function object.
-Symbol.iterator is a built-in property.
+Symbol.iterator;
+Symbol.toStringTag;
+Symbol.toPrimitive;
+Symbol.isConcatSpreadable;
 
 var a = [1,2,3];
 a[Symbol.iterator];			//a native function
