@@ -1,5 +1,44 @@
 /* Basic algorithms */
 
+/* References:
+Link to GitHub repo: https://github.com/StephenGrider/algocasts
+
+*/
+
+/*
+Algo complexity: Big 'O' Notation -
+1       - constant time
+log(n)  - logarithimic time  (searching a sorted array)
+n       - linear time
+nlog(n) - quasilinear time (sorting an array)
+n^2     - quadratic time
+2^n     - exponential time
+
+
+O(n+m) iterating through two different sets of data
+O(n*m) two for loops of different sizes, one inside the other
+
+Useful JS hacks-
+Math.abs(25)
+Math.sign(-50)
+someArray.every((char,i) => {})
+for (c of stringValue) { }
+obj.hasOwnProperty(abc)
+Object.keys(obj);
+Object.values(obj);
+Object.entries(obj);
+for (key in someObj) { }
+for (index in someArray) { }
+someArray.slice(beginIndex,endIndex);           (endIndex is not included)
+someString.replace(/[^a-zA-Z0-9]/g,"");          (remove all non alpha numerics)
+Any string, convert to array and then sort/reverse
+someString.repeat(27)                     (returns a string concated 27 times)
+someString.match(/[aeiou]/g)             (returns an array of matches or NULL)
+someString.includes(otherString)        (boolean, if one string is there in the other or not)
+someArray.includes(x)                    (boolean, checks if x is in the array or not)
+
+*/
+
 // String Reversal: Given a string, return a new string with the reversed order of characters.
 function reverse(str) {
 	return str.split('').reverse().join('');
