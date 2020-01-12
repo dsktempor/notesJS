@@ -520,7 +520,7 @@ The second statement, a=2, the assignment, is left in place for the execution ph
 Only the declarations themselves are hoisted, while any assignments or other executable logic are left in place. Obviously.
 Hoisting is done, for each scope. i.e the scope is informed that these variables exist for these blocks. The JS Engine, during execution will ask for these (LHS or RHS references)
 So, variable decleration is done during compilation and not run time! (HOISTING). During run time, it is essentially a NO OP!
-var baz = 2; 
+var baz = 2;
 typeof baz;    //'number'
 var baz;       //this line is ignored, it is a NO OP.
 
@@ -1352,7 +1352,7 @@ JS developers also give the function name a captial letter to pretend as if it i
 
 In JS, a "constructor" is ANY function called with the new keyword in front of it. Functions aren't constructors, but function calls are "constructor calls" if and only if new is used.
 
-//How JS devs create "classes" - 
+//How JS devs create "classes" -
 function Foo(name) {
 	this.name = name;
 }
@@ -2172,7 +2172,7 @@ for an object -> whatever .valueOf() returns
 {} -> NaN
 [] -> 0  (even [""] is 0)
 [1,2,3] -> NaN
-["0"] is 0 
+["0"] is 0
 "-0" is -0   ("0" is 0)
 " 0009  " is 9
 ".0" is 0
@@ -2348,7 +2348,7 @@ true == "abc" //FALSE, it compares 1 and NaN
 var a = "42";
 if (a == true) { }     //false
 if (a === true) { }    //false
-if (a) { }      	   //true, implicit 
+if (a) { }      	   //true, implicit
 if (!!a) { }           //true, a better explicit form
 if (Boolean(a)) { }    //true, a better explicit form
 
@@ -2412,8 +2412,8 @@ good tool: https://github.com/dorey/JavaScript-Equality-Table
 
 //Double EQUAL issues
 foo = [];
-if(foo);            //true  Empty array is true. Period. It is not on the 'false' list for the toBoolean() function. 
-if(foo == false);   //true. == algo says use the to primitive algo, so it does toString(). you get empty string. 
+if(foo);            //true  Empty array is true. Period. It is not on the 'false' list for the toBoolean() function.
+if(foo == false);   //true. == algo says use the to primitive algo, so it does toString(). you get empty string.
 
 Relational Comparison > and < Algorithm -
 x > y
@@ -2430,7 +2430,7 @@ Implicit coercion must be used responsibly and consciously. Know why you're writ
 
 //Some extras
 parseInt('08');              //0 it sees 0 and thinks it is octal, so 8 is not there in octal, hence 0.
-parseInt(1/0,19);            //paresInt takes a string and a base and spits out a number. Infinity -> "Infinity" -> I is 18, n does'nt exist in base19, so 18. 
+parseInt(1/0,19);            //paresInt takes a string and a base and spits out a number. Infinity -> "Infinity" -> I is 18, n does'nt exist in base19, so 18.
 String('abc') instanceof String;                 //false. it is of type string
 (new String ('abc')) instanceof String;          //true, this is a String native object
 String('abc') == (new String('abc'));            //true Comapring string and Object. Object calls .toString() so abc is abc
@@ -3633,18 +3633,18 @@ function *genex(){
 	return 20;     //if there is nothing returned, value will be undefined
 }
 for (v of genex()){
-	console.log(v);  // it will give hello, 10, hello2, 6, hello3. It will not print 20! Only if the last line was yield 20, then it would print it. 
+	console.log(v);  // it will give hello, 10, hello2, 6, hello3. It will not print 20! Only if the last line was yield 20, then it would print it.
 }
 The last iteration returns {value:20, done:true}, since done is true, it won't go inside the for loop at all (and console log v=20)
 
-//Use case of generators - 
+//Use case of generators -
 function *uniqID(){
 	while(true){
 		yield Math.random();
 	}
 }
 var numbers = uniqID();
-numbers.next().value; // use this to create a unique id. 
+numbers.next().value; // use this to create a unique id.
 
 Generators AND Asynchrony
 Usual callback way:
@@ -4482,7 +4482,7 @@ function foo( x=2, f=function(){return x;} ){
 }
 foo(); // will give 2
 foo(3); // will give 3
-foo(5,function(){return x;}); //will give 1 . Here you are passing the global x. 
+foo(5,function(){return x;}); //will give 1 . Here you are passing the global x.
 
 //What is the output
 var x = 1;
@@ -4492,7 +4492,7 @@ function foo( x = 2, f = function (){ return x;}){
 }
 foo(); //this will give 5. Because the function closed on x. x had 2 first. but then it changed to 5 when the closure f() was executed.
 //chrome currently gives 2 and it is a bug in chrome. Chrome is declaring two var x . one has 2 and one has 5. Which is WRONG.
-//remember a closure is a live-link of the variables. It is not a snap-shot of the variables. 
+//remember a closure is a live-link of the variables. It is not a snap-shot of the variables.
 //all the function parameters are in the same scope as the function itself. Think of them as the first lines of the function itself..
 function foo(){
 	var x = 2;
@@ -4544,7 +4544,7 @@ var a1 = [1,2,3],
 a2 = [];
 [a2[2], a2[0], a2[1]] = a1;
 
-var abc = [1,2,3,4,5,6]; 
+var abc = [1,2,3,4,5,6];
 [,,...abc] = [...abc, 7];   abc is now changed to [3,4,5,6,7] !
 
 Swap two vars-
@@ -4679,12 +4679,12 @@ This is most used with Symbol-  {[Symbol.toStringTag]: "really cool thing"}
 var a = 1;
 var d = 'hello';
 var obj = {
-	a: a,               
-	b: function(){},    
-	c: function c(){ 
+	a: a,
+	b: function(){},
+	c: function c(){
 			c();         //gave it a name because i want to self call it
 		},
-	foo: function* (){} 
+	foo: function* (){}
 }
 obj[d] = 45;  //inside the object you can't do d:45
 //ES6 way
@@ -4695,9 +4695,9 @@ var obj = {
 	[d] : 45,          //now obj['hello'] = 45;
 	[d.toUpperCase()] : 19,      //obj['HELLO'] = 19
 	[d+'fn'](){},               //this is now a concise method
-	*foo(){}         
+	*foo(){}
 	*[c+'gn'](){}       //a concise computed generator!
- }	
+ }
 
 __proto__ property
 var o1 = {  };
@@ -4732,7 +4732,7 @@ function foo(strings, ...values) {
 	console.log(strings);
 	console.log(values);
 }
-var desc = "awesome"; 
+var desc = "awesome";
 foo`Everything is ${desc}!`;   prints out [ "Everything is ", "!"], [ "awesome" ]
 var a=10,b='desi',c=20;
 foo`${a}${b}${c}`;      prints out ["","","",""] and [10,desi,20]   SO the template literal starts and ends with ""
@@ -4747,8 +4747,8 @@ function tag(strings, ...values) {
 }
 OR
 for(var i=0; i<string.length;i++){
-		if(i>0) str+= values[i-1];     
-		str += strings[i];     // str-(val-str)(val-str)(val-str) 
+		if(i>0) str+= values[i-1];
+		str += strings[i];     // str-(val-str)(val-str)(val-str)
 }
 tag`Everything is ${desc}!`;
 basically, this is a step in between 2 steps of the string literal: finished evaluating all expressions, time to put them all together.
@@ -4835,7 +4835,7 @@ for(var val,it=a[Symbol.iterator](); (ret=it.next() && ret.done!==false){
 }
 
 These are by default iterables - Array, String, Generator, Collections/TypedArrays
-Plain objects are not iterable! Objects do NOT ship with iterators. They are not iterables. 
+Plain objects are not iterable! Objects do NOT ship with iterators. They are not iterables.
 for (var c of "hello") {     //the literal is boxed to the String object, which is an iterable by default.
 	console.log(c);         //gives out each character
 }
@@ -4982,11 +4982,11 @@ read it in the book if required
 Symbols as Object Properties
 var o = {
 	foo: 42,
-	[Symbol("bar")]: "hello world",  //You are calling symbol() over here and then using it as a computed property  
+	[Symbol("bar")]: "hello world",  //You are calling symbol() over here and then using it as a computed property
 	baz: true
 };
 Object.keys(o);                     // ["foo","baz"]     Symbols are non-enumerable by default.
-Object.getOwnPropertyNames(o);      // ["foo","baz"]       
+Object.getOwnPropertyNames(o);      // ["foo","baz"]
 Object.getOwnPropertySymbols(o);	// [Symbol(bar)]
 
 Built-in Symbols - They are all properties of the Symbol function object.
@@ -5417,6 +5417,7 @@ Reflect.Loader.import() is an API to load modules by yourself without the import
 Read more if really required
 
 Classes
+A blueprint for creating objects with pre-defined properties and methods. It is like a MOLD used in casting steel.
 JS fakes classes by doing object delegation.
 things like new and instanceof and .constructor property have nothing to do with classes
 
@@ -5434,7 +5435,13 @@ class Foo {
 >constructor() implies the signature of that function (i.e its arguments and its definition)
 >class methods use "concise method/generator" syntax available to object literals.
 >class methods are non-enumerable whereas object methods are by default enumerable.
->Unlike object literals, there are NO commas separating members in a class body
+>Unlike object literals, there are NO commas separating members in a class body.
+
+A class has three kinds of functions: constructor, instance methods, static methods. The constructor method is used for creating these new objects.
+The Class keyword creates a constant, so you cannot redfine it.
+A 'static' function within a class, does not need an instance to call it, you call on class name:  Animal.Speak().  These funcs are like utility functions. Let the first letter be uppercase.
+	Example: Point.Distance(p1,p2) - a static method of the Point Class that accepts two instances of the Point Class and returns the distance between them.
+
 
 basically it is this -
 function Foo(a,b) {    //prototype style of coding
@@ -5791,7 +5798,7 @@ var x = {id:1};
 var	y = {id:2};
 m.set( x, "foo" );     //m.x is now "foo", the property x (which is an object) has a value of "foo"
 m.set( y, "bar" );
-m.get(x);           
+m.get(x);
 You can't use m[x]/m[y]/m[z] to get and set values, you have to use m.get() and m.set()
 
 A map instance is an iterable, and its default iterator is the same as entries().
@@ -5943,7 +5950,7 @@ var t = Array.from(arrLike, function mapper(val,idx){
 	}
 }, optionalObjectForThisInsideTheCallback);  //t is [0,1,FOO,3]
 
-string.repeat(); 
+string.repeat();
 
 Fetch function. Works natively with browsers to fetch data.
 fetch('http://api.open-notify.org/astros.json').then(console.log); //it outputs the entire response object.

@@ -2,26 +2,107 @@
 
 /* References:
 Link to GitHub repo: https://github.com/StephenGrider/algocasts
+How to solve - a book by george polya
+Sorting animations webiste: https://www.toptal.com/developers/sorting-algorithms
+Visualising sorts: https://visualgo.net/en/sorting
 
 */
 
 /*
-Algo complexity: Big 'O' Notation -
+Algorithm: A set of steps to accomplish a certain task. The foundation of a software developer.
+
+Good algos are highly performant. There is always 'the best' solution.
+Try to identify when your code slows down, find the inefficient points.
+
+Factors to judge an algorithm-
+>Time complexity / speed
+>Space complexity / memory usage
+>Is the code clean and readable
+
+When testing time of your algo -
+>Different machines will record different times
+>The same machine wll recored different times in different trys
+>Speed measurement may not be precise enough in your machine/environment
+
+Instead of counting time, count the number of simple operations your algo has to perform. This is what big(o) does.
+Algo complexity: Big'O' Notation - how the runtime of an algorithm grows as the input size grows.
+
+In order of increasing time:
 1       - constant time
-log(n)  - logarithimic time  (searching a sorted array)
+log(n)  - logarithimic time  (searching a sorted array) (this is almost as good as O(1))
 n       - linear time
 nlog(n) - quasilinear time (sorting an array)
 n^2     - quadratic time
 2^n     - exponential time
 
+Constants don't matter in BigO notation: BigO does'nt care about precision, just general trend.
+O(10n), O(50n+10) is O(n)
+O(2n^2), O(n^2) +5n +2) is O(n^2)
+O(500) is O(1)
+O(n^2 + n^3) is O(n^3)
+Addition/sub/mult/div, assignments are all constants
+array[index], obj{key} access is constant
+For a loop: length of loop times complexity of each iteration
 
 O(n+m) iterating through two different sets of data
 O(n*m) two for loops of different sizes, one inside the other
 
+Space Complexity in JS-
+Boolean, numbers, undefined and null are constant space
+String are O(n) space where n is the string length
+Arrays and objects are also O(n) space where n is the number of keys in the object
+So, just add up all the extra NEW vars you use in your algo and determine your space complexity.
+
+Logarithms: The inverse of exponentiation (like div is the inverse of mult)
+3^x=100, so Log(100)base3= x
+2^3=8, so Log(8)base2 = 3    [Log(value)base2 = exponent]
+So Log(n) means, your input n has to go up by a lot..... then only your RHS (exponent or time) will go by 1. You can see, it is the inverse of exponentiation.
+	In exponentiation, if your input (exponent) goes by 1.... then your RHS (time) will go up by a lot!
+Every Log must have a base. But in Big O, for simplicity, you just say Log(n) and not Log(n)base2
+Log(n)base 2 means: the number of times you can divide n by 2, before you get a value <=1.
+
+JS built-ins and their BigO-
+Objects - these are unordered. So use these if you don't need any order.
+Insertion: O(1)        Removal: O(1)         Access: O(1)         Searching: O(n) [i.e searching for a value not searching for a key...]
+Object.keys(), Object.values(), object.entries() - O(n)
+obj.hasOwnProperty() - O(1)    [it just tries to access it directly and checks if it is undefined]
+Arrays - these are ordered left to right
+Access: O(1)        Searching: O(n)       Insert at End: O(1)        Remove at End: O(1)
+Insert anywhereElse: O(n)      Remove anywhereElse: O(n)     (you need to re-index/move all the other elements, that's why O(n))
+concat:O(n)   slice:O(n)   splice:O(n)    sort:O(nlogn)    forEach/map/filter/reduce/every etc:O(n)
+
+Problem Solving Plan:
+>Understand the problem properly: Restate it in your own words (abstract out all the crap, what is the core issue?), what inputs (their types, sizes) go in, what outputs (formats) come out, do you have enough info about your problem.
+>Explore concrete examples: These can act as your test cases too. Explore simple examples.. then try edge cases. Try invalid or empty inputs. (different user stories)
+>Break down the problem: Identify the different issues in the problem. Write some pseudocode/comments for each part of the problem. Interviewer now knows you almost have a solution.
+>Write Code: Convert pseudocode/comments to code. If there is some edge case/difficult sub-problem you can't solve, just ignore that part, assume you've done it, and do the rest of the solution.
+>Lookback and refactor: Better variable names, use clean ES6 code. What is the time and space complexity? Can you improve them? Is there a completely different solution?
+
+Common Problem Solving Patterns:
+Frequency counters: Use an object/set to collect/count frequencies of values. (characterMaps)
+Mutilple Pointers: creating pointer or values that correspond to an index, and then move these pointers towards the middle/end/beginning
+Sliding Window: Create a window which can either be an array or number from one position to another. Depending on a condition, the window expands/closes.
+Divide & Conquer: Divide a data set into smaller chunks and then repeating a process with a subset of data. (binary search in a sorted array)
+
+Recursion: Taking one problem, and solving it over and over on a smaller peice or changing peice untill you reach some end point.
+JSON.parse, JSON.strigify, document.getElementByID are often implemented as recursive functions by browsers.
+Call Stack: browser maintains a stack (FILO) of functions that have been called. When a function returns a value, it is removed from the top of the stack.
+If you base case is not there or never hit: In JS, you will get - RangeError: Maximum call stack size exceeded  (Stack Overflow!)
+In recursion, often you need to make copies: so for arrays use - slice, spread, concat etc, for strings use slice, substr etc, For objects use spread, Object.assign
+
+Sorting in JS: Array.sort(), it converts everything to string and then sorts them! so 10 comes before 4 !!
+Use [6,10,4,15,20].sort( (a,b) => a-b );  to sort JS numbers.
+
+Data Structures - You can't always rely on JS built-ins like arrays and objects. You need other structures to hold data better and process data better.
+Each data structure is good at something - insert, remove, read, sort, search etc.
+
+
 Useful JS hacks-
-Math.abs(25)
-Math.sign(-50)
+/[a-z0-9]/.test(character)
+someArray.splice(someIndex,1);    //removes an element at a particular index, and then shifts all the others.
 someArray.every((char,i) => {})
+Array.from();
+Math.floor, Math.pow, Math.log10, Math.abs, Math.sign(-20)
 for (c of stringValue) { }
 obj.hasOwnProperty(abc)
 Object.keys(obj);
@@ -147,7 +228,7 @@ function chunk(array, size) {
 }
 
 // Anagrams: Check to see if two provided strings are anagrams of eachother. One string is an anagram of another if it uses the same characters in the same quantity. Only consider characters, not spaces or punctuation.  Consider capital letters to be the same as lower case.
-function anagrams(stringA, stringB) {
+function anagrams(stringA, stringB) {  //O(n)
 
 	function buildCharMap(str) {
 		const charMap = {};
@@ -473,6 +554,7 @@ class Node {
 }
 
 class LinkedList {
+	//For any linkedList function you write, make sure it works for 1)empty list    2)list with one node     3)list with 4 nodes   DONE
 	constructor() {
 		this.head = null;
 	}
@@ -493,22 +575,38 @@ class LinkedList {
 		return counter;
 	}
 
+	forEach(g) {              // Traverse the list and apply function g on each element's data. Function g takes a node and it's index in the list as arguments.
+		let node = this.head;
+		let currentIndex = 0;
+		while (node!==null) {
+			g(node, currentIndex);
+			node = node.next;
+			currentIndex++;
+		}
+	}
+
+	*[Symbol.iterator]() {    //A generator that yields the next node
+		let node = this.head;
+		while (node) {
+			yield node;
+			node = node.next;
+		}
+	}
+
 	getFirst() {
 		return this.head;
 	}
 
 	getLast() {
-		if (!this.head) {
+		if (!this.head) {         //empty list
 			return null;
 		}
 
 		let node = this.head;
-		while (node) {
-			if (!node.next) {
-				return node;
-			}
+		while (node.next !== null) {
 			node = node.next;
 		}
+		return node;
 	}
 
 	clear() {
@@ -524,11 +622,11 @@ class LinkedList {
 	}
 
 	removeLast() {
-		if (!this.head) {
+		if (!this.head) {          //empty list
 			return;
 		}
 
-		if (!this.head.next) {
+		if (!this.head.next) {     //one item list
 			this.head = null;
 			return;
 		}
@@ -554,26 +652,26 @@ class LinkedList {
 		}
 	}
 
-	getAt(index) {
+	getAt(index) {       //Linked List first element is of index 0
 		let counter = 0;
 		let node = this.head;
-		while (node) {
-			if (counter === index) {
-				return node;
-			}
 
-			counter++;
+		while (node!==null) {
+			if (counter === index) return node;
 			node = node.next;
+			counter++;
 		}
+
+		//it comes here for empty list. It also comes here if index>listLength
 		return null;
 	}
 
 	removeAt(index) {
-		if (!this.head) {
+		if (!this.head) {            //empty list
 			return;
 		}
 
-		if (index === 0) {
+		if (index === 0) {           //remove the first element
 			this.head = this.head.next;
 			return;
 		}
@@ -584,6 +682,27 @@ class LinkedList {
 		}
 		previous.next = previous.next.next;
 	}
+
+	/*
+	removeAt(i) {                         // my version
+		if (!this.head) return;             //empty list
+
+		if (index === 0) {                 //remove the first element
+			this.head = this.head.next;
+			return;
+		}
+
+		let counter = 0;
+		let n = this.head;
+		while (n !== null && counter<i-1) {
+			n = n.next;
+			counter++
+		}
+		if (counter < i) return;  //i.e they asked to remove item 6 in a list of size 3.
+		// by now you are at the node at index i-1.
+		n.next = n.next.next;
+	}
+	*/
 
 	insertAt(data, index) {
 		if (!this.head) {
@@ -601,23 +720,6 @@ class LinkedList {
 		previous.next = node;
 	}
 
-	forEach(fn) {
-		let node = this.head;
-		let counter = 0;
-		while (node) {
-			fn(node, counter);
-			node = node.next;
-			counter++;
-		}
-	}
-
-	*[Symbol.iterator]() {
-		let node = this.head;
-		while (node) {
-			yield node;
-			node = node.next;
-		}
-	}
 }
 
 // Midpoint of a linked list: Return the 'middle' node of a linked list. If the list has an even number of elements, return the node at the end of the first half of the list. Do not use a counter variable or retrieve the size of the list, and only iterate through the list one time.
@@ -818,65 +920,174 @@ class Events {
 	}
 }
 
-// Bubble Sort (n^2)
+// Bubble Sort O(n^2)                 (best case is O(n) i.e with the optimization for nearly sorted data)
+// Large values bubble to the end of the array in each PASS. At the end of each PASS, the last i elements are sorted and their postions are fixed.
+// You make n passes at the array (outer loop). Total possible comparisons is n! (n + n-1 + n-2 + n-3 + ... + 1). You keep comparing adjacent elements.
+// This one might do many swaps in a PASS.
 function bubbleSort(arr) {
+	var noSwaps;
 	for (let i=0; i<arr.length; i++) {
-			for (let j=0; j<(arr.length-i-1); j++) {
-					if (arr[j] > arr[j+1]) {
-						const lesser = arr[j+1];
-						arr[j+1] = arr[j];
-						arr[j] = lesser;
-					}
-			}
+		noSwaps = true;                  //optimization for a nearly sorted array: set to true here, but at the end of this complete pass, if there were no swaps at all, you are done. break; No point doing anymore passes at all.
+		for (let j=0; j<(arr.length-i-1); j++) {
+				if (arr[j] > arr[j+1])  {
+					[arr[j+1], arr[j]] = [arr[j], arr[j+1]];  //swap
+					noSwaps = false;
+				}
+		}
+		if (noSwaps) return;
 	}
 	return arr;
 }
 
-// Selection Sort (n^2)
+// Selection Sort O(n^2)       (best case is also O(n^2))
+// Smallest values are placed at the beginning of the array in each PASS. At the end of each PASS, the first i elements are sorted and their postions are fixed.
+// You make n passes at the array (outer loop).  Total possible comparisons is n! (n + n-1 + n-2 + n-3 + ... + 1). You keep comparing each element of (rest of) the array with currentMin.
+// This one does only 1 swap per PASS.
 function selectionSort(arr) {
 	for (let i=0; i<arr.length; i++) {
 			let indexOfMin = i;
+
+			//find the smallest number's index in the rest of the array
 			for (let j=i+1; j<arr.length; j++) {
-					if (arr[j] < arr[indexOfMin]) {
-						indexOfMin = j;
-					}
+					if (arr[j] < arr[indexOfMin]) indexOfMin = j;
 			}
-			if (indexOfMin !== i) {
-				let lesser = arr[indexOfMin];
-				arr[indexOfMin] = arr[i];
-				arr[i] = lesser;
-			}
+
+			//swap this number with the number at i. The for loop will now move i forward by 1.
+			if (indexOfMin !== i) [arr[i], arr[indexOfMin]] = [arr[indexOfMin], arr[i]];  //swap
 	}
 	return arr;
 }
 
-// Merge Sort (nlogn)
-function merge(left, right) {
-	const results = [];
+// Insertion Sort O(n^2)      (best case is O(n), i.e with the optimization for nearly sorted data)
+// Go from left to right, pick an element and as long as elements to its left are smaller, move them to the right by 1, then place this element at that spot.
+// You keep comparing your left most element of the unsorted(right)part of the array with each element in the left(sorted) part of the array to finds it's right place.
+// At the end of each PASS, the first i elements are sorted, BUT their positions are not fixed. Some new element might squeeze into this sorted array and bump some of the elements.
+// You bump up about n elements per PASS. There is no swapping going on here.
+// This one works well for a stream of data. As and when new bits are coming, they are inserted in their right place.
+function insertionSort(arr) {
+	for (i = 1; i < arr.length; i++) {
+		let currentVal = arr[i];
 
-	while (left.length && right.length) {
-		if (left[0] < right[0]) {
-			results.push(left.shift());
+		//Move elements in the left part of the array (sorted array) up by 1, until the right spot for currentVal is found.
+		for (j = i - 1; j >= 0 && arr[j] > currentVal; j--) {
+			//optimization: && arr[j] > currentVal. Do j-- only if arr[j] > currentVal, the moment you hit a smaller number, you don't have to look at the remaining left half of the left-sorted array.
+		 	arr[j+1] = arr[j];
+		}
+
+		// now place the element at j, move i by 1 to get the next element from unsorted part of the array (the right side part of the array)
+		arr[j+1] = currentVal;             //at j was where the above compare failed, so put the element at j+1
+	}
+}
+
+// Merge Sort O(nlogn) (best,avg,and worst case) Invented by Jon Van Neuman on vacuum tubes. Space complexity is O(n).
+// If you have an array of size n, you will at most split it log(base2)n times to get size 1 arrays...  And you sort each of these arrays in  +m time, so final is n+m * log(base2)n = nlogn
+// Split up the array until you reach size 1 -> sort it -> then merge these different sorted arrays.
+// It exploits the fact that arrays of size 0 or 1 are already sorted.
+function merge(a, b) {    //O(n+m) time and space   this one merges two sorted arrays. It does MAX n+m comparisons in total.
+	const results = [];
+	let aIndex = 0;
+	let bIndex = 0;
+
+	while (aIndex <= a.length-1 && bIndex <= b.length-1) {
+		if (a[aIndex] < b[bIndex]) {
+			results.push(a[aIndex]);
+			aIndex++;
 		} else {
-			results.push(right.shift());
+			results.push(b[bIndex]);
+			bIndex++;
 		}
 	}
 
-	return [...results, ...left, ...right];
+	//at some point one of the arrays will hits it's end and the while() block will be false.
+	while (aIndex <= a.length-1) {
+		results.push(a[aIndex]);
+		aIndex++
+	}
+	while (bIndex <= b.length - 1) {
+		results.push(b[bIndex]);
+		bIndex++
+	}
+
+	return results;
 }
-function mergeSort(arr) {
-	if (arr.length === 1) {
+function mergeSort(arr) {     // the point of this function is to just split an array into two halves recursively.  Only the merge() function is the one doing the sorting.
+	if (arr.length <= 1) {
 		return arr;
 	}
 
 	const center = Math.floor(arr.length / 2);
-	const left = arr.slice(0, center);
-	const right = arr.slice(center);
+	const leftArr = mergeSort(arr.slice(0, center));
+	const rightArr = mergeSort(arr.slice(center));
 
-	return merge(mergeSort(left), mergeSort(right));
+	return merge(leftArr, rightArr);
+}
+// Try writing this function down by try to sort [76,73,24,10]
+
+
+// Quick Sort O(nlogn) (best,avg). LogN decompositions each needing n comparisons
+// Worst case is O(n^2) i.e for an already sorted array. You create n different right arrays (n levels/compositions) (no left arrays as it already sorted), for each of the right arrays you do n comparisons, so n*n.
+// Basically everytime you cal pivotThisArray(), if your pivotValue is already the min value in that array. Its a waste of pivoting on it.
+// Just like merge sort, exploits the fact that arrays of size 0 or 1 are already sorted.
+// It selects one element called the Pivot, and moves all smaller numbers to its left and all larger numbers to it's right. Then quick sort is done on the two left and right arrays again.
+// You then recursively split the array on these pivot points...
+function pivotThisArray(arr, start, end) {          //0(n) i.e in one pass of the array, pivot it. You make o(n) comparisons in the one and only pass that you make.
+	// Given an array, it should pick a pivot point and move all smaller to the left, larger to the right, and return the index of the pivot.
+
+	let pivotValue = arr[start];            // Just always take your pivot as index=0. In theory you can pick any index as your pivot point. But zero is easiest for O(n) time.
+	let countOfLesserItems = 0;             //this counts the number of items less than the pivot value, also used as the index of where you want to swap to.
+
+	for (let i = start+1; i <= end; i++) {
+		if (arr[i] < pivotValue) {
+			countOfLesserItems++;
+			[arr[start+countOfLesserItems], arr[i]] = [arr[i], arr[start+countOfLesserItems]];   //swap, i.e bring that lower value to the left
+		}
+	}
+
+	// at this point you have: [pivotValue,...allSmallerItem,...allLargerItems]. So just move the pivotValue after the ...allSmallerItems, i.e at the location 'countOfLesserItems'
+	[arr[start], arr[start+countOfLesserItems]] = [arr[start+countOfLesserItems], arr[start]];       //swap
+	return start+countOfLesserItems;                // this is the final value of this pivot value index in this given arr.
 }
 
+function quickSort(arr, left=0, right=arr.length-1) {   //the default params are only used the first time when someone calls this qucikSort function.
+	if (left < right) {
+		let pivotPoint = pivotThisArray(arr, left, right);   // now this arr is pivoted on pivotPoint. i.e left half and right half are unsorted. So just call quickSort on them.
+		quickSort(arr, left, pivotPoint-1);
+		quickSort(arr, pivotPoint+1, right);
+	}
 
+	//this just edits the existing array given as the argument. there is nothing to return.
+}
 
+// Radix Sort. This only works with integers. this is not a comparison sort, it is just based on numbers. k is logn for avg arrays.
+// O(nk) for best,avg,worst.  k is the num of digits of the longets number. Space complexity is o(n+k)
+// In each PASS of the array (iteration of k), you group items depending on their nth last digit. Then you just pop() everything to get back your array for the next PASS.
+function getDigit(num, i) {
+	return Math.floor(Math.abs(num)/Math.pow(10,i)) % 10;         // 456784/1000 = 456.784, this %10 is 6
+}
+function digitCount(num) {
+	if (num === 0) return 1;
+	return Math.floor(Math.log10(Math.abs(num))) + 1;
+}
+function mostDigits(arr) {
+	let maxDigits = 0;
+	for (v of arr) {
+		maxDigits = Math.max(maxDigits, digitCount(v));
+	}
+	return maxDigits;
+}
+function radixSort(arr) {
+	let maxDigitCount = mostDigits(arr);
+	for (let k=0; k<=maxDigitCount; k++){
+		//create an array of 10 empty arrays
+		let map = Array.from({length: 10}, () => []);
 
+		//populate this map based on each number's kth last digit
+		for (v of arr) {
+			map(getDigit(v,k)).push(v);   //map[5].push(38675)
+		}
 
+		//pop out everything from the map, the arr is now sorted by each number's last k digits.
+		arr = [].concat(...map)     //concat takes the different arrays at map[0],map[1],map[2] etc and concats them all into one single array.
+	}
+	return arr;
+}
