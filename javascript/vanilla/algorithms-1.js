@@ -4,8 +4,9 @@
 Link to GitHub repo: https://github.com/StephenGrider/algocasts
 How to solve - a book by george polya
 Sorting animations webiste: https://www.toptal.com/developers/sorting-algorithms
-Visualising sorts: https://visualgo.net/en/sorting
-
+Visualise sorts: https://visualgo.net/en/sorting
+Visualise Linked Lists: https://visualgo.net/en/list
+Visualise Heap: https://visualgo.net/en/heap
 */
 
 /*
@@ -416,7 +417,7 @@ function fibo(n) {
 		return sum;
 	}
 }
-function fib(n) {
+function fib(n) {   // O(n)  (bottom-up approach)
   const result = [0, 1];
 
   for (let i = 2; i <= n; i++) {
@@ -426,12 +427,12 @@ function fib(n) {
   return result[n];
 }
 
-function fibViaRecurssion(n) {
-	if (n < 2) {
+function fibViaRecurssion(n) {  // (top-down approach) O(2^n) !!! fib(45) on chrome takes 10 seconds. fib(100) crashes chrome. (i.e without memoization)
+	if (n < 2) {       // memoized fibo is O(n)
 		return n;
 	}
 
-	return fib(n - 1) + fib(n - 2);  //you call fib here and not fibViaRecurssion
+	return fib(n - 1) + fib(n - 2);  //you call fib here and not fibViaRecurssion.  fib(n-2) subtree does not run untill the whole fin(n-1) sub tree finishes
 }
 function memoize(fn) {          //MEMOIZE a given function..!
 	const cache = {};
@@ -448,22 +449,57 @@ function memoize(fn) {          //MEMOIZE a given function..!
 }
 const fib = memoize(slowFib);
 
-// Queue: Create a queue data structure.  The queue should be a class with methods 'add', 'remove' and 'peek'. Adding to the queue should store an element until it is removed
+// Queue: Create a queue data structure.  FIFO. The queue should be a class with methods 'add', 'remove' and 'peek'. Adding to the queue should store an element until it is removed.
+// queues are used all over the place in computer science.
 class Queue {
 	constructor() {
 		this.data = [];
 	}
 
-	add(record) {
-		this.data.unshift(record);                      //adds an element to the beginning
+	add(record) {  //(enqueue)
+		this.data.unshift(record);                      //adds an element to the beginning - O(n).    You can even do push() and shift(), but even there one of them is o(n), so array is bad.
 	}
 
-	remove() {
-		return this.data.pop();                         //returns the last element by removing it
+	remove() {   //(dequeue)
+		return this.data.pop();                         //returns the last element by removing it - O(1)
 	}
 
 	peek() {
 		return this.data[this.data.length - 1];        //returns the last element without removing it
+	}
+}
+
+//Queue can also be implemented with SinglyLinkedList. Add to the end and remove from the beginning. Both are O(1)
+//Insertion and removal are O(1).  Searching and access are O(n)
+class QueueWithSinglyLinkedList {
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.size = 0;
+	}
+
+	enqueue(val) {
+		var newNode = new Node(val);
+		if (!this.head) {
+			this.head = newNode;
+			this.tail = newNode;
+		} else {
+			this.tail.next = newNode;
+			this.tail = newNode;
+		}
+		return ++this.size;
+	}
+
+	dequeue() {
+		if (!this.head) return null;
+
+		var temp = this.head;
+		if (this.head === this.tail) {
+			this.tail = null;
+		}
+		this.head = this.head.next;
+		this.size--;
+		return temp.value;
 	}
 }
 
@@ -484,22 +520,55 @@ function weave(sourceOne, sourceTwo) {
 	return q;
 }
 
-// Stack: Create a stack data structure. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
+// Stack: Create a stack data structure. LIFO. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
+// Examples - function call stack, undo/redo actions in programs, routing browser history
 class Stack {
 	constructor() {
 		this.data = [];
 	}
 
-	push(record) {
-		this.data.push(record);
+	add(record) {
+		this.data.push(record);         //O(1), You can even use shift and unshift but it will be O(n)
 	}
 
-	pop() {
-		return this.data.pop();
+	remove() {
+		return this.data.pop();         // O(1)
 	}
 
 	peek() {
 		return this.data[this.data.length - 1];
+	}
+}
+
+// You can also implement it with a singly linked list. But you can't use the Linked List's push and pop, pop takes O(n). So use shift() and unshift(), both take O(1).
+// Insertion and removal are O(1). Searching and access are O(n)
+class StackWithSinglyLinkedList {
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.size = 0;
+	}
+	add(val) {
+		var newNode = new Node(val);
+		if (!this.head) {
+			this.head = newNode;
+			this.tail = newNode;
+		} else {
+			var temp = this.head;
+			this.head = newNode;
+			this.head.next = temp;
+		}
+		return ++this.size;
+	}
+	remove() {
+		if (!this.head) return null;
+		var temp = this.head;
+		if (this.head === this.last) {
+			this.last = null;
+		}
+		this.head = this.head.next;
+		this.size--;
+		return temp.value;
 	}
 }
 
@@ -511,17 +580,17 @@ class Queue {
 	}
 
 	add(x) {
-		this.s1.push(x);
+		this.s1.add(x);
 	}
 
 	remove() {
 		let retVal;
 		while (this.s1.peek()) {
-			this.s2.push(this.s1.pop())
+			this.s2.add(this.s1.remove())
 		}
-		retVal = this.s2.pop();
+		retVal = this.s2.remove();
 		while (this.s2.peek()) {
-			this.s1.push(this.s2.pop())
+			this.s1.add(this.s2.remove())
 		}
 		return retVal;
 	}
@@ -529,11 +598,11 @@ class Queue {
 	peek() {
 		let retVal;
 		while (this.s1.peek()) {
-			this.s2.push(this.s1.pop())
+			this.s2.add(this.s1.remove())
 		}
 		retVal = this.s2.peek();
 		while (this.s2.peek()) {
-			this.s1.push(this.s2.pop())
+			this.s1.add(this.s2.remove())
 		}
 		return retVal;
 	}
@@ -547,13 +616,13 @@ class Queue {
 // insertAt(data, index), removeAt(index), getAt()
 // forEach(n), iterator
 class Node {
-	constructor(data, next = null) {
+	constructor(data, next = null) {     //Normally, the only argument for the constructor is the data argument.
 		this.data = data;
 		this.next = next;
 	}
 }
 
-class LinkedList {
+class LinkedListOne {
 	//For any linkedList function you write, make sure it works for 1)empty list    2)list with one node     3)list with 4 nodes   DONE
 	constructor() {
 		this.head = null;
@@ -652,7 +721,7 @@ class LinkedList {
 		}
 	}
 
-	getAt(index) {       //Linked List first element is of index 0
+	getAt(index) {       //Linked List's first element's index is 0
 		let counter = 0;
 		let node = this.head;
 
@@ -683,8 +752,7 @@ class LinkedList {
 		previous.next = previous.next.next;
 	}
 
-	/*
-	removeAt(i) {                         // my version
+	removeAtTwo(i) {                         // my version
 		if (!this.head) return;             //empty list
 
 		if (index === 0) {                 //remove the first element
@@ -702,7 +770,6 @@ class LinkedList {
 		// by now you are at the node at index i-1.
 		n.next = n.next.next;
 	}
-	*/
 
 	insertAt(data, index) {
 		if (!this.head) {
@@ -721,6 +788,312 @@ class LinkedList {
 	}
 
 }
+
+//Linked List defintion 2: A data structure that contains a head,tail and length property.
+// Insertion and deletion in the middle of list is faster than in the middle of an array.
+// Insertion O(1) i.e push/unshift.   Removal O(1) for shift, o(n) for pop.
+// Searching O(n), Access at particular index O(n)
+class SinglyLinkedList {
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.length = 0;
+	}
+
+	push(val) {          // Add an element to the end (InsertLast)
+		let n = new Node(val);
+		if (!this.head) {
+			this.head = n;
+			this.tail = n;
+		} else {
+			this.tail.next = n;
+			this.tail = n;
+		}
+		this.length++;
+		return this;
+	}
+
+	pop() {               //Remove the last element  (removeLast)
+		if (!this.head) return;
+
+		var current = this.head;
+		var newtail = current;
+		while(current.next){
+			newtail = current;
+			current = current.next;
+		}
+		this.tail = newtail;
+		this.tail.next = null;
+		this.length--;
+
+		if(this.length === 0) {
+			this.head = null;
+			this.tail = null;
+		}
+
+		return current;
+	}
+
+	shift() {             //Remove node from the begining of the list (removeFirst)
+		if (!this.head) return;
+
+		var k = this.head;
+		this.head = this.head.next;
+		this.length--;
+
+		if(this.length===0) this.tail=null;
+
+		return k;
+	}
+
+	unshift(val) {            //Add an element to the begining. (InsertFirst)
+		var k = new Node(val);
+
+		if(!this.head){
+			this.head = k;
+			this.tail = k;
+		} else {
+			k.next = this.head;
+			this.head = k;
+		}
+		this.length++;
+		return this;
+	}
+
+	get(i) {              // Get item at index i, same as getAt()
+		if (i < 0 || i >= this.length) return;
+
+		let counter = 0;
+		let n = this.head;
+		while (counter !== index) {
+			n = n.next;
+			counter++
+		}
+		return n;
+	}
+
+	set(i,val) {          //Set item at index i, i.e overwrite the value at that index (if it is there)
+		let n = this.get(i);
+		if(n) {
+			n.value = val;
+			return true;
+		}
+		return false;
+	}
+
+	insert(i,val) {       //Insert item at index i, same as insertAt()
+		if (i<0 || i>this.length) return false;
+
+		if(i === this.length) {this.push(val);   return true;}
+		if(i === 0) {this.unshift(val);   return true;}
+
+		//i.e trying to add it somewhere in the middle
+		let k = new Node(val);
+		let prev = this.get(i-1);
+
+		k.next = prev.next;
+		prev.next = k;
+		this.length++;
+		return true;
+	}
+
+	remove(i) {           //Remove item at index i, same as removeAt()
+		if (i < 0 || i > this.length) return false;
+
+		if (i === this.length-1) { this.pop; return true; }
+		if (i === 0) { this.shift(); return true; }
+
+		//i.e trying to remove something in the middle
+		let prev = this.get(i-1);
+		let removed = prev.next;
+		prev.next = removed.next;
+		this.length--;
+		return removed;
+	}
+
+	reverse() {          //Common question. Don't make any duplicate of the list. You just have to traverse the list and flip the direction of the next pointers in each node.
+		if(this.length<=1) return;
+
+		this.tail = this.head;
+		let prev = this.head;
+		let current = this.head.next;
+		while(current!==null) {
+			nextDestination = current.next;
+
+			current.next = prev;  //flip the direction
+
+			prev = current;
+			current = nextDestination;
+		}
+		this.head = prev;
+
+	}
+
+	reverseInstructorCode() {
+		let n = this.head;
+		[this.head, this.tail] = [this.tail, this.head]   //swap
+
+		var next;
+		var prev = null;
+		for (var i = 0; i < this.length; i++) {
+			next = n.next;
+			n.next = prev;
+			prev = n;
+			n = next;
+		}
+		return this;
+	}
+
+	printAll() {
+		var arr = [];
+		var current = this.head
+		while (current) {
+			arr.push(current.val)
+			current = current.next
+		}
+		console.log(arr);
+	}
+}
+
+//Doubly LinkedList: Each node has a next and prev pointer. HEAD's prev is null, TAIL's next is null. Everyother node has prev and next.
+// Insertion O(1) i.e push/unshift.   Removal O(1) for shift/pop
+// Searching  O(n/2) which is O(n), Access at particular index O(n)
+// So these are basically the same as singly linked lists, except that these have prev pointers which optimizes pop() and search()
+// Browser history is like a DLL, you can go back and go forwards..
+class DoublyLinkedList {
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.length = 0;
+	}
+
+	push(val) {        // Add node to the last
+		let k = new Node(val);
+		if (this.length===0) {
+			this.head = k;
+			this.tail = k;
+		} else {
+			k.next = null;           //not required, by default it is anyway null as it was just created.
+			k.prev = this.tail;
+			this.tail.next = k;
+			this.tail = k;
+		}
+		this.length++;
+		return this;
+	}
+
+	pop() {           // Remove node from the last
+		if (this.length===0) return;
+
+		let removedNode = this.tail;
+		if (this.length===1){
+			this.head = null;
+			this.tail = null;
+		} else {
+			//i.e list has more than one item
+			this.tail = removedNode.prev;            //disconnect the last element from second last
+			this.tail.next = null;
+			removedNode.prev = null;                 //make sure you remove this connection too, remove node must also not be connected to anything
+		}
+
+		this.length--;
+		return removedNode;
+	}
+
+	shift() {         // Remove node from first
+		if (this.length===0) return;
+
+		let removedNode = this.head;
+		if (this.length===1){
+			this.head = null;
+			this.tail = null;
+		} else {
+			// there are atleast two elements in the list
+			this.head = removedNode.next;
+			this.head.prev = null;
+			removedNode.next = null;     //make sure you remove even this connection
+		}
+		this.length--;
+		return removedNode;
+	}
+
+	unshift(val){     //Add node at the first
+		let k = new Node(val);
+
+		if(this.length===0){
+			this.head = k;
+			this.tail = k;
+		} else {
+			//there is atleast one element in the list. 3 links need to change.
+			k.next = this.head;
+			this.head.prev = k;
+			this.head = k;
+		}
+		this.length++;
+		return this;
+	}
+
+	get(i) {					//Get the node at position i
+		// You can actually do the same thing as singlyLinkedList, but instead, you can actually optimize and use prev.
+		if(i<0 || i>=this.length) return;
+
+		let midPoint = Math.floor(this.length/2);
+		requiredIndex = i < midPoint ? i : this.length-1-i;     //if you are going to go backwards, then required index will change...
+
+		let n = this.head;
+		let counter = 0;
+		while(counter!==requiredIndex){
+			n = i < midPoint ? n.next : n.prev;
+			counter++;
+		}
+		return n;
+	}
+
+	set(i,val) {       //Set (overwrite) the value at index i with val
+		let n = this.get(i);
+		if(n){
+			n.val = val;
+			return true;
+		}
+		return false;
+	}
+
+	insert(i,val){     //Insert a new node at index i
+		if(i<0 || i>this.length) return false;
+		if(i===0) return !!this.unshift(val);
+		if(i===this.length) return !!this.push(val);
+
+		//i.e inserting a new element somewhere in the middle.  (also, no need to update head or tail now)
+		let k = new Node(val);
+
+		let prevNode = this.get(i-1);   //this will never be null
+		//need to update 4 links
+		k.next = prevNode.next;
+		k.prev = prevNode;
+		prevNode.next.prev = k;
+		prevNode.next = k;
+		this.length++;
+		return true;
+	}
+
+	remove(i){         //Remove the node at index i
+		if(i<0 || i>=this.length) return;
+		if(i===0) return !!this.shift();
+		if(i===this.length-1) return !!this.pop();
+
+		//i.e remove an element somewhere in the middle.
+		let removedNode = this.getAt(i);    //this will never be null
+		//need to update 4 links
+		removedNode.next.prev = removedNode.prev;
+		removedNode.prev.next = removedNode.next;
+		removedNode.next = null;
+		removedNode.prev = null;
+		this.length--;
+		return removedNode;
+	}
+
+}
+
 
 // Midpoint of a linked list: Return the 'middle' node of a linked list. If the list has an even number of elements, return the node at the end of the first half of the list. Do not use a counter variable or retrieve the size of the list, and only iterate through the list one time.
 function midpoint(list) {
@@ -773,17 +1146,19 @@ function fromLast(list, n) {
 // Tree: Create a node class (data + array of children), The node class should have methods add(data) and remove(data) (i.e wrt children).
 // Create a tree class. The tree constructor should initialize a 'root' property to null.
 // Implement 'traverseBF' and 'traverseDF' on the tree class.  Each method should accept a function that gets called with each element in the tree.
-class Node {
+// Trees are non-linear. A tree must have only one root. A node can have only one parent. Siblings: Nodes the have the same parent.  Leaf: A node with no children. Edge: The connection from the parent to a child.
+// Examples: HTML DOM, network routing, file system in OS, JSON parsers use trees, abstract syntax tree that the JS engine creates from your code, trees are used in AI for decision paths (decision trees).
+class NodeTree {
 	constructor(data) {
 		this.data = data;
 		this.children = [];
 	}
 
-	add(data) {
-		this.children.push(new Node(data));
+	add(data) {      //Adding children to a node
+		this.children.push(new NodeTree(data));
 	}
 
-	remove(data) {
+	remove(data) {   //Removing a child from a node
 		this.children = this.children.filter(node => {
 			return node.data !== data;
 		});
@@ -835,28 +1210,29 @@ function levelWidth(root) {
 }
 
 // Binary Search Tree: Implement the Node class to create a binary search tree.  The constructor should initialize values 'data', 'left', and 'right'.
+// BST : Each node can have max 2 children, data must be sorted left to right.
 // Implement the 'insert' method for theNode class.  Insert should accept an argument 'data', then create an insert a new node at some appropriate location in the tree.
 // Implement the 'contains' method for the Node class.  Contains should accept a 'data' argument and return the Node in the tree with the same value. If the value isn't in the tree return null.
-class Node {
+class NodeBST {
 	constructor(data) {
 		this.data = data;
 		this.left = null;
 		this.right = null;
 	}
 
-	insert(data) {
-		if (data < this.data && this.left) {
-			this.left.insert(data);
-		} else if (data < this.data) {
-			this.left = new Node(data);
-		} else if (data > this.data && this.right) {
-			this.right.insert(data);
-		} else if (data > this.data) {
-			this.right = new Node(data);
+	insert(val) {
+		if (val < this.data && this.left) {
+			this.left.insert(val);
+		} else if (val < this.data) {
+			this.left = new NodeBST(val);
+		} else if (val > this.data && this.right) {
+			this.right.insert(val);
+		} else if (val > this.data) {
+			this.right = new NodeBST(val);
 		}
 	}
 
-	contains(data) {
+	contains(val) {
 		if (this.data === data) {
 			return this;
 		}
@@ -869,6 +1245,127 @@ class Node {
 
 		return null;
 	}
+}
+
+// Or implement A BST class which has all the methods (instead of Node having al the funcs). The Node constructor will be the same as above.
+// Insertion and Search are both O(logn) [best,avg case] Worst case could be O(n). i.e if every node in the tree has just one child.. If you double the nodes in the tree, it just adds one more level to the tree, hence log(n).
+// BFS and DFS have same time complexity O(n). For really wide trees, use DFS (you save memory, in BFS you store the whole layer, but in DFS you store less)
+class BinarySearchTree {
+	constructor() {
+		this.root = null
+	}
+
+	insert(val) {        //Insert a node at it's appropriate place in the tree
+		let k = new NodeBST(val);
+
+		if(this.root===null) {this.root = k;  return this;}      //empty tree
+
+		let n = this.head;
+		while(true) {
+			if(val===n.data) return undefined;        //Do not accept duplicate values
+
+			if(val<n.data && n.left === null) {
+				n.left = k;
+				return this;
+			} else if (val<n.data){
+				n = n.left;
+			} else if (val>n.data && n.right === null) {
+				n.right = k;
+				return this;
+			} else if (val>n.data) {
+				n = n.right;
+			}
+		}
+	}
+
+	search(val) {          //Search for a val in the tree
+		if (this.root === null) return false;       //empty tree
+
+		let n = this.root;
+		let found = false;
+		while(n && !found) {
+			if(val<n.data){
+				n = n.left;
+			} else if (val>n.data){
+				n = n.right;
+			} else {
+				found = true;
+			}
+		}
+		return found ? n : false;
+	}
+
+	breadthFirstTraversal() {     //use a queue
+		let queue = [];
+		let visitedNodes = [];
+		if (!this.root) return visitedNodes;
+
+		queue = [this.root];
+		while(queue.length!==0) {
+			let n = queue.shift();
+			visitedNodes.push(n);
+			if(n.left) queue.push(n.left);
+			if(n.right) queue.push(n.right);
+		}
+		return visitedNodes;
+	}
+
+	depthFirstPreOrderTraversalIteration(){    //use a stack. When you visit a node, finish it's entire left side then only start it's right side.
+		let visitedNodes = [];
+
+
+		queue = [this.root];
+		while (queue.length !== 0) {
+			let n = queue.shift();
+			visitedNodes.push(n);
+			if (n.left) queue.unshift(n.left);
+			if (n.right) queue.unshift(n.right);
+		}
+		return visitedNodes;
+	}
+
+	depthFirstPreOrderTraversalRecursion() {     //When you VISIT a node, finish it's entire left side then only start it's right side.
+		let visitedNodes = [];
+		if (!this.root) return visitedNodes;
+
+		function goDeeper(n) {
+			visitedNodes.push(n);
+			if (this.left) goDeeper(this.left);
+			if (this.right) goDeeper(this.right);
+		}
+
+		goDeeper(this.root);
+		return visitedNodes;
+	}
+
+	depthFirstPostOrderTraversalRecursion() {     //First finish it's entire left side then it's entire right side, after that, VISIT the node
+		let visitedNodes = [];
+		if (!this.root) return visitedNodes;
+
+		function goDeeper(n) {
+			if (this.left) goDeeper(this.left);
+			if (this.right) goDeeper(this.right);
+
+		}
+
+		goDeeper(this.root);
+		return visitedNodes;
+	}
+
+	depthFirstInOrderTraversalRecursion() {     //First finish it's entire left side, then VISIT the node, then finsih it's entire right side. This is like printing the tree, how it actually looks, looking from left to right. For a BST, you get nodes in ascending order (sorted order).
+		let visitedNodes = [];
+		if (!this.root) return visitedNodes;
+
+		function goDeeper(n) {
+			if (this.left) goDeeper(this.left);
+			visitedNodes.push(n);                     //only this changes.
+			if (this.right) goDeeper(this.right);
+		}
+
+		goDeeper(this.root);
+		return visitedNodes;
+	}
+
 }
 
 // Validate a BST given a node. Given a node, validate the binary search tree, ensuring that every node's left hand child is less than the parent node's value, and that every node's right hand child is greater than the parent
@@ -919,6 +1416,461 @@ class Events {
 		delete this.events[eventName];
 	}
 }
+
+// Binary heap: a binary tree. Max/Min binary heap: parent nodes are always larger/smaller than their two children. There is no order/relationship among siblings.
+// All the children of each node are as full as they can be and left children are always filled out first. A level must be filled up as much as possible.
+// BH are used to implement priority queues. BH are also used for graph traversal algos.
+// You can implement BH via a node and tree class, but easiest was is ARRAY. If parent is at index n, left child is at 2n+1, right child is at 2n+2.
+// The parent of any element is at Floor(n-1)/2
+// Be default, when you insert into a binary heap, you start a whole new level ONLY after the current level is completely filled up.
+class MaxBinaryHeap {
+	constructor() {
+		this.heapArr = [];
+	}
+
+	insert(val) {      //Just add it to the end of the array, then bubble it up the heap by swapping it with different values along the way, until it reaches it's right spot.
+		this.heapArr.push(val);
+
+		let currentLocation = this.heapArr.length-1;
+		let nextParent = Math.floor( (currentLocation-1)/2 );
+
+		while (nextParent > -1 && this.heapArr[currentLocation] > this.heapArr[nextParent]) {
+			[this.heapArr[nextParent], this.heapArr[currentLocation]] = [this.heapArr[currentLocation], this.heapArr[nextParent]];  // swap
+
+			currentLocation = nextParent;   // go one level up
+			nextParent = Math.floor( (nextParent-1)/2 );
+		}
+	}
+
+	remove(){        // In a binary heap, remove means, remove root. You only always remove the root from binary heaps. (i.e remove the max/min value of the entire heap)
+		// remove the root and put some random number there, and then bubble-down that value appropriately, to backfill the whole tree. Normally you put the last element up at the root.
+
+		if(this.heapArr.length===0) return;
+
+		let getNextChildLocation = (loc) => {      // arrow function because you want 'this' to work inside this function
+			let leftChild = 2 * loc + 1;
+			let rigthChild = 2 * loc + 2;
+
+			if (this.heapArr[leftChild] === undefined) {
+				return;
+			} else if (this.heapArr[rigthChild] === undefined) {    // left exists but right does not. Then just return left.
+				return leftChild;
+			} else if (this.heapArr[leftChild] > this.heapArr[rigthChild]) {
+				return leftChild;
+			} else {
+				return rigthChild;
+			}
+		}
+
+		[this.heapArr[0], this.heapArr[this.heapArr.length-1]] = [this.heapArr[this.heapArr.length-1], this.heapArr[0]];        // blindly swap root with the last element
+		let returnValue = this.heapArr.pop();           // remove root completely from the heap
+
+		let currentLocation = 0;
+		let nextChild = getNextChildLocation(currentLocation);
+
+		while(nextChild && this.heapArr[nextChild] > this.heapArr[currentLocation]) {
+			[this.heapArr[currentLocation], this.heapArr[nextChild]] = [this.heapArr[nextChild], this.heapArr[currentLocation]];  //swap
+
+			currentLocation = nextChild;     // go one level down
+			nextChild = getNextChildLocation(currentLocation);
+		}
+
+		return returnValue;
+	}
+}
+
+// Priority Queue: a data structure where element has a priority. Elements with higher priority are extracted before lower priority elements.
+// You can implements it with a binary heap. You can even use an array, just give each element a priority, everytime you need an element, just scan the whole array for the highest priority one.
+// Insertion, Extraction O(logn). Search is O(n).   It is log(base2)n because, worst case, that is the number of levels you have to bubble up after insertion or sink down after a deletion. You do 1-2 comparisons at each level.
+class NodePriorityQueue {
+	constructor(val, priority) {
+		this.val = val;
+		this.priority = priority;
+	}
+}
+class PriorityQueueMinBinaryHeap {
+	constructor() {
+		this.values = [];
+	}
+	enqueue(val, priority) {      // because this is called a priority 'queue'
+		let newNode = new Node(val, priority);
+		this.values.push(newNode);
+
+		let idx = this.values.length - 1;
+		const element = this.values[idx];
+		while (idx > 0) {
+			let parentIdx = Math.floor((idx - 1) / 2);
+			let parent = this.values[parentIdx];
+			if (element.priority >= parent.priority) break;
+			this.values[parentIdx] = element;
+			this.values[idx] = parent;
+			idx = parentIdx;
+		}
+	}
+	dequeue() {                // because this is called a priority 'queue'
+		const min = this.values[0];
+		const end = this.values.pop();
+
+		if (this.values.length > 0) {
+			this.values[0] = end;
+			this.sinkDown();
+		}
+		return min;
+	}
+	sinkDown() {
+		let idx = 0;
+		const length = this.values.length;
+		const element = this.values[0];
+		while (true) {
+			let leftChildIdx = 2 * idx + 1;
+			let rightChildIdx = 2 * idx + 2;
+			let leftChild, rightChild;
+			let swap = null;
+
+			if (leftChildIdx < length) {
+				leftChild = this.values[leftChildIdx];
+				if (leftChild.priority < element.priority) {
+					swap = leftChildIdx;
+				}
+			}
+			if (rightChildIdx < length) {
+				rightChild = this.values[rightChildIdx];
+				if (
+					(swap === null && rightChild.priority < element.priority) ||
+					(swap !== null && rightChild.priority < leftChild.priority)
+				) {
+					swap = rightChildIdx;
+				}
+			}
+			if (swap === null) break;
+			this.values[idx] = this.values[swap];
+			this.values[swap] = element;
+			idx = swap;
+		}
+	}
+}
+
+
+// Hash tables: Collection of key-value pairs. The keys are not oredered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a value will be O(n).
+// Python has dictionary, JS- Objects and Map, Java go and Scala have Maps, Ruby has Hashes
+// You take an key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size)
+// So at array index '10', you store a key of 'pink' and a value of '#ff69b4'. Your hash function converted your key 'pink' to index '10'.
+// Hash function must return a value in O(1) time (be very fast), it must distribute values uniformly AND for the same input it must give the same output (must be deterministic)
+// Handling collisions
+// 1) Seperate Chaining: Just store the data at the same spot. But that spot now becomes an array of different values that have collided. (nested data structure at that index)
+// 2) Linear Probing: You store only one value at one index. If there is a collision, search through the array to find the next empty spot.
+class HashTable {
+	constructor(size = 53) {
+		this.keyMap = new Array(size);         // A HashTable of fixed size (default size is 53). Most hashTables use a HUGE array.
+	}
+
+	_hash(key) {             // function that returns a value between 0 to this.keyMap.length everytime.
+		let total = 0;
+		let WEIRD_PRIME = 31;      // Prime numbers help in spreading out keys more evenly
+		for (let i = 0; i < Math.min(key.length, 100); i++) {        // Constant time, you can do i<key.length, then it becomes O(n)
+			let char = key[i];
+			let value = char.charCodeAt(0) - 96
+			total = (total * WEIRD_PRIME + value) % this.keyMap.length;
+		}
+		return total;
+	}
+
+	set(key, value) {     // Store a key-value in the hash map
+		let index = this._hash(key);
+		if (!this.keyMap[index]) {
+			this.keyMap[index] = [];       // Seperate Chaining
+		}
+		this.keyMap[index].push([key, value]);    //In some cases if the same key has been passed again, then you might have to overwrite the existing value with the given new value.
+	}
+
+	get(key) {           // retrieve the value of the given key from the hash map
+		let index = this._hash(key);
+		if (this.keyMap[index]) {
+			for (v of this.keyMap[index]) {
+				if (v[0] === key) {       // an array of array arrays!
+					return v[1]
+				}
+			}
+		}
+		return undefined;
+	}
+
+	keys(){            // returns all the keys in the hash map
+		let arrayOfKeys = [];
+		for (indexValueArr of this.keyMap) {
+			if (Array.isArray(indexValueArr) && indexValueArr.length > 0) {
+				for (nameValuePairs of indexValueArr) {
+					arrayOfKeys.push(nameValuePairs[0]);      // for values() function, just do arrayOfKeys.push(nameValuePairs[1]);
+					// if you have to return only the unique keys/values, then check if !arrayOfKeys.includes(nameValuePairs[0/1]), then only push it....
+				}
+			}
+		}
+		return arrayOfKeys;
+	}
+
+}
+let ht = new HashTable(17);
+ht.set("maroon", "#800000");
+ht.get("maroon");
+ht.keys().forEach( k => console.log(ht.get(k)) );  // prints out all the values.
+
+
+// Graphs: A data structure that consists of a finite set of nodes/vertices V connected with a set of non-directed/directed edges E. Edges can also be weighted/unweighted.
+// Examples: Social Networks, Mapping and routing, recommendation engines, website hyperlinks, almost everywhere.
+// Storage: Use an adjaceny matrix (AM).  matrix[a][b] and matrix[b][a] = 1 if there is an edge E between them, else the value will be zero at the position.
+// Adjacency List (AL): An array to store the edges of each vertex V. [ [1,5], [4,3], [2,5], [2,4] ] Meaning vertex number 0 has edges to 1 and 5. Vertex number 1 has edges to 4 and 3.
+// Add vertex:[AL O(1), AM O(V^2)],  Add Edge:[AL O(1), AM O(1)],  Remove Vertex:[AL O(V+E), AM O(V^2)], Remove Edge:[AL O(E), AM O(1)]
+// Query:[AL O(V+E), AM:O(1)],  Storage:[AL O(V+E), AM O(V^2)]
+// AL (vs AM): Less space, faster to iterate over all edges of the graph, slower to lookup specific edge. Real world data tends to be sparse, so AL is more popular.
+// Traversal: visiting every vertex of the graph once.
+
+class GraphAdjacencyList {             // undirected graph
+	constructor() {
+		this.adjacencyList = {};           // this will be a one level object, the values of each key will be an array of edges for that particular key.
+	}
+
+	addVertex(v) {                       // O(1)
+		if (!this.adjacencyList[v]) {      // if v already exists, just ignore this addtion.
+			this.adjacencyList[v] = [];
+		}
+	}
+
+	addEdge(v1, v2) {						         // O(1)      Ofcourse, you first check if v1 or v2 exist etc.. For a directed graph, you would just have one .push() line.
+		this.adjacencyList[v1].push(v2);
+		this.adjacencyList[v2].push(v1);
+	}
+
+	removeEdge(v1, v2) {                 //O(V+E)   You are iterating though the list of all edges in each of the two vertices.
+		this.adjacencyList[v1] = this.adjacencyList[v1].filter( v => v!==v2 );
+		this.adjacencyList[v2] = this.adjacencyList[v2].filter( v => v!==v1 );
+	}
+
+	removeVertex(v1) {
+		var listOfExistingEdges = this.adjacencyList[v1];
+
+		for (x of listOfExistingEdges) {
+			this.removeEdge(x, v1);
+		}
+
+		delete this.adjacencyList[v1]  //remove the vertex from the adjacency list
+	}
+
+	// Examples for traversal: web crawlers, find closest matches/neighbours, shortest paths, AI uses shortest path to win game.
+	myDepthFirstTraversal(f) {
+		let randomStartNode = Object.keys(this.adjacencyList)[0];
+
+		let nodesToVisit = [randomStartNode];
+		let visitedNodes = [];
+
+		while (nodesToVisit.length) {
+			let justVisited = nodesToVisit.shift();
+			if (!visitedNodes.includes[justVisited]) {
+				visitedNodes.push(justVisited);
+				f(justVisited);
+				nodesToVisit.unshift(...this.adjacencyList[justVisited]);
+			}
+		}
+	}
+
+	dfsTraversalRecursive(startNode) {
+		let visitedNodes = {};       // a simple hack. use an object instead of an array.
+		let resultNodes = [];
+		let adjacencyList = this.adjacencyList;
+
+		function goDeeper(v) {
+			if(!v) return null;       // author says this is the base case?! But i think this is just a safety null check.
+
+			visitedNodes[v] = true;
+			resultNodes.push(v);
+
+			for (child of adjacencyList[v]) {     // it is not exactly child though, in a graph, it is like 'neighbor'
+				if (!visitedNodes[child]) {         // this is O(1) becuase it is an object and not an array.
+					return goDeeper(child);
+				}
+			}
+		}
+		goDeeper(startNode);   //inside this function, 'this' means window, therefore you declare the variable adjacencyList
+
+		return resultNodes;
+	}
+
+	dfsTraversalIterative(startNode) {
+		let visitedNodes = {};
+		let resultNodes = [];
+		let nodesToVisitStack = [startNode];
+		let justVisited;
+
+		while (nodesToVisitStack.length) {
+			justVisited = nodesToVisitStack.pop();    // because you are using an array and doing only push and pop, the array works as a stack.
+			resultNodes.push(justVisited);
+			visitedNodes[justVisited] = true;
+
+			for (child of this.adjacencyList[justVisited]) {
+				if (!visitedNodes[child]) {
+					nodesToVisitStack.push[child];
+				}
+			}
+		}
+
+		return resultNodes;
+	}
+
+	bfsTraversalIterative(startNode) {     // Visit all the neighbors at current depth first
+		let visitedNodes = {};
+		let resultNodes = [];
+		let nodesToVisitQueue = [startNode];
+		let justVisited;
+
+		while (nodesToVisitQueue.length) {
+			justVisited = nodesToVisitQueue.shift();    // because you are using an array and doing only push and shift, the array works as a queue.
+			resultNodes.push(justVisited);
+			visitedNodes[justVisited] = true;
+
+			for (child of this.adjacencyList[justVisited]) {
+				if (!visitedNodes[child]) {
+					nodesToVisitQueue.push[child];
+				}
+			}
+		}
+
+		return resultNodes;
+	}
+}
+
+// Dijktra's Shortest path in a weighted graph Algorithm: uses a graph and a priortiy queue. One of the world's most used algorithm.
+// Examples: GPS routing, network routing for packets, biology model spread of viruses in humans, airline routing,
+class WeightedGraph {
+	constructor() {
+		this.adjacencyList = {};
+	}
+
+	addVertex(v) {
+		if (!this.adjacencyList[v]) {
+			this.adjacencyList[v] = [];
+		}
+	}
+
+	addEdge(v1, v2, weight) {
+		this.adjacencyList[v1].push({node:v2, weight});    //ES6 shorthand syntax weight:weight is just weight
+		this.adjacencyList[v2].push({node:v1, weight});
+	}
+}
+class DijkstraSimplePriorityQueue {
+	constructor() {
+		this.values = [];
+	}
+	enqueue(val, priority) {   //O(nLogn)
+		this.values.push({ val, priority });
+		this.sort();
+	};
+	dequeue() {               //O(n)
+		return this.values.shift();
+	};
+	sort() {
+		this.values.sort((a, b) => a.priority - b.priority);
+	};
+}
+function dijkstraAlgorithmShortestPath(v1, v2) {
+	let graph = this.adjacencyList;
+
+	let nodesToVisitQueue = new DijkstraSimplePriorityQueue();
+	let previousBestNode = {};                       //this will be like {A:C, D:B, F:C, B:C}
+	let shortestDistanceFromV1 = {};                 //this will be like {A:0, D:250, F:100, B:25}
+	let resultantShortestPath = [];
+	let resultantShortestDistance = Infinity;
+
+	for (v of Object.keys(graph)) {      //v is the vertex name! Initialize all vertexes A,B,C as null/-Infinity.
+		previousBestNode[v] = v===v1? v1 : null;
+		shortestDistanceFromV1[v] = v===v1? 0 : -Infinity;
+		nodesToVisit.enqueue(v, v===v1? 0 : Infinity);
+	}
+
+	let bestNodeToVisit;
+	while (nodesToVisitQueue.length) {
+		bestNodeToVisit = nodesToVisitQueue.dequeue().val;       //just the name of the node from {val,priority}
+
+		if (bestNodeToVisit === v2) {	 //reached the destination
+			while (previousBestNode[bestNodeToVisit]) {
+				resultantShortestPath.push(bestNodeToVisit);
+				bestNodeToVisit = previousBestNode[bestNodeToVisit];
+			}
+			resultantShortestPath.push(bestNodeToVisit);
+			resultantShortestDistance = shortestDistanceFromV1[v2];
+			break;
+		}
+
+		if(bestNodeToVisit || shortestDistanceFromV1[bestNodeToVisit]!==Infinity) {
+			for (child of graph(bestNodeToVisit)) {   // the list of all edges for this particular node
+				// calculate the new distance to child
+				let totalLengthToChild = shortestDistanceFromV1[bestNodeToVisit] + child.weight;
+				if(totalLengthToChild < shortestDistanceFromV1[child.node]) {
+					// updating the new smallest distance to child
+					shortestDistanceFromV1[child.node] = totalLengthToChild;
+					previousBestNode[child.node] = bestNodeToVisit;
+					// enqueue with new priority
+					nodesToVisitQueue.enqueue(child, shortestDistanceFromV1);
+				}
+			}
+		}
+
+	}
+
+	return {
+		'shortestPath' : resultantShortestPath.reverse(),
+		'shortestDistance': resultantShortestDistance
+	};
+}
+
+function DijkstraByTheAuthor(start, finish){
+	const nodes = new PriorityQueue();
+	const distances = {};
+	const previous = {};
+	let path = [] //to return at end
+	let smallest;
+	//build up initial state
+	for (let vertex in this.adjacencyList) {
+		if (vertex === start) {
+			distances[vertex] = 0;
+			nodes.enqueue(vertex, 0);
+		} else {
+			distances[vertex] = Infinity;
+			nodes.enqueue(vertex, Infinity);
+		}
+		previous[vertex] = null;
+	}
+	// as long as there is something to visit
+	while (nodes.values.length) {
+		smallest = nodes.dequeue().val;
+		if (smallest === finish) {
+			//WE ARE DONE
+			//BUILD UP PATH TO RETURN AT END
+			while (previous[smallest]) {
+				path.push(smallest);
+				smallest = previous[smallest];
+			}
+			break;
+		}
+		if (smallest || distances[smallest] !== Infinity) {
+			for (let neighbor in this.adjacencyList[smallest]) {
+				//find neighboring node
+				let nextNode = this.adjacencyList[smallest][neighbor];
+				//calculate new distance to neighboring node
+				let candidate = distances[smallest] + nextNode.weight;
+				let nextNeighbor = nextNode.node;
+				if (candidate < distances[nextNeighbor]) {
+					//updating new smallest distance to neighbor
+					distances[nextNeighbor] = candidate;
+					//updating previous - How we got to neighbor
+					previous[nextNeighbor] = smallest;
+					//enqueue in priority queue with new priority
+					nodes.enqueue(nextNeighbor, candidate);
+				}
+			}
+		}
+	}
+	return path.concat(smallest).reverse();
+}
+
 
 // Bubble Sort O(n^2)                 (best case is O(n) i.e with the optimization for nearly sorted data)
 // Large values bubble to the end of the array in each PASS. At the end of each PASS, the last i elements are sorted and their postions are fixed.
@@ -1091,3 +2043,12 @@ function radixSort(arr) {
 	}
 	return arr;
 }
+
+
+
+// Dynamic Programming: Solving a complex problem by breaking it down into a collection of simpler subproblems, solving each of those subproblems just once and storing their solutions.
+// The name is very misleading, this is not AI generated programs! It is just a more optimal way to solve an already solved problem.
+// DP can be used on a problem if it has these characteristics -
+// 1)Overlapping subproblems: the problem can be broken down into subproblems which are solved and reused several times. Fibonacci has it, but merge sort has subproblems that don't overlap!! Each subproblem in merge sort is a different array ,that you are trying to merge.
+// 2)Optimal substructure: The optimal solution of a bigger problem can be constructed from optimal solutions of its subproblems. Like, the bset solution for Fib(10) can be calcualted from the best solution for fib(5).
+// So in SPL You use past knowledge to make solving a future problem easier. Like memoize of fibonacci.
