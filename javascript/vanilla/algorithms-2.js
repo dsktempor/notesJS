@@ -1,3 +1,459 @@
+// String Reversal: Given a string, return a new string with the reversed order of characters.
+function reverse(str) {
+	return str.split('').reverse().join('');
+	// or
+	return str.split('').reduce((rev, char) => char + rev, '');
+}
+function reverse(str) {
+	let reversed = '';
+	for (let character of str) {
+		reversed = character + reversed;
+	}
+	return reversed;
+}
+function reverse(str) {
+	var k = '';
+	for (i = str.length - 1; i >= 0; i--) {
+		k = k + str[i];
+	}
+	return k;
+}
+
+// Palindrome check: Given a string, return true if the string is a palindrome or false if it is not.  Palindromes are strings that form the same word if it is reversed.
+// Just check if the reversed string === given string.. or -
+function palindrome(str) {
+	return str.split('').every((char, i) => {
+		return char === str[str.length - i - 1];
+	});
+}
+
+// Integer Reversal: Given an integer, return an integer that is the reverse ordering of numbers.
+function reverseInt(n) {
+	const reversedString = n.toString().split('').reverse().join('');
+	return parseInt(reversedString) * Math.sign(n);
+}
+
+// Max Chars: Given a string, return the character that is most commonly used in the string.  (build a character map)
+function maxChar(str) {
+	const charMap = {};
+	for (let c of str) {
+		if (charMap[c]) {
+			charMap[c]++;
+		} else {
+			charMap[c] = 1;
+		}
+	}
+
+	let max = 0;
+	let maxChar = '';
+	for (let key in charMap) {
+		if (charMap[key] > max) {
+			max = charMap[key];
+			maxChar = key;
+		}
+	}
+
+	return maxChar;
+}
+
+// Fizzbuzz: Console log the numbers from 1 to n. But for multiples of three print “fizz” instead of the number and for the multiples of five print “buzz”. For numbers which are multiples of both three and five print “fizzbuzz”.
+function fizzBuzz(n) {
+	for (let i = 1; i <= n; i++) {
+		if (i % 3 === 0 && i % 5 === 0) {
+			console.log('fizzbuzz');
+		} else if (i % 5 === 0) {
+			console.log('buzz');
+		} else if (i % 3 === 0) {
+			console.log('fizz');
+		} else {
+			console.log(i);
+		}
+	}
+}
+
+// Reverse words in a string
+function reverseWords(s) {
+	var wordsArr = s.split('');
+	var reversedWords = [];
+
+	wordsArr.forEach(w => {
+		let reversedWord = '';
+		for (let i = w.length - 1; i >= 0; i--) {
+			reversedWord += w[i];
+		}
+		reversedWords.push(reversedWord);
+	});
+
+	return reversedWords.join('');
+}
+
+// Reverse array in place
+function reverseArrayInPlace(arr) {
+	for (let i = 0; i < arr.length / 2; i++) {     //Loop through ONLY the first half of the array. If you loop through the whol array, you will switch back the items back in place...
+		[arr[i], arr[arr.length - 1 - i]] = [arr[arr.length - i - 1], arr[i]];   // swap
+	}
+	return arr;
+}
+
+// meanMedianMode: Given an integer array, return an object that has the mean, median and mode.
+function meanMediaModeArray(arr) {
+	let mean, median, mode = [];
+
+	let sum = 0;
+	arr.forEach(x => sum += x);
+	mean = sum / arr.length;
+
+	arr.sort((a, b) => a - b);
+	if (arr.length % 2 !== 0) median = arr[Math.floor(arr.length / 2)];          //for odd number of elements, return middle element
+	else median = (arr[(arr.length / 2) - 1] + arr[(arr.length / 2)]) / 2;    //for even number of elements, return avg of two mid elements
+
+	let hashTable = {}
+	arr.forEach(x => {
+		hashTable[x] = hashTable[x] + 1 || 1;
+	});
+	let maxFreq = 0;
+	for (index in hashTable) {
+		if (hashTable[index] > maxFreq) {
+			mode = [arr[index]];     //reset the mode array to this new value
+			maxFreq = hashTable[index];
+		} else if (hashTable[index] === maxFreq) {
+			mode.push(arr[index]);   //add it to the existing array
+		}
+	}
+	if (mode.length === Object.keys(hashTable).length) mode = [];    //if every element has the same frequency, that means there is no mode.
+
+	return { mean, median, mode };      //shorthand object literal syntax
+}
+
+// twoSum: given an integer array, return an array of number pairs that add up to the given sum. Do it in O(n).
+// obvious solution is O(n^2), for each number, loop through all element of the array to see if they add up to sum
+function twoSum(numArray, sum) {  //O(n)
+	var result = [], hashTable = {};
+
+	numArray.forEach(x => {
+		let remainder = sum - x;
+		if (hashTable[remainder] !== undefined) result.push([x, remainder]);   // in ([1,4,6,3,5],7) it adds [6,1] to the result only when x=6, for x=1 it just does hashTable[1]=''
+		hashTable[x] = '';
+	});
+
+	return result;
+}
+function hasPairWithSum2(arr, sum) {  //O(n)
+	const mySet = new Set();
+	const len = arr.length;
+	for (let i = 0; i < len; i++) {
+		if (mySet.has(arr[i])) {
+			return true;
+		}
+		mySet.add(sum - arr[i]);
+	}
+	return false;
+}
+
+// First recurring character, given an array return the first element that is a duplicate. Naive solution is O(n^2).
+function firstDuplicate(arr) {   //O(n)
+	let hashMap = {}
+	arr.forEach(x => {
+		if (!hashMap[x]) {
+			hashMap[x] = 'marked';
+		} else if (hashMap[x] === 'marked') {
+			return true;
+		}
+	});
+	return false;
+}
+
+
+// maxStockProfit: Given an array of integers (stock prices in the day), return the max profit possible.
+function maxStockProfit(pricesArr) {
+	var maxProfit = -1;
+	var buyPrice = 0;
+	var sellPrice = 0;
+
+	var changeBuyPrice = true;
+
+	for (var i = 0; i < pricesArr.length; i++) {
+		if (changeBuyPrice) buyPrice = pricesArr[i];
+		sellPrice = pricesArr[i + 1];
+
+		if (sellPrice > buyPrice) {
+			var tempProfit = sellPrice - buyPrice;
+			if (tempProfit > maxProfit) maxProfit = tempProfit;
+			changeBuyPrice = false;
+		} else {
+			changeBuyPrice = true;
+		}
+	}
+
+	return maxProfit;
+}
+
+// commonElements: Given two arrays, return true if they have atleast 1 item in common. Brute force is O(n^2)
+function commonElement(a1, a2) {   //O(n+m)
+	let hashTable = {};
+	a1.forEach(x => {
+		if (!hashTable[x]) hashTable[x] = true;
+	});
+
+	a2.forEach(y => {
+		if (hashTable[y] === true) return true;
+	});
+	return false;
+}
+
+// Array chunking: Given an array and chunk size, divide the array into many subarrays where each subarray is of length size.
+function chunk(array, size) {
+	var r = [];
+	var limit = 1;
+	var subArray = [];
+	for (a of array) {
+		if (limit < size) {
+			subArray.push(a);
+			limit++;
+		} else if (limit === size) {
+			subArray.push(a);
+			r.push(subArray);
+			subArray = [];
+			limit = 1;
+		}
+	}
+
+	if (subArray.length > 0) {
+		r.push(subArray);
+	}
+	return r;
+}
+function chunk(array, size) {
+	const chunked = [];
+	let index = 0;
+
+	while (index < array.length) {
+		chunked.push(array.slice(index, index + size));
+		index += size;
+	}
+
+	return chunked;
+}
+
+// Anagrams: Check to see if two provided strings are anagrams of eachother. One string is an anagram of another if it uses the same characters in the same quantity. Only consider characters, not spaces or punctuation.  Consider capital letters to be the same as lower case.
+function anagrams(stringA, stringB) {  //O(n)
+
+	function buildCharMap(str) {
+		const charMap = {};
+		for (let c of str.replace(/[^\w]/g, '').toLowerCase()) {
+			charMap[c] = charMap[c] + 1 || 1;
+		}
+		return charMap;
+	}
+
+	const aCharMap = buildCharMap(stringA);
+	const bCharMap = buildCharMap(stringB);
+
+	if (Object.keys(aCharMap).length !== Object.keys(bCharMap).length) {
+		return false;
+	}
+	for (let char in aCharMap) {
+		if (aCharMap[char] !== bCharMap[char]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function anagrams(stringA, stringB) {
+
+	function cleanString(str) {
+		return str.replace(/[^\w]/g, '').toLowerCase().split('').sort().join('');
+	}
+
+	return cleanString(stringA) === cleanString(stringB);
+}
+
+// Ransom Note: Given a magazineString of words, check the magazine string to see if you have all the words you need for your ransomNote string.
+function ransomNote(ransomStr, magazineStr) {    //O(n+m)
+	let ransomWords = ransomStr.split(' ');
+	let magazineWords = magazineStr.split(' ');
+	let magazineHashMap = {};
+
+	for (w of magazineWords) {
+		magazineHashMap[w] = magazineHashMap[w] + 1 || 1;
+	}
+	for (rw in ransomWords) {
+		if (magazineHashMap[rw]) {
+			magazineHashMap[rw]--;
+			if (magazineHashMap[rw] < 0) return false;
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+
+// Caesar Cipher: Given a string and num, return a string, where each char was bumped up by num count. ('zoo',2) should give 'bqq'
+function caesarCipher(str, num) {      //num can be any integer
+	num = num % 26;
+	let lowerStr = str.toLowerCase();
+	let alphabets = 'abcdefghijklmnopqrstuvwxyz'.split('');
+	let newString = '';
+
+	for (let i = 0; i < lowerStr.length; i++) {
+		let l = lowerStr[i];
+		if (!alphabets.includes(l)) {
+			newString += l;
+			continue;
+		}
+
+		let currentIndex = alphabets.indexOf(l);
+		let newIndex = currentIndex + num;       //num can be a positive or negative integer..
+		if (newIndex > 25) newIndex -= 26;
+		if (newIndex < 0) newIndex += 26;
+		if (str[i] === str[i].toUpperCase()) {
+			newString += alphabets[newIndex].toUpperCase();
+		} else {
+			newString += alphabets[newIndex];
+		}
+	}
+
+	return newString;
+}
+
+// Sentence Capitalization: Write a function that accepts a string.  The function should capitalize the first letter of each word in the string then return the capitalized string.
+function capitalize(str) {
+	const words = [];
+	for (let w of str.split(' ')) {
+		words.push(w[0].toUpperCase() + w.slice(1));
+	}
+	return words.join(' ');
+}
+
+// Printing Steps: Write a function that accepts a positive number N. The function should console log a step shape with N levels using the # character.  Make sure the step has spaces on the right hand side!
+// '#  '
+// '## '
+// '###'
+function steps(n) {
+	let thisRow = '';
+	for (let i = 1; i <= n; i++) {
+		thisRow = ''
+		for (j = 1; j <= n; j++) {
+			if (j <= i) {
+				thisRow += '#';
+			} else {
+				thisRow += ' ';
+			}
+		}
+		console.log(thisRow);
+	}
+}
+function steps(n, row = 0, stair = '') {
+	if (n === row) {
+		return;
+	}
+
+	if (n === stair.length) {
+		console.log(stair);
+		return steps(n, row + 1);
+	}
+
+	const add = stair.length <= row ? '#' : ' ';
+	steps(n, row, stair + add);
+}
+
+// Pyramid: Write a function that accepts a positive number N. The function should console log a pyramid shape with N levels using the # character. Make sure the pyramid has spaces on both the left and right hand sides
+// '  #  '
+// ' ### '
+// '#####'
+function pyramid(n) {
+	let numberOfSpaceInThisRow = 0;
+	let numberOfHashInThisRow = 0;
+	let currentRow = '';
+	let hash = '#';
+	let space = ' ';
+
+	for (let i = 1; i <= n; i++) {
+		numberOfSpaceInThisRow = 2 * n - 2 * i;
+		numberOfHashInThisRow = 2 * i - 1;
+		currentRow = space.repeat(numberOfSpaceInThisRow / 2) + hash.repeat(numberOfHashInThisRow) + space.repeat(numberOfSpaceInThisRow / 2);
+		console.log(currentRow);
+	}
+}
+
+function pyramid(n, row = 0, level = '') {
+	if (row === n) {
+		return;
+	}
+
+	if (level.length === 2 * n - 1) {
+		console.log(level);
+		return pyramid(n, row + 1);
+	}
+
+	const midpoint = Math.floor((2 * n - 1) / 2);
+	let add;
+	if (midpoint - row <= level.length && midpoint + row >= level.length) {
+		add = '#';
+	} else {
+		add = ' ';
+	}
+	pyramid(n, row, level + add);
+}
+
+// Count of Vowels: Write a function that returns the number of vowels used in a string. (aeiou)
+function vowels(str) {
+	const matches = str.match(/[aeiou]/gi);
+	return matches !== null ? matches.length : 0;
+}
+// or loop through each char in the string, check if c.toLowerCase() is aeiou and incrememt counter.
+
+// Spiral Matrix: Write a function that accepts an integer N and returns a NxN spiral matrix.
+//   matrix(2)
+//     [[1, 2],
+//     [3, 4]]
+//   matrix(3)
+//     [[1, 2, 3],
+//     [8, 9, 4],
+//     [7, 6, 5]]
+//  matrix(4)
+//     [[1,   2,  3, 4],
+//     [12, 13, 14, 5],
+//     [11, 16, 15, 6],
+//     [10,  9,  8, 7]]
+function matrix(n) {
+	var m = [];
+	for (i = 0; i < n; i++) {
+		m.push([]);
+	}
+
+	let rowStart = 0;
+	let rowEnd = n - 1;
+	let colStart = 0;
+	let colEnd = n - 1;
+	let counter = 0;
+	while (rowStart <= rowEnd && colStart <= colEnd) {
+		for (i = colStart; i <= colEnd; i++) {
+			m[rowStart][i] = ++counter;
+		}
+		rowStart++;
+
+		for (j = rowStart; j < rowEnd; j++) {
+			m[j][colEnd] = ++counter;
+		}
+		colEnd--;
+
+		for (k = colEnd; k >= colStart; k--) {
+			m[rowEnd][k] = ++counter;
+		}
+		rowEnd--;
+
+		for (l = rowEnd; l >= rowStart; l--) {
+			m[l][colStart] = ++counter;
+		}
+		colStart++;
+	}
+
+	return m;
+}
+
 //Write a function addUpto(n) that returns the sum of all numbers from 1 to n
 function addUpto(n) {
 	let total = 0;
@@ -291,237 +747,10 @@ function findLongestSubstring(str) {
 	return longest;
 }
 
-// Recursion: Count down from n
-function countDown (n) {
-	if (n === 0) {
-		console.log('count down finished');
-		return;                          // when it hits the line, the call stack will consist of n+1 countDown funcs.. in the stack
-	}
-	console.log(n);                   // prints out 5,4,3,2,1
-	n--;
-	countDown(n);
-	console.log('finished '+n);       // then prints out 0,1,2,3,4
-}
-// Recursion: sumToN, find the sum of first n numbers
-function sumToN(n) {
-	if (n === 1)  return n;
-	return n + sumToN(n-1);    //every TCO recursion line must have a "return" so that the value is bubbled up the call stack of recursive calls!!
-}
-// Recursion: factorial of n
-function factorial(n) {    // O(n)
-	if (n<0) return 0;  // invalid input
-
-	if (n <= 1)  return 1;    //0! is 1, 1! is 1
-	return n * factorial(n-1);
-}
-// Recursion: Given an array of numbers, collect all odd numbers into an array and return the array.   This is the helper-method-recusrion PATTERN.
-function collectOdds(a) {
-	var finalResult = [];
-
-	function helper(b) {
-		if (b.length === 0) return;
-
-		if (b[0]%2!==0) finalResult.push(b[0]);
-
-		helper(b.slice(1));   //basically keep calling yourself on a size of n-- until your size n goes to zero. Coverting an iteration to a recursion.
-	}
-	helper(a);
-
-	return finalResult;
-}
-function CollectOddsNoHelper(a) {
-	let newArr = [];
-
-	if (a.length === 0) return newArr;
-
-	if(a[0]%2!==0) newArr.push(a[0]);
-
-	newArr = newArr.concat(CollectOddsNoHelper(a.slice(1)));
-
-	return newArr;
-}
-// Recursion: Write a function 'power' that takes a base and an exponent and returns the value of base^exponent. i.e mimic Math.pow()
-function power(b,e) {
-	if (e === 0) {
-		return 1;     // special case
-	}
-	return b * power(b,--e);   // if you put e-- it will be inifite loop!!
-}
-// Recursion: factorial - takes n and returns n!
-function factorial(n) {
-
-	return n * factorial(n-1);
-}
-//Recursion: productOfArray, takes an array of integers and returns the product of them all
-function productOfArray(a) {
-	if (a.length === 1) return a[0];
-
-	return a[0] * productOfArray(a.slice(1));
-}
-//Recursion: recursiveRange, takes a number and adds up all number from 0 to n
-function recursiveRange(n) {
-	if (n === 0) return 0;
-	return n + recursiveRange(n-1);
-}
-// Recursion: fibonacci, takes n and returns the nth number in the fibonacci sequence
-function fib(n){
-	if (n <= 2) return 1;
-	return fib(n-1) + fib(n-2);
-}
-// Recursion: reverse, takes a string and returns a reversed string
-function reverse(s) {
-	if (s.length <= 1) return s;
-
-	return s.charAt(s.length-1) + reverse(s.slice(0,s.length-1));    //story becomes: y+reverse(stor) which becomes r+reverse(sto)
-}
-//Recursion: isPalindrome, takes a string and return true/false if string is a palindrome
-function isPalindrome(s) {
-	//basically check if the string is symmetric, outwards to inwards..
-	if (s.length === 1) return true;
-	if (s.length === 2) return s[0] === s[1];
-
-	if (s[0] === s[s.length-1]) {
-		return isPalindrome(s.slice(1, -1));
-	}
-	return false;
-}
-// Recursion: someRecursive, takes an array and a callback. Function returns true if ANY element in the array when called with the callback returns true, i.e cb(anyArrayElement) === true, then return true
-function someRecursive(a,cb) {
-	if (a.length === 0) {
-		return false;
-	}
-	return Boolean(cb(a[0]) || someRecursive(a.slice(1), cb));   //actually Boolean() is not required, i just put it for readability
-}
-// Recursion: flatten, accepts an array of arrays (can be any number of levels deep) and returns a new array with all values in the top level (1 flattened array). Example: [[[[3]],6]] should give [3,6]
-function flatten(a) {
-	var result = [];
-
-	for (i=0; i<a.length; i++) {
-		if (Array.isArray(a[i])) {
-			result = result.concat(flatten(a[i]));
-		} else {
-			result.push(a[i]);
-		}
-	}
-
-	return result;
-}
-// Recursion: capitalizeFirst(), takes an array of strings, capitalize the first letter of each string in the array.  ['cat','car','dog'] to ['Cat','Car','Dog']
-function capitalizeFirst(array) {
-	if (array.length === 1) {
-		return [array[0][0].toUpperCase() + array[0].substr(1)];
-	}
-	const res = capitalizeFirst(array.slice(0, -1));
-	const string = array.slice(array.length - 1)[0][0].toUpperCase() + array.slice(array.length - 1)[0].substr(1);
-	res.push(string);
-	return res;
-}
-// Recursion: nestedEvenSum(), returns the sum of all even numbers in an object which may contain nested objects. i.e find all 'values' in this object (however deep), if value is even, add it
-function nestedEvenSum(obj) {
-	var result = 0;
-
-	for (let key in obj) {
-		if (typeof obj[key] === 'object') {
-			result += nestedEvenSum(obj[key]);
-		} else if (typeof obj[key] === 'number') {
-			if (obj[key]%2 === 0) result += obj[key];
-		}
-	}
-
-	return result;
-}
-// Recursion: capitalizeWords(), given an array of words, return a new array containing each word capitalized.
-function capitalizeWords(arr) {
-	if (arr.length === 1) {
-		return [arr[0].toUpperCase()];
-	}
-	let res = capitalizeWords(arr.slice(0,-1));
-	res.push(arr[arr.length-1].toUpperCase());
-	return res;
-}
-// Recursion: stringifyNumbers, takes an obj and finds all the 'values' that are numbers (however deep) and convert them to strings. It must return a new obj.
-function stringifyNumbers (obj) {
-	var newObj = {};
-
-	for (let key in obj) {
-		if (typeof obj[key] === 'number') {
-			newObj[key] = obj[key].toString();
-		} else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-			newObj[key] = stringifyNumbers(obj[key]);
-		} else {
-			newObj[key] = obj[key];
-		}
-	}
-
-	return newObj;
-}
-// Recursion: collectStrings, takes an object and returns an array of all the values in the object that are of type string
-function collectStrings(obj) {
-	var result = [];
-
-	for (let key in obj) {
-		if (typeof obj[key] === 'string') {
-			result.push(obj[key]);
-		} else if (typeof obj[key] === 'object') {
-			result.push(...collectStrings(obj[key]));    //result = result.concat(collectStrings(obj[key]))
-		}
-	}
-
-	return result;
-}
 
 
-// Linear Search on Arrays  (indexOf(), includes(), find(), findIndex())
-function linearSearch(arr, n) { //O(n)
-	let index = 0;
-	for (index = 0; index < arr.length; index++) {
-		if (arr[index] === n) return index;
-	}
-	return -1;
-}
-// Binary Search on sorted arrays. It is a divide and conquer algo.
-function binarySearch(arr, n) { //O(logn)
-	let beg = 0;
-	let end = arr.length-1;
-	let mid;
 
-	while (beg <= end) {                    //this won't work if it is beg<end, it has to be <=
-		mid = Math.floor((beg+end)/2);        //console.log(beg,mid,end), you will see different values in different iterations
 
-		if (arr[mid] === n) return mid;
-		else if (arr[mid] > n) end = mid-1;   // look at the left half
-		else beg = mid+1;                     //look at the right half
-	}
-	return -1;
-}
-
-function binarySearchRecursive(arr, n, beg = 0, end = arr.length - 1) { //O(logn) VVIP
-	let mid = Math.floor((beg + end) / 2);
-
-	if (n === arr[mid]) return mid;
-	else if (n > arr[mid] && beg!==end) return binarySearchRecursive(arr, n, mid + 1, end);    //Tail call optimization
-	else if (n < arr[mid] && beg!==end) return binarySearchRecursive(arr, n, beg, mid - 1);   //Tail call optimization
-	else return 'not-found';
-
-}
-
-// Count the number of times a string appears inside another string.
-function stringSearch(s1,s2) {  //search for s2 inside s1. O(n^2)
-	let mainCounter = 0;
-	for (let i = 0, i < s1.length; i++) {
-		let  k = i;
-		for (let j = 0; j < s2.length; j++) {
-			if (s1[k] === s2[j]) {      // instead of k, you can use i+j
-				k++;
-			} else {
-				break;
-			}
-			if (j===s2.length-1) mainCounter++;
-		}
-		// this is the outer loop
-	}
-	return mainCounter;
-}
 
 
 
