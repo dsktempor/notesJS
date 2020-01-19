@@ -1919,7 +1919,7 @@ null, undefined, string, number, boolean, and symbol.
 
 Pass By Reference
 Compound values -- objects (including arrays, and all boxed object wrappers) and functions,
-always create a copy of the reference on assignment or passing.
+always create a copy of the reference on assignment or passing. These are "reference types"!
 References are not like references/pointers in other languages -- they are never pointed at other variables/references, they only point at the underlying VALUES.
 
 Remember: you cannot directly control/override value-copy vs. reference -- those semantics are controlled entirely by the type of the underlying value.
