@@ -15,6 +15,30 @@ function logAtMost10(n) {
 	}
 }
 
+// Sieve of Eratosthenes: Return an array of prime numbers up to n.
+function primesToN(n) {
+	let primes = [];
+	for(let i=0; i <=n; i++){
+		primes[i]=true;
+	}
+	primes[0] = false;
+	primes[1] = true;
+
+	//Loop through primes array, and mark all multiples of i as false. You only have to go till sqrt(n).
+	for(let i=2; i<=Math.sqrt(n); i++){
+		for (let j=2; j*i<=n; j++){
+			primes[j*i] = false;
+		}
+	}
+
+	let resultsArray = [];
+	for (k in primes){
+		if(primes[k] === true) resultsArray.push(k);
+	}
+
+	return resultsArray;
+}
+
 // Write a function SAME that compares two arrays. Should return true if one array has all the square values of the other array. As long every square is there (and in any order), it is true. The frequencies should match.  same([1,2,3], [4,1,9]) is true.
 function same(f,s) {     //O(n^2)
 	if (f.length !== s.length) {
@@ -281,10 +305,10 @@ function countDown (n) {
 // Recursion: sumToN, find the sum of first n numbers
 function sumToN(n) {
 	if (n === 1)  return n;
-	return n + sumToN(n-1);
+	return n + sumToN(n-1);    //every TCO recursion line must have a "return" so that the value is bubbled up the call stack of recursive calls!!
 }
 // Recursion: factorial of n
-function factorial(n) {
+function factorial(n) {    // O(n)
 	if (n<0) return 0;  // invalid input
 
 	if (n <= 1)  return 1;    //0! is 1, 1! is 1
@@ -326,7 +350,7 @@ function power(b,e) {
 // Recursion: factorial - takes n and returns n!
 function factorial(n) {
 
-	return n *
+	return n * factorial(n-1);
 }
 //Recursion: productOfArray, takes an array of integers and returns the product of them all
 function productOfArray(a) {
@@ -470,6 +494,17 @@ function binarySearch(arr, n) { //O(logn)
 	}
 	return -1;
 }
+
+function binarySearchRecursive(arr, n, beg = 0, end = arr.length - 1) { //O(logn) VVIP
+	let mid = Math.floor((beg + end) / 2);
+
+	if (n === arr[mid]) return mid;
+	else if (n > arr[mid] && beg!==end) return binarySearchRecursive(arr, n, mid + 1, end);    //Tail call optimization
+	else if (n < arr[mid] && beg!==end) return binarySearchRecursive(arr, n, beg, mid - 1);   //Tail call optimization
+	else return 'not-found';
+
+}
+
 // Count the number of times a string appears inside another string.
 function stringSearch(s1,s2) {  //search for s2 inside s1. O(n^2)
 	let mainCounter = 0;
@@ -487,7 +522,6 @@ function stringSearch(s1,s2) {  //search for s2 inside s1. O(n^2)
 	}
 	return mainCounter;
 }
-
 
 
 

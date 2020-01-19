@@ -1,0 +1,160 @@
+Job hunt process Mind map: https://coggle.it/diagram/W5u8QkZs6r4sZM3J/t/master-the-interview
+resumemaker.online
+resume checklist: https://github.com/aneagoie/resume-checklist
+job scan: Compare your resume to the job description:  https://www.jobscan.co/
+sample engg resumes: https://www.cakeresume.com/Engineering-resume-samples
+resume template: https://thisresumedoesnotexist.com/
+Change how commit appear on your github repo: https://github.com/aneagoie/gitfiti
+Protfolio templates: http://www.mashup-template.com/templates.html, https://mdbootstrap.com/freebies/,
+				https://www.creative-tim.com/bootstrap-themes/ui-kit?direction=asc&sort=price
+Example portfolios: https://www.freecodecamp.org/news/15-web-developer-portfolios-to-inspire-you-137fb1743cae/
+Questions to ask the technical round interviewer - https://github.com/viraptor/reverse-interview/blob/master/README.md
+Glassdoor: glassdoor.com
+Salary: salary.com
+payscale: https://www.payscale.com/
+Stack overlfow salaries: https://stackoverflow.com/jobs/salary?utm_source=Iterable&utm_medium=email&utm_campaign=salary-calculator-2018
+KS interview questions: https://github.com/MaximAbramchuck/awesome-interview-questions#javascript
+Front End Dev questions: https://github.com/h5bp/Front-end-Developer-Interview-Questions
+
+
+
+
+It is normal to get rejected in more than 10 interviews.
+
+Resume:
+>use a pre-designed resume template (a neat one to impress HR)
+>Make it personal for the employer
+>make sure you have keywords from the job description and include you relevant skills.
+>make it one page
+>keep an online link
+>first item on the resume must reflect what they are looking for
+>do not use the word 'i'
+>use action words
+>measure eveything in terms of impact, don't just describe your responsibilities. What you did, how you did, results.
+>Sections: experience, projects, education, technical skills
+>no typos or bad grammar
+>only show years, if it is impressive
+>know a 100% about the projects that you have listed
+
+Applying For jobs
+>Software Engineer is a job that is in very high-demand. The better programmer you are, more doors open for you.
+> Most job descriptions are bloated. They are just trying to weed out weak candidates. They are created by non-technical people.
+>Every application should be a long shot. You must have space to learn and grow in your role.
+>Have a github repo. Have a portfolio of 2-3 pet big full-stack projects. Not 10 small projects.
+>Contribute to small open source projects. You don't have to find big ones, even small ones are fine.
+>LinkedIN! the best. Update your profile with keywords, find people.
+>Number 1 of company to hire is REFERRALS. Email people on netflix.
+>Ask people out for lunch/coffee, people love talking about themselves. You are not going to ask them for a job, just chat about their work.
+
+Hey $BOB,
+I saw your presentation at $CONFERENCE last year on Youtube (rr point to some work they have done).
+Great stuff; loved what you did with $FOO, in particular
+$COMMENT_PROVING_YOU_KNOW_WHAT_YOU'RE_TALKING_ABOUT.
+I'm also a $FOO developer. I noticed that your company is hiring
+or $ROLE. I’d love to be a part of your team. Do you have a
+few minutes to chat on Thursday about what you guys are doing?
+Thanks,
+Yourname
+Your website or any public profile link
+
+Job Appplication Sites:
+Linkedin, HackerNews, AngeList (startups), Seen (by indeed), HIRED, TriplyByte, WhiteTruffle, Zip Recruiter, Meetup.com too.
+
+Companies are looking for- They want smart people.
+Analytical skills  (think through a problem, thought process)
+Coding skills (clean, readable, well-organised code)
+Technical Skills (fundamentals, pros and cons of different solution, do you know how to look for answers)
+Communication skills (does your personality match the comapny and team)
+
+Coding Interview tips -
+>What is the most important value of the problem? Do you have time, and space and memory,etc.. What is the main goal?
+>Start with the naive/brute force approach. First thing that comes into mind. It shows that you’re able to think well and critically
+>Tell them why this approach is not the best. Walk through your approach, comment things and see where you may be able to break things. Any repetition, bottlenecks like O(N^2), or unnecessary work?
+>Before you start coding, walk through your code and write down the steps you are going to follow.
+>Modularize your code from the very beginning. Break up your code into beautiful small pieces and add just comments if you need to.
+>Keep in mind: A lot of interviews ask questions that you won’t be able to fully answer on time. So think: What can I show in order to show that I can do this and I am better than other coders.
+>Think about error checks and how you can break this code. Never make assumptions about the input. Assume people are trying to break your code
+>Finally talk to the interviewer where you would improve the code. Does it work? Are there different approaches? Is it readable? What would you google to improve? How can performance be improved?
+>It is also common that the interviewer asks you extension questions, such as how you would handle the problem if the whole input is too large to fit into memory, or if the input arrives as a stream. This is a common follow-up question at Google, where they care a lot about scale. The answer is usually a divide-and-conquer approach — perform distributed processing of the data and only read certain chunks of the input from disk into memory, write the output back to disk and combine them later.
+
+Good code checklist:
+>It works
+>Good use of data structures
+>Code Re-use/ Do Not Repeat Yourself
+>Modular - makes code more readable, maintainable and testable
+>Less than O(N^2). We want to avoid nested loops if we can since they are expensive. Two separate loops are better than 2 nested loops
+>Low Space Complexity --> Recursion can cause stack overflow, copying of large arrays may exceed memory of machine
+
+Heurestics to ace the question:
+>Hash Maps are usually the answer to improve Time Complexity
+>If it's a sorted array, use Binary tree to achieve O(log N). Divide and Conquer - Divide a data set into smaller chunks and then repeating a process with a subset of data. Binary search is a great example of this
+>Try Sorting your input
+>Hash tables and precomputed information (i.e. sorted) are some of the best ways to optimize your code
+>Look at the Time vs Space tradeoff. Sometimes storing extra state in memory can help the time. (Runtime)
+>If the interviewer is giving you advice/tips/hints. Follow them
+>Space time tradeoffs: Hastables usually solve this a lot of the times. You use more space, but you can get a time optimization to the process. In programming, you often times can use up a little bit more space to get faster time
+
+Non-technical & behavioural questions
+Success comes to that 1% who make the extra effort and take that one extra step.
+These rounds are the SAME for year and they will not change over time. Once you nail these basic questions, you are set for life.
+First treat everything as a learning process. You will be less nervous and more comfortable.
+Enter the room with a lot of energy. You interviewer will match your energy. You must sound excited
+Interviewer: Can you do the job? Can i work with you? Are you going to catch-up and improve?
+The first question is for the technical round. The last two are the non-technical rounds.
+
+>You must have one good technical story/problem/project you solved.
+>You must share one success story in life
+>Show leadership
+>How you manage challenges.
+
+
+>Tell me about a problem you had and how you solved it / Tell me about an interesting project: Have metrics, numbers. Scaling/performance/security issues. Situation -> Action -> Result
+>Why do want to work for us: make them feel special, you admire the company, you will be there for long. (i have been researching your company, i think the problem of x is interesting and i think i can learn/grow and contribute)
+>Any question for us? I have a question for YOU (the interviewer name), mention something that they mention (means that you paid attention). Where do you see this company in the next 3 years, i would like to see where this company is headed (means you are interested long term), have you grown in your role? how does the company handle mess-ups
+>Tell me about Yourself : Your triggers of success/drive, Mention things that you want to get asked, Skills that are relevant to the job. Make it sound like everything in your past led you to this moment.
+>What is your biggest weakness? Be honest, don't give some positive thing. But also, say how you have corrected that mistake and improved.
+>Why did you leave your job? Don't say any negative thing, just sasy you want to grow and want to succed further.
+
+Secret Weapons -
+>Simplicity over Complexity (readable,maintainable,scalable code)
+>Premature optimization is the root of all evil. First solve the problem. That 1% of time improvement is not so imp.
+>Focus on overall goal, don't be myopic.
+>Don't complain about code/co-workers. This is toxic and no use.
+>No ego. Accept feedback.
+
+After the interview -
+>Ask when you should expect to hear back from them
+>Conclude on something positive
+>Thank you for your time. I'm sure you have lots of candidates to see but I want to say one last thing. There are no shortages of developers for you to interview. However there is a shortage of good talented ego less developers with ambition to learn. It's not the ones that are unable to admit that they are wrong. The best developers aren't the ones that know the language inside and out at the expense of having blinders.
+It is not the ones who are unable to admit they are wrong. I am not the most experienced developer that you may interview today but the one thing that you can guarantee is that there is nobody that you will interview that will work as hard to develop his or her skill every day. Play nicely with all the other developers that the company isn't so narrow minded and problem solving that he or she isn't willing to try new and novel ideas.
+When you hire me you will rest assured that you won't have to micromanage me. You don't have to extinguish fires. And in one year I'll be one of your most valuable employees. I can guarantee you that I'm at a point in my career where I want to be surrounded by a team that I can grow with and be surrounded by smart people like yourself. And I've chosen this company specific for that reason. And you've probably had similar experiences in your career where one company allows you to really have an impact and propel your career. I'm at this stage now and I hope to be part of the team with you. So thank you for your time and I hope to hear back soon from you.
+
+Handling an offer
+>Don't end the conversation.
+>Be positive
+>Ask for time
+>This sounds fantastic. I really thought this was a great fit. When I met you and I interviewed you and I'm really glad to see that we both agree and you see a good fit here right now I'm talking to a few other companies so I can't really speak to the full details of the offer until I'm done with the interviewing process. And I'm closer to making a decision but I'm sure that we can find something that works great for us because I would really love to be part of your team and I had a great time interviewing and I could really see myself working there long term.
+>Hello.
+Name of company or person.
+I just want to let you know and give you an update on my interviewing process. I've just received an offer from another company. You can get the company name which is quite strong. With that said I'm really excited to potentially be working with your company. I had a really good time interviewing with you and I really wanted to see if we can make things work. Since my timeline is now a little bit compressed with this new offer is there anything we can do to make the process go a little bit faster.
+
+
+Negotiation
+>I think the avg sde gets $120K a year, so i would start with that
+>Give a reason for eveything
+>always negotiate! Your offer will never be revoked because you negotiated.
+>Don't be mean, explore situtations, that's all.
+>Show companies that you have other offers. (rival companies, big 4 etc)
+>Always go higher than what you wanted
+
+In the first 6 mnths of your job, list all the skills/things you have learnt, and plan how you can help to improve the company more. This is when you can ask for a raise. (normally by $10,000).
+
+
+
+
+
+
+
+
+
+

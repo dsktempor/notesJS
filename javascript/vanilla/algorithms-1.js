@@ -3,14 +3,30 @@
 /* References:
 Link to GitHub repo: https://github.com/StephenGrider/algocasts
 How to solve - a book by george polya
+BigO cheat sheet - https://www.bigocheatsheet.com/
 Sorting animations webiste: https://www.toptal.com/developers/sorting-algorithms
 Visualise sorts: https://visualgo.net/en/sorting
 Visualise Linked Lists: https://visualgo.net/en/list
 Visualise Heap: https://visualgo.net/en/heap
+Algos mind map: https://coggle.it/diagram/W5E5tqYlrXvFJPsq/t/master-the-interview-click-here-for-course-link
+List of data-structures: https://en.wikipedia.org/wiki/List_of_data_structures
+Data structure MInd Map: https://coggle.it/diagram/W5E5tqYlrXvFJPsq/t/master-the-interview-click-here-for-course-link/c25f98c73a03f5b1107cd0e2f4bce29c9d78e31655e55cb0b785d56f0036c9d1
+Hash generator (MD5): http://www.miraclesalad.com/webtools/md5.php
+AVL tree animation: https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
+AVL tree: https://medium.com/basecs/the-little-avl-tree-that-could-86a3cae410c7
+Red-black tree animation: https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
+Red-black tree: https://medium.com/basecs/painting-nodes-black-with-red-black-trees-60eacb2be9a5
+RB vs AVL tree: https://stackoverflow.com/questions/13852870/red-black-tree-over-avl-tree
+Graphs: https://visualgo.net/en/graphds
+TCO: https://2ality.com/2015/06/tail-call-optimization.html
+
 */
+
 
 /*
 Algorithm: A set of steps to accomplish a certain task. The foundation of a software developer.
+Give simple, clear and efficient instructions to the device in front of you.
+Problem solving is a muscle that you can train and grow. It sits with you for life.
 
 Good algos are highly performant. There is always 'the best' solution.
 Try to identify when your code slows down, find the inefficient points.
@@ -26,24 +42,30 @@ When testing time of your algo -
 >Speed measurement may not be precise enough in your machine/environment
 
 Instead of counting time, count the number of simple operations your algo has to perform. This is what big(o) does.
-Algo complexity: Big'O' Notation - how the runtime of an algorithm grows as the input size grows.
+Fundamental operations: math(*+-/), comparisons(>=<==), looping(for,while), custom-function calls or built-in-functions calls.
+Fundamental space occupiers: variables, data structures, function calls, allocations
+Algo complexity: Big'O' Asyntotic Notation - how the runtime of an algorithm grows as the input size grows.
 
 In order of increasing time:
 1       - constant time
-log(n)  - logarithimic time  (searching a sorted array) (this is almost as good as O(1))
+log(n)  - logarithimic time  (searching a sorted array) (this is almost as good as O(1)!)
 n       - linear time
-nlog(n) - quasilinear time (sorting an array)
+nlog(n) - quasi-linear/log-linear time (sorting an array)
 n^2     - quadratic time
 2^n     - exponential time
+n!      - factorial time
 
 Constants don't matter in BigO notation: BigO does'nt care about precision, just general trend.
-O(10n), O(50n+10) is O(n)
-O(2n^2), O(n^2) +5n +2) is O(n^2)
+O(10n), O(50n+10), O(n/2) is O(n)     [drop the constants]
+O(n + m) is O(n+m) only...
+O(2n^2), O(n^2 +5n +2) is O(n^2)     [drop the non-dominant terms]
 O(500) is O(1)
 O(n^2 + n^3) is O(n^3)
 Addition/sub/mult/div, assignments are all constants
 array[index], obj{key} access is constant
 For a loop: length of loop times complexity of each iteration
+
+Always calculate worst case BigO for your algorithm. Identify the worst case input for your algo.
 
 O(n+m) iterating through two different sets of data
 O(n*m) two for loops of different sizes, one inside the other
@@ -61,6 +83,10 @@ So Log(n) means, your input n has to go up by a lot..... then only your RHS (exp
 	In exponentiation, if your input (exponent) goes by 1.... then your RHS (time) will go up by a lot!
 Every Log must have a base. But in Big O, for simplicity, you just say Log(n) and not Log(n)base2
 Log(n)base 2 means: the number of times you can divide n by 2, before you get a value <=1.
+
+What is good code? Readable & Scalable.(in terms speed & memory(RAM which is heap+stack))  [heap is for variables and stack is for func stack]
+In the bigO chart, don't worry about the left half of the graph (small n), any algo will be fine. But think about the right hand side of the chart (high values of n).
+For space complexity, do not include the space of the input variable.
 
 JS built-ins and their BigO-
 Objects - these are unordered. So use these if you don't need any order.
@@ -88,21 +114,34 @@ Divide & Conquer: Divide a data set into smaller chunks and then repeating a pro
 Recursion: Taking one problem, and solving it over and over on a smaller peice or changing peice untill you reach some end point.
 JSON.parse, JSON.strigify, document.getElementByID are often implemented as recursive functions by browsers.
 Call Stack: browser maintains a stack (FILO) of functions that have been called. When a function returns a value, it is removed from the top of the stack.
+Recursion in linux terminal: ls -R   (recursively open all sub-directories and list all files!!)
+Anything that can be written with recursion, can be written with iterations.
+TCO is tail call optimization, JS engine reuses the previous call block with the new block instead of creating a new one.
 If you base case is not there or never hit: In JS, you will get - RangeError: Maximum call stack size exceeded  (Stack Overflow!)
 In recursion, often you need to make copies: so for arrays use - slice, spread, concat etc, for strings use slice, substr etc, For objects use spread, Object.assign
+When to use recursion
+>Problem can be divided into a number of sub problems that are smaller instance of the same problem
+>Each instance of the sub problem is identical in nature
+>The solutions of each subproblem can be combined to solve the problem at hand. (divide and conquer can use recursion)
+Recursion has a possibility of stack overflow (if the dataset is too big)
+
 
 Sorting in JS: Array.sort(), it converts everything to string and then sorts them! so 10 comes before 4 !!
 Use [6,10,4,15,20].sort( (a,b) => a-b );  to sort JS numbers.
 
-Data Structures - You can't always rely on JS built-ins like arrays and objects. You need other structures to hold data better and process data better.
-Each data structure is good at something - insert, remove, read, sort, search etc.
+Data Structures - You can't always rely on JS built-ins like arrays and objects. You need other structures to hold data/values better and process data better. Algorithms access/manipulate these values.
+Program = Data Structure + Algorithm. The only constant in computer science. Everything else is syntax.
+Each data structure is good at something - insert, remove, access, sort, traversal, search etc. Pick the right one and your algo BigO complexity will reduce.
+
+Hardware: Storage -> RAM -> Cache -> CPU. Things are pulled out of storage in to RAM. CPU works out of RAM/cache. RAM is temporary memory but faster memory.
+Your program and its data structures sit on RAM. So limited space and CPU time is also limited.
 
 
 Useful JS hacks-
 /[a-z0-9]/.test(character)
 someArray.splice(someIndex,1);    //removes an element at a particular index, and then shifts all the others.
 someArray.every((char,i) => {})
-Array.from();
+Array.from(), Array.fill();
 Math.floor, Math.pow, Math.log10, Math.abs, Math.sign(-20)
 for (c of stringValue) { }
 obj.hasOwnProperty(abc)
@@ -194,6 +233,136 @@ function fizzBuzz(n) {
 	}
 }
 
+// Reverse words in a string
+function reverseWords (s) {
+	var wordsArr = s.split('');
+	var reversedWords = [];
+
+	wordsArr.forEach(w => {
+		let reversedWord = '';
+		for (let i=w.length-1; i>=0; i--){
+			reversedWord += w[i];
+		}
+		reversedWords.push(reversedWord);
+	});
+
+	return reversedWords.join('');
+}
+
+// Reverse array in place
+function reverseArrayInPlace(arr) {
+	for (let i = 0; i < arr.length/2; i++) {     //Loop through ONLY the first half of the array. If you loop through the whol array, you will switch back the items back in place...
+		[arr[i], arr[arr.length-1-i]] = [arr[arr.length-i-1], arr[i]];   // swap
+	}
+	return arr;
+}
+
+// meanMedianMode: Given an integer array, return an object that has the mean, median and mode.
+function meanMediaModeArray(arr) {
+ let mean, median, mode = [];
+
+ let sum = 0;
+ arr.forEach(x => sum+=x);
+ mean = sum / arr.length;
+
+ arr.sort( (a,b) => a-b );
+ if (arr.length%2 !==0) median = arr[Math.floor(arr.length/2)];          //for odd number of elements, return middle element
+ else median = (arr[(arr.length / 2) - 1] + arr[(arr.length / 2)])/2;    //for even number of elements, return avg of two mid elements
+
+ let hashTable = {}
+	arr.forEach(x => {
+		hashTable[x] = hashTable[x] + 1 || 1;
+	});
+	let maxFreq = 0;
+	for (index in hashTable) {
+		if(hashTable[index] > maxFreq) {
+			mode = [arr[index]];     //reset the mode array to this new value
+			maxFreq = hashTable[index];
+		} else if (hashTable[index] === maxFreq) {
+			mode.push(arr[index]);   //add it to the existing array
+		}
+	}
+	if (mode.length === Object.keys(hashTable).length) mode = [];    //if every element has the same frequency, that means there is no mode.
+
+	return {mean, median, mode};      //shorthand object literal syntax
+}
+
+// twoSum: given an integer array, return an array of number pairs that add up to the given sum. Do it in O(n).
+// obvious solution is O(n^2), for each number, loop through all element of the array to see if they add up to sum
+function twoSum(numArray, sum) {  //O(n)
+	var result = [], hashTable = {};
+
+	numArray.forEach(x => {
+		let remainder = sum - x;
+		if (hashTable[remainder] !== undefined) result.push([x,remainder]);   // in ([1,4,6,3,5],7) it adds [6,1] to the result only when x=6, for x=1 it just does hashTable[1]=''
+		hashTable[x] = '';
+	});
+
+	return result;
+}
+function hasPairWithSum2(arr, sum) {  //O(n)
+	const mySet = new Set();
+	const len = arr.length;
+	for (let i = 0; i < len; i++) {
+		if (mySet.has(arr[i])) {
+			return true;
+		}
+		mySet.add(sum - arr[i]);
+	}
+	return false;
+}
+
+// First recurring character, given an array return the first element that is a duplicate. Naive solution is O(n^2).
+function firstDuplicate(arr) {   //O(n)
+	let hashMap = {}
+	arr.forEach(x => {
+		if (!hashMap[x]) {
+			hashMap[x] = 'marked';
+		} else if (hashMap[x] === 'marked') {
+			return true;
+		}
+	});
+	return false;
+}
+
+
+// maxStockProfit: Given an array of integers (stock prices in the day), return the max profit possible.
+function maxStockProfit(pricesArr) {
+	var maxProfit = -1;
+	var buyPrice = 0;
+	var sellPrice = 0;
+
+	var changeBuyPrice = true;
+
+	for (var i = 0; i < pricesArr.length; i++) {
+		if (changeBuyPrice) buyPrice = pricesArr[i];
+		sellPrice = pricesArr[i + 1];
+
+		if (sellPrice > buyPrice) {
+			var tempProfit = sellPrice - buyPrice;
+			if (tempProfit > maxProfit) maxProfit = tempProfit;
+			changeBuyPrice = false;
+		} else {
+			changeBuyPrice = true;
+		}
+	}
+
+	return maxProfit;
+}
+
+// commonElements: Given two arrays, return true if they have atleast 1 item in common. Brute force is O(n^2)
+function commonElement(a1, a2) {   //O(n+m)
+	let hashTable = {};
+	a1.forEach(x => {
+		if (!hashTable[x]) hashTable[x] = true;
+	});
+
+	a2.forEach(y => {
+		if (hashTable[y] === true) return true;
+	});
+	return false;
+}
+
 // Array chunking: Given an array and chunk size, divide the array into many subarrays where each subarray is of length size.
 function chunk(array, size) {
 	var r = [];
@@ -261,6 +430,54 @@ function anagrams(stringA, stringB) {
 	}
 
 	return cleanString(stringA) === cleanString(stringB);
+}
+
+// Ransom Note: Given a magazineString of words, check the magazine string to see if you have all the words you need for your ransomNote string.
+function ransomNote (ransomStr, magazineStr) {    //O(n+m)
+	let ransomWords = ransomStr.split(' ');
+	let magazineWords = magazineStr.split(' ');
+	let magazineHashMap = {};
+
+	for(w of magazineWords) {
+		magazineHashMap[w] = magazineHashMap[w] + 1 || 1;
+	}
+	for (rw in ransomWords) {
+		if (magazineHashMap[rw]) {
+			magazineHashMap[rw]--;
+			if (magazineHashMap[rw] < 0) return false;
+		} else {
+			return false;
+		}
+	}
+	return true;
+}
+
+// Caesar Cipher: Given a string and num, return a string, where each char was bumped up by num count. ('zoo',2) should give 'bqq'
+function caesarCipher(str,num){      //num can be any integer
+	num = num % 26;
+	let lowerStr = str.toLowerCase();
+	let alphabets = 'abcdefghijklmnopqrstuvwxyz'.split('');
+	let newString = '';
+
+	for (let i=0; i<lowerStr.length; i++){
+		let l = lowerStr[i];
+		if(!alphabets.includes(l)) {
+			newString += l;
+			continue;
+		}
+
+		let currentIndex = alphabets.indexOf(l);
+		let newIndex = currentIndex + num;       //num can be a positive or negative integer..
+		if (newIndex>25) newIndex -= 26;
+		if (newIndex<0) newIndex += 26;
+		if(str[i] === str[i].toUpperCase()) {
+			newString += alphabets[newIndex].toUpperCase();
+		} else {
+			newString += alphabets[newIndex];
+		}
+	}
+
+	return newString;
 }
 
 // Sentence Capitalization: Write a function that accepts a string.  The function should capitalize the first letter of each word in the string then return the capitalized string.
@@ -449,19 +666,147 @@ function memoize(fn) {          //MEMOIZE a given function..!
 }
 const fib = memoize(slowFib);
 
+function fibMemo(index, cache) {
+	cache = cache || [];
+	if (cache[index]) return cache[index];
+	else {
+		if (index < 3) return 1;
+		else {
+			cache[index] = fibMemo(index - 1, cache) + fibMemo(index - 2, cache);
+		}
+	}
+	return cache[index];
+}
+
+// Arrays: Organises items sequentially, i.e one after another in memory. (contiguous memory lcoations)
+// Because they are contiguous and in order, access is very fast for the cpu.
+// access O(1), push O(1), insert O(n), delete O(n). Search is O(n)
+// Static array: Fixed size. You need to know the size ahead of time. If you add extra elements later, there is no guarantee that the OS will add the new elements as part of the same original continguos memory locations.
+// Dynamic array: No size. i.e Variable size. It grows as elements are added. It copies the whole contiguos locations, creates a whole new contiguous location set and copies the values there. JS has dynamic arrays, which mean the machine automatically manages array memory locations for you and you don't have control like in C/C++. Thus sometime c/c++ is faster than high level languages like JS. So, even in JS, arr.push() might be O(n) under the hood becuase it copies and pastes everything into a new contiguous memory location. But for you, just say O(1)
+// Strings are just arrays. If you get any string question, just do str.split('') and then use array methods.
+// Advantages: access, push, pop, ordered data
+// Disadvantages: slow insert/delete, fixed size
+
+const string = ['a', 'b', 'c', 'd', 'e']; //each char is 4bytes (32-bit system), so this array takes 4*4 Bytes of RAM.
+strings[2];  //access is O(1)
+strings.push('f');  //push is O(1)
+strings.pop();  //pop is O(1)
+strings.unshift('aa'); //insert at beginning is O(n)
+strings.splice(2, 0, 'cc'); //insert at middle is O(n)
+strings.shift(); //remove at beginning is O(n)
+
+class MyArray {
+	constructor() {
+		this.length = 0;
+		this.data = {};
+	}
+	get(index) {
+		return this.data[index];
+	}
+	push(item) {
+		this.data[this.length] = item;
+		this.length++;
+		return this.data;
+	}
+	pop() {
+		const lastItem = this.data[this.length - 1];
+		delete this.data[this.length - 1];
+		this.length--;
+		return lastItem;
+	}
+	deleteAtIndex(index) {
+		const item = this.data[index];
+		this.shiftItems(index);
+		return item;
+	}
+	shiftItems(index) {    // Move the items from index onwards,all to the left. (overwrite the existing value at index)
+		for (let i = index; i < this.length - 1; i++) {
+			this.data[i] = this.data[i + 1];
+		}
+		console.log(this.data[this.length - 1]);
+		delete this.data[this.length - 1];     // you can remove this 'previous' last item position and its value.
+		this.length--;
+	}
+}
+
+// Stack: Create a stack data structure. LIFO. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
+// Examples - function call stack, undo/redo actions in programs, routing browser history
+class StackWithArray {     // contiguous memory locations, so it is faster than StackWithLinkedList. But this is a dynamic array (adding values takes longer time)
+	constructor() {
+		this.data = [];
+	}
+
+	add(record) {
+		this.data.push(record);         // O(1), You can even use shift and unshift but it will be O(n)
+	}
+
+	remove() {
+		return this.data.pop();         // O(1)
+	}
+
+	peek() {                          // O(1)
+		return this.data[this.data.length - 1];
+	}
+}
+
+// You can also implement it with a singly linked list. But you can't use the Linked List's push and pop, pop takes O(n). So use shift() and unshift(), both take O(1).
+// Insertion and removal are O(1). Searching and access are O(n)
+class Node {
+	constructor(val) {
+		this.value = val;
+		this.next = null;
+	}
+}
+class StackWithSinglyLinkedList {         // It has unlimited size, use more memory (head/tail pointers), nodes are scattered in memory.
+	constructor() {
+		this.head = null;
+		this.tail = null;
+		this.size = 0;
+	}
+
+	add(val) {                //O(1) Add to the beginning
+		var k = new Node(val);
+		if (!this.head) {        //Empty List
+			this.head = k;
+			this.tail = k;
+		} else {                 //Non Empty List
+			var temp = this.head;
+			this.head = k;
+			this.head.next = temp;
+		}
+		return ++this.size;
+	}
+
+	remove() {                //O(1) Remove from beginning
+		if (!this.head) return null;   //Empty List
+
+		var temp = this.head;
+		if (this.head === this.tail) {  //One Node in List
+			this.tail = null;
+		}
+		this.head = this.head.next;
+		this.size--;
+		return temp.value;
+	}
+
+	peek() {                  //O(1)
+		return this.head;
+	}
+}
+
 // Queue: Create a queue data structure.  FIFO. The queue should be a class with methods 'add', 'remove' and 'peek'. Adding to the queue should store an element until it is removed.
-// queues are used all over the place in computer science.
-class Queue {
+// queues are used all over the place in computer science. In JS - the event loop call back queue!
+class QueueWithArray {
 	constructor() {
 		this.data = [];
 	}
 
 	add(record) {  //(enqueue)
-		this.data.unshift(record);                      //adds an element to the beginning - O(n).    You can even do push() and shift(), but even there one of them is o(n), so array is bad.
+		this.data.unshift(record);                      // O(n), adds an element to the beginning.You can even do push() and shift(), but even there one of them is o(n), so array is bad.
 	}
 
 	remove() {   //(dequeue)
-		return this.data.pop();                         //returns the last element by removing it - O(1)
+		return this.data.pop();                         // O(1), returns the last element by removing it.
 	}
 
 	peek() {
@@ -471,6 +816,12 @@ class Queue {
 
 //Queue can also be implemented with SinglyLinkedList. Add to the end and remove from the beginning. Both are O(1)
 //Insertion and removal are O(1).  Searching and access are O(n)
+class Node {
+	constructor(val) {
+		this.value = val;
+		this.next = null;
+	}
+}
 class QueueWithSinglyLinkedList {
 	constructor() {
 		this.head = null;
@@ -478,28 +829,32 @@ class QueueWithSinglyLinkedList {
 		this.size = 0;
 	}
 
-	enqueue(val) {
-		var newNode = new Node(val);
-		if (!this.head) {
-			this.head = newNode;
-			this.tail = newNode;
-		} else {
-			this.tail.next = newNode;
-			this.tail = newNode;
+	enqueue(val) {          //O(1) Add to the end
+		var k = new Node(val);
+		if (!this.head) {        //Empty List
+			this.head = k;
+			this.tail = k;
+		} else {                 //Non Empty List
+			this.tail.next = k;
+			this.tail = k;
 		}
 		return ++this.size;
 	}
 
-	dequeue() {
-		if (!this.head) return null;
+	dequeue() {              //O(1) Remove from front
+		if (!this.head) return null;  //Empty List
 
 		var temp = this.head;
-		if (this.head === this.tail) {
+		if (this.head === this.tail) {   //One node in List
 			this.tail = null;
 		}
 		this.head = this.head.next;
 		this.size--;
 		return temp.value;
+	}
+
+	peek() {                  //O(1)
+		return this.head;
 	}
 }
 
@@ -518,58 +873,6 @@ function weave(sourceOne, sourceTwo) {
 	}
 
 	return q;
-}
-
-// Stack: Create a stack data structure. LIFO. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
-// Examples - function call stack, undo/redo actions in programs, routing browser history
-class Stack {
-	constructor() {
-		this.data = [];
-	}
-
-	add(record) {
-		this.data.push(record);         //O(1), You can even use shift and unshift but it will be O(n)
-	}
-
-	remove() {
-		return this.data.pop();         // O(1)
-	}
-
-	peek() {
-		return this.data[this.data.length - 1];
-	}
-}
-
-// You can also implement it with a singly linked list. But you can't use the Linked List's push and pop, pop takes O(n). So use shift() and unshift(), both take O(1).
-// Insertion and removal are O(1). Searching and access are O(n)
-class StackWithSinglyLinkedList {
-	constructor() {
-		this.head = null;
-		this.tail = null;
-		this.size = 0;
-	}
-	add(val) {
-		var newNode = new Node(val);
-		if (!this.head) {
-			this.head = newNode;
-			this.tail = newNode;
-		} else {
-			var temp = this.head;
-			this.head = newNode;
-			this.head.next = temp;
-		}
-		return ++this.size;
-	}
-	remove() {
-		if (!this.head) return null;
-		var temp = this.head;
-		if (this.head === this.last) {
-			this.last = null;
-		}
-		this.head = this.head.next;
-		this.size--;
-		return temp.value;
-	}
 }
 
 // Queue from stack. Implement a queue data structure using two stacks only. (no arrays)
@@ -609,12 +912,17 @@ class Queue {
 
 }
 
-// Linked List: Implement classes Node (data, next) and Linked Lists -
+// Linked List: Unlimited length. (hashtable and static array have pre-defined lengths/memory. Though dynamic arrays can increase in length, but performance problem)
+// Nodes are scattered in memory (not like array). So CPU takes longer to get your node in linked-list. (just like hast-tables)
+
+
+// Implement classes Node (data, next) and Linked Lists -
 // constructor(), size(), clear()
 // insertFirst(data), removeFirst(), getFirst()
 // insertLast(data), removeLast(), getLast()
 // insertAt(data, index), removeAt(index), getAt()
 // forEach(n), iterator
+
 class Node {
 	constructor(data, next = null) {     //Normally, the only argument for the constructor is the data argument.
 		this.data = data;
@@ -793,6 +1101,8 @@ class LinkedListOne {
 // Insertion and deletion in the middle of list is faster than in the middle of an array.
 // Insertion O(1) i.e push/unshift.   Removal O(1) for shift, o(n) for pop.
 // Searching O(n), Access at particular index O(n)
+// Advantage: fast insert, fast delete, it is ordered, flexible size
+// Disadvantage: slow search, use more memory
 class SinglyLinkedList {
 	constructor() {
 		this.head = null;
@@ -800,20 +1110,33 @@ class SinglyLinkedList {
 		this.length = 0;
 	}
 
-	push(val) {          // Add an element to the end (InsertLast)
-		let n = new Node(val);
-		if (!this.head) {
-			this.head = n;
-			this.tail = n;
-		} else {
-			this.tail.next = n;
-			this.tail = n;
+	push(val) {               // O(1), Add an element to the end (InsertLast)
+		let k = new Node(val);
+		if (!this.head) {       //Empty List
+			this.head = k;
+			this.tail = k;
+		} else {                //Non-Empty list
+			this.tail.next = k;
+			this.tail = k;
 		}
 		this.length++;
 		return this;
 	}
 
-	pop() {               //Remove the last element  (removeLast)
+	unshift(val) {            // O(1), Add an element to the beginning. (InsertFirst)  O(1)
+		var k = new Node(val);
+		if (!this.head) {       //Empty List
+			this.head = k;
+			this.tail = k;
+		} else {                //Non Empty List
+			k.next = this.head;
+			this.head = k;
+		}
+		this.length++;
+		return this;
+	}
+
+	pop() {               //Remove the last element  (removeLast)  O(n)
 		if (!this.head) return;
 
 		var current = this.head;
@@ -834,7 +1157,7 @@ class SinglyLinkedList {
 		return current;
 	}
 
-	shift() {             //Remove node from the begining of the list (removeFirst)
+	shift() {             //Remove node from the begining of the list (removeFirst)  O(1)
 		if (!this.head) return;
 
 		var k = this.head;
@@ -846,33 +1169,22 @@ class SinglyLinkedList {
 		return k;
 	}
 
-	unshift(val) {            //Add an element to the begining. (InsertFirst)
-		var k = new Node(val);
-
-		if(!this.head){
-			this.head = k;
-			this.tail = k;
-		} else {
-			k.next = this.head;
-			this.head = k;
-		}
-		this.length++;
-		return this;
-	}
-
-	get(i) {              // Get item at index i, same as getAt()
+	get(i) {              //O(n) ,Get node at index i, same as getAt()
 		if (i < 0 || i >= this.length) return;
 
+		// The i value is a valid value
 		let counter = 0;
 		let n = this.head;
-		while (counter !== index) {
+		while (counter !== i) {    //
 			n = n.next;
 			counter++
 		}
 		return n;
 	}
 
-	set(i,val) {          //Set item at index i, i.e overwrite the value at that index (if it is there)
+	set(i,val) {          //O(n), Set node at index i, i.e overwrite the value at that index (if it is there)
+		if (i < 0 || i >= this.length) return;
+
 		let n = this.get(i);
 		if(n) {
 			n.value = val;
@@ -881,7 +1193,7 @@ class SinglyLinkedList {
 		return false;
 	}
 
-	insert(i,val) {       //Insert item at index i, same as insertAt()
+	insert(i,val) {       //O(n), Insert node at index i, same as insertAt()
 		if (i<0 || i>this.length) return false;
 
 		if(i === this.length) {this.push(val);   return true;}
@@ -897,10 +1209,10 @@ class SinglyLinkedList {
 		return true;
 	}
 
-	remove(i) {           //Remove item at index i, same as removeAt()
+	remove(i) {           //O(n), Remove node at index i, same as removeAt()
 		if (i < 0 || i > this.length) return false;
 
-		if (i === this.length-1) { this.pop; return true; }
+		if (i === this.length-1) { this.pop(); return true; }
 		if (i === 0) { this.shift(); return true; }
 
 		//i.e trying to remove something in the middle
@@ -912,9 +1224,11 @@ class SinglyLinkedList {
 	}
 
 	reverse() {          //Common question. Don't make any duplicate of the list. You just have to traverse the list and flip the direction of the next pointers in each node.
-		if(this.length<=1) return;
+		if(this.length<=1) return this;
 
-		this.tail = this.head;
+		this.tail = this.head;      //update tail here
+
+		// there are atleast two nodes in the list
 		let prev = this.head;
 		let current = this.head.next;
 		while(current!==null) {
@@ -925,8 +1239,8 @@ class SinglyLinkedList {
 			prev = current;
 			current = nextDestination;
 		}
-		this.head = prev;
-
+		this.head = prev;          //update head here
+		return this;
 	}
 
 	reverseInstructorCode() {
@@ -967,13 +1281,13 @@ class DoublyLinkedList {
 		this.length = 0;
 	}
 
-	push(val) {        // Add node to the last
+	push(val) {        // O(1), Add node to the last
 		let k = new Node(val);
-		if (this.length===0) {
+		if (this.length===0) {    // Empty List
 			this.head = k;
 			this.tail = k;
-		} else {
-			k.next = null;           //not required, by default it is anyway null as it was just created.
+		} else {                 // Non Empty List
+			k.next = null;         //not required, by default it is anyway null as it was just created.
 			k.prev = this.tail;
 			this.tail.next = k;
 			this.tail = k;
@@ -982,7 +1296,22 @@ class DoublyLinkedList {
 		return this;
 	}
 
-	pop() {           // Remove node from the last
+	unshift(val) {     // O(1), Add node at the first
+		let k = new Node(val);
+
+		if (this.length === 0) {     //Empty List
+			this.head = k;
+			this.tail = k;
+		} else {                //there is atleast one element in the list. 3 links need to change.
+			k.next = this.head;
+			this.head.prev = k;
+			this.head = k;
+		}
+		this.length++;
+		return this;
+	}
+
+	pop() {           // O(1), Remove node from the last
 		if (this.length===0) return;
 
 		let removedNode = this.tail;
@@ -1000,7 +1329,7 @@ class DoublyLinkedList {
 		return removedNode;
 	}
 
-	shift() {         // Remove node from first
+	shift() {         // O(1), Remove node from first
 		if (this.length===0) return;
 
 		let removedNode = this.head;
@@ -1017,24 +1346,8 @@ class DoublyLinkedList {
 		return removedNode;
 	}
 
-	unshift(val){     //Add node at the first
-		let k = new Node(val);
-
-		if(this.length===0){
-			this.head = k;
-			this.tail = k;
-		} else {
-			//there is atleast one element in the list. 3 links need to change.
-			k.next = this.head;
-			this.head.prev = k;
-			this.head = k;
-		}
-		this.length++;
-		return this;
-	}
-
-	get(i) {					//Get the node at position i
-		// You can actually do the same thing as singlyLinkedList, but instead, you can actually optimize and use prev.
+	get(i) {					// O(n/2), Get the node at position i
+		// You can actually do the same thing as singlyLinkedList, but instead, you can optimize and use prev.
 		if(i<0 || i>=this.length) return;
 
 		let midPoint = Math.floor(this.length/2);
@@ -1049,7 +1362,7 @@ class DoublyLinkedList {
 		return n;
 	}
 
-	set(i,val) {       //Set (overwrite) the value at index i with val
+	set(i,val) {       // O(n/2), Set (overwrite) the value at index i with val
 		let n = this.get(i);
 		if(n){
 			n.val = val;
@@ -1058,7 +1371,7 @@ class DoublyLinkedList {
 		return false;
 	}
 
-	insert(i,val){     //Insert a new node at index i
+	insert(i,val){     // O(n/2), Insert a new node at index i
 		if(i<0 || i>this.length) return false;
 		if(i===0) return !!this.unshift(val);
 		if(i===this.length) return !!this.push(val);
@@ -1076,7 +1389,7 @@ class DoublyLinkedList {
 		return true;
 	}
 
-	remove(i){         //Remove the node at index i
+	remove(i){         // O(n/2), Remove the node at index i
 		if(i<0 || i>=this.length) return;
 		if(i===0) return !!this.shift();
 		if(i===this.length-1) return !!this.pop();
@@ -1094,6 +1407,9 @@ class DoublyLinkedList {
 
 }
 
+// Singly VS Doubly linked list.
+// Singly uses one less pointer and hence one less operation (pointer to update, faster). You can't traverse from back to front.
+// Doubly is just better in all aspects. Requires one more pointer and hence operations.
 
 // Midpoint of a linked list: Return the 'middle' node of a linked list. If the list has an even number of elements, return the node at the end of the first half of the list. Do not use a counter variable or retrieve the size of the list, and only iterate through the list one time.
 function midpoint(list) {
@@ -1210,7 +1526,11 @@ function levelWidth(root) {
 }
 
 // Binary Search Tree: Implement the Node class to create a binary search tree.  The constructor should initialize values 'data', 'left', and 'right'.
-// BST : Each node can have max 2 children, data must be sorted left to right.
+// Binary Tree : Each node can have max 2 children. BST: A BT where data must be sorted left to right.
+// Perfect binary tree: every node has exactly 2 children. In this one, If a level has 'n' nodes, then all the levels above it, together have n+1 nodes. That mean, in PBT, the last level has about half the nodes of the whole tree.
+// The number of nodes at level n is 2^n. The levels start from level0. If there are h levels, then total nodes in the tree is 2^h -1.
+// advantages of BST: better than o(n), ordered, flexible size
+// disadvantages: nothing is O(1)
 // Implement the 'insert' method for theNode class.  Insert should accept an argument 'data', then create an insert a new node at some appropriate location in the tree.
 // Implement the 'contains' method for the Node class.  Contains should accept a 'data' argument and return the Node in the tree with the same value. If the value isn't in the tree return null.
 class NodeBST {
@@ -1233,7 +1553,7 @@ class NodeBST {
 	}
 
 	contains(val) {
-		if (this.data === data) {
+		if (this.data === val) {
 			return this;
 		}
 
@@ -1248,8 +1568,12 @@ class NodeBST {
 }
 
 // Or implement A BST class which has all the methods (instead of Node having al the funcs). The Node constructor will be the same as above.
-// Insertion and Search are both O(logn) [best,avg case] Worst case could be O(n). i.e if every node in the tree has just one child.. If you double the nodes in the tree, it just adds one more level to the tree, hence log(n).
+// Insertion and Search are both O(logn) [best,avg case]If you double the nodes in the tree, it just adds one more level to the tree, hence log(n).
+// Worst case could all be O(n) (unbalanced BST). i.e if every node in the tree has just one child..
 // BFS and DFS have same time complexity O(n). For really wide trees, use DFS (you save memory, in BFS you store the whole layer, but in DFS you store less)
+// BFS: more memory used, but it tells you a list of neighbors, also used in shortest path algos. If you know a solution is not far from the root of the tree, if the tree is very deep and solutions are rare
+// DFS: less memory, tells me if a path exists between two nodes. If the tree is very wide, use this as BFS takes too much memory. If the solution is very deep in the tree.
+
 class BinarySearchTree {
 	constructor() {
 		this.root = null
@@ -1295,6 +1619,86 @@ class BinarySearchTree {
 		return found ? n : false;
 	}
 
+	remove(value) {       // crazy tough. will not be asked in an interview.
+		if (!this.root) {
+			return false;
+		}
+		let currentNode = this.root;
+		let parentNode = null;
+		while (currentNode) {
+			if (value < currentNode.value) {
+				parentNode = currentNode;
+				currentNode = currentNode.left;
+			} else if (value > currentNode.value) {
+				parentNode = currentNode;
+				currentNode = currentNode.right;
+			} else if (currentNode.value === value) {
+				//We have a match, get to work!
+
+				//Option 1: No right child:
+				if (currentNode.right === null) {
+					if (parentNode === null) {
+						this.root = currentNode.left;
+					} else {
+
+						//if parent > current value, make current left child a child of parent
+						if (currentNode.value < parentNode.value) {
+							parentNode.left = currentNode.left;
+
+							//if parent < current value, make left child a right child of parent
+						} else if (currentNode.value > parentNode.value) {
+							parentNode.right = currentNode.left;
+						}
+					}
+
+					//Option 2: Right child which doesnt have a left child
+				} else if (currentNode.right.left === null) {
+					currentNode.right.left = currentNode.left;
+					if (parentNode === null) {
+						this.root = currentNode.right;
+					} else {
+
+						//if parent > current, make right child of the left the parent
+						if (currentNode.value < parentNode.value) {
+							parentNode.left = currentNode.right;
+
+							//if parent < current, make right child a right child of the parent
+						} else if (currentNode.value > parentNode.value) {
+							parentNode.right = currentNode.right;
+						}
+					}
+
+					//Option 3: Right child that has a left child
+				} else {
+
+					//find the Right child's left most child
+					let leftmost = currentNode.right.left;
+					let leftmostParent = currentNode.right;
+					while (leftmost.left !== null) {
+						leftmostParent = leftmost;
+						leftmost = leftmost.left;
+					}
+
+					//Parent's left subtree is now leftmost's right subtree
+					leftmostParent.left = leftmost.right;
+					leftmost.left = currentNode.left;
+					leftmost.right = currentNode.right;
+
+					if (parentNode === null) {
+						this.root = leftmost;
+					} else {
+						if (currentNode.value < parentNode.value) {
+							parentNode.left = leftmost;
+						} else if (currentNode.value > parentNode.value) {
+							parentNode.right = leftmost;
+						}
+					}
+				}
+				return true;
+			}
+		}
+	}
+
 	breadthFirstTraversal() {     //use a queue
 		let queue = [];
 		let visitedNodes = [];
@@ -1308,6 +1712,17 @@ class BinarySearchTree {
 			if(n.right) queue.push(n.right);
 		}
 		return visitedNodes;
+	}
+
+	breadthFirstSearchRecursive(queue=[this.root], list=[]) {
+		if (!queue.length) return list;
+
+		let n = queue.shift();
+		list.push(n);
+		if (n.left) queue.push(n.left);
+		if (n.right) queue.push(n.right);
+
+		return this.breadthFirstSearchRecursive(queue, list);
 	}
 
 	depthFirstPreOrderTraversalIteration(){    //use a stack. When you visit a node, finish it's entire left side then only start it's right side.
@@ -1345,14 +1760,14 @@ class BinarySearchTree {
 		function goDeeper(n) {
 			if (this.left) goDeeper(this.left);
 			if (this.right) goDeeper(this.right);
-
+			visitedNodes.push(n);
 		}
 
 		goDeeper(this.root);
 		return visitedNodes;
 	}
 
-	depthFirstInOrderTraversalRecursion() {     //First finish it's entire left side, then VISIT the node, then finsih it's entire right side. This is like printing the tree, how it actually looks, looking from left to right. For a BST, you get nodes in ascending order (sorted order).
+	depthFirstInOrderTraversalRecursion() {     //First finish it's entire left side, then VISIT the node, then finish it's entire right side. This is like printing the tree, how it actually looks, looking from left to right. For a BST, you get nodes in ascending order (sorted order).
 		let visitedNodes = [];
 		if (!this.root) return visitedNodes;
 
@@ -1368,7 +1783,9 @@ class BinarySearchTree {
 
 }
 
-// Validate a BST given a node. Given a node, validate the binary search tree, ensuring that every node's left hand child is less than the parent node's value, and that every node's right hand child is greater than the parent
+// Balanced BST - two types AVL and red-black, these balance themselves automatically
+
+// Validate a BST given a node. Given a node, validate the tree, ensuring that every node's left hand child is less than the parent node's value, and that every node's right hand child is greater than the parent
 function validate(node, min = null, max = null) {
 	if (max !== null && node.data > max) {
 		return false;
@@ -1423,6 +1840,7 @@ class Events {
 // You can implement BH via a node and tree class, but easiest was is ARRAY. If parent is at index n, left child is at 2n+1, right child is at 2n+2.
 // The parent of any element is at Floor(n-1)/2
 // Be default, when you insert into a binary heap, you start a whole new level ONLY after the current level is completely filled up.
+// Search is O(n), insert is O(logN), delete is O(logn)
 class MaxBinaryHeap {
 	constructor() {
 		this.heapArr = [];
@@ -1480,6 +1898,7 @@ class MaxBinaryHeap {
 }
 
 // Priority Queue: a data structure where element has a priority. Elements with higher priority are extracted before lower priority elements.
+// Examples: Hospital emergency room, Night club entrance, Airline boarding
 // You can implements it with a binary heap. You can even use an array, just give each element a priority, everytime you need an element, just scan the whole array for the highest priority one.
 // Insertion, Extraction O(logn). Search is O(n).   It is log(base2)n because, worst case, that is the number of levels you have to bubble up after insertion or sink down after a deletion. You do 1-2 comparisons at each level.
 class NodePriorityQueue {
@@ -1551,20 +1970,24 @@ class PriorityQueueMinBinaryHeap {
 }
 
 
-// Hash tables: Collection of key-value pairs. The keys are not oredered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a value will be O(n).
+// Hash tables: Collection of key-value pairs. The keys are not oredered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a 'value' will be O(n).
 // Python has dictionary, JS- Objects and Map, Java go and Scala have Maps, Ruby has Hashes
 // You take an key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size)
 // So at array index '10', you store a key of 'pink' and a value of '#ff69b4'. Your hash function converted your key 'pink' to index '10'.
-// Hash function must return a value in O(1) time (be very fast), it must distribute values uniformly AND for the same input it must give the same output (must be deterministic)
+// Hash function must return a value in O(1) time (be very fast), it must distribute values uniformly AND for the same input it must give the same output (must be deterministic or idempotent)
 // Handling collisions
-// 1) Seperate Chaining: Just store the data at the same spot. But that spot now becomes an array of different values that have collided. (nested data structure at that index)
+// 1) Seperate Chaining: Just store the data at the same spot. But that spot now becomes an array/linked-list of different values that have collided. (nested data structure at that index)
 // 2) Linear Probing: You store only one value at one index. If there is a collision, search through the array to find the next empty spot.
+// Worst case - all values hashed to one place (bucket). Acesss becomes O(n)
+// Hashtables don't store data in order like arrays do. You insert it in one order, but in memory, these will be spread at random locations, depending on the hashed index.
+// Advantage: fast access (assuming no collisions), insert, flexible keys (like JS Maps)
+// Disadvantage: unordered, slow key iteration (need to go through whole memory space to get all keys), high memory O(n)
 class HashTable {
 	constructor(size = 53) {
 		this.keyMap = new Array(size);         // A HashTable of fixed size (default size is 53). Most hashTables use a HUGE array.
 	}
 
-	_hash(key) {             // function that returns a value between 0 to this.keyMap.length everytime.
+	_hash(key) {   // function that returns a value between 0 to this.keyMap.length everytime. _VARNAME means, do not access this from outside this class (dev standard)
 		let total = 0;
 		let WEIRD_PRIME = 31;      // Prime numbers help in spreading out keys more evenly
 		for (let i = 0; i < Math.min(key.length, 100); i++) {        // Constant time, you can do i<key.length, then it becomes O(n)
@@ -1575,12 +1998,12 @@ class HashTable {
 		return total;
 	}
 
-	set(key, value) {     // Store a key-value in the hash map
+	set(key, value) {     // Store a key-value in the hash map.
 		let index = this._hash(key);
 		if (!this.keyMap[index]) {
 			this.keyMap[index] = [];       // Seperate Chaining
 		}
-		this.keyMap[index].push([key, value]);    //In some cases if the same key has been passed again, then you might have to overwrite the existing value with the given new value.
+		this.keyMap[index].push([key, value]);    //In some cases if the same key has been passed again, then you might have to overwrite the existing value with the given new value, but here you are just adding it to the list at that index.
 	}
 
 	get(key) {           // retrieve the value of the given key from the hash map
@@ -1588,14 +2011,14 @@ class HashTable {
 		if (this.keyMap[index]) {
 			for (v of this.keyMap[index]) {
 				if (v[0] === key) {       // an array of array arrays!
-					return v[1]
+					return v[1]             //return the value at the key
 				}
 			}
 		}
 		return undefined;
 	}
 
-	keys(){            // returns all the keys in the hash map
+	keys(){            // returns all the keys in the hash map. You loop over the entire hashmap eventhough most index might be empty. Whereas in array you just loop over the length of the array (and the array is not sparse like a hashmap)
 		let arrayOfKeys = [];
 		for (indexValueArr of this.keyMap) {
 			if (Array.isArray(indexValueArr) && indexValueArr.length > 0) {
@@ -1614,6 +2037,17 @@ ht.set("maroon", "#800000");
 ht.get("maroon");
 ht.keys().forEach( k => console.log(ht.get(k)) );  // prints out all the values.
 
+//Any JS object uses hashtables under the hood
+let user = {
+	age: 54,
+	name: 'kyle',
+	magic: true,
+	arr: [5,6],
+	scream: function() {}
+}
+user.age; // this access takes O(1)
+
+// ES6 Map and Set also use hashtables. For Maps, the key does not have to be a string and map maintains the insertion order.
 
 // Graphs: A data structure that consists of a finite set of nodes/vertices V connected with a set of non-directed/directed edges E. Edges can also be weighted/unweighted.
 // Examples: Social Networks, Mapping and routing, recommendation engines, website hyperlinks, almost everywhere.
@@ -1623,6 +2057,7 @@ ht.keys().forEach( k => console.log(ht.get(k)) );  // prints out all the values.
 // Query:[AL O(V+E), AM:O(1)],  Storage:[AL O(V+E), AM O(V^2)]
 // AL (vs AM): Less space, faster to iterate over all edges of the graph, slower to lookup specific edge. Real world data tends to be sparse, so AL is more popular.
 // Traversal: visiting every vertex of the graph once.
+// You can also represent a graph as an array of edges (Edge List) - [ [0,2], [3,4], [2,1], [2,3] ]
 
 class GraphAdjacencyList {             // undirected graph
 	constructor() {
@@ -1672,7 +2107,7 @@ class GraphAdjacencyList {             // undirected graph
 		}
 	}
 
-	dfsTraversalRecursive(startNode) {
+	dfsTraversalRecursive(startNode) {     // Solves a maze puzzle
 		let visitedNodes = {};       // a simple hack. use an object instead of an array.
 		let resultNodes = [];
 		let adjacencyList = this.adjacencyList;
@@ -1872,6 +2307,10 @@ function DijkstraByTheAuthor(start, finish){
 }
 
 
+// No company uses built-in language sorts. They build their own custom sorts. Don't just use arr.sort() -> this one converts to string and then sorts! And strings are sorted by their unicode numbers of their chars!
+// Google - websites, Netflix - tv shows and recommendations, Apple - apps on the app store, Amazon - products etc.
+// BTW chrome for JS arr.sort() uses quick sort , and it uses insertion sort for small n.
+
 // Bubble Sort O(n^2)                 (best case is O(n) i.e with the optimization for nearly sorted data)
 // Large values bubble to the end of the array in each PASS. At the end of each PASS, the last i elements are sorted and their postions are fixed.
 // You make n passes at the array (outer loop). Total possible comparisons is n! (n + n-1 + n-2 + n-3 + ... + 1). You keep comparing adjacent elements.
@@ -1916,6 +2355,7 @@ function selectionSort(arr) {
 // At the end of each PASS, the first i elements are sorted, BUT their positions are not fixed. Some new element might squeeze into this sorted array and bump some of the elements.
 // You bump up about n elements per PASS. There is no swapping going on here.
 // This one works well for a stream of data. As and when new bits are coming, they are inserted in their right place.
+// This is the BEST algo for nearly sorted data comapred to ALL others.  It goes in O(n)
 function insertionSort(arr) {
 	for (i = 1; i < arr.length; i++) {
 		let currentVal = arr[i];
@@ -1936,6 +2376,9 @@ function insertionSort(arr) {
 // Split up the array until you reach size 1 -> sort it -> then merge these different sorted arrays.
 // It exploits the fact that arrays of size 0 or 1 are already sorted.
 function merge(a, b) {    //O(n+m) time and space   this one merges two sorted arrays. It does MAX n+m comparisons in total.
+	if (a.length === 0) return b;
+	if (b.length === 0) return a;
+
 	const results = [];
 	let aIndex = 0;
 	let bIndex = 0;
@@ -2044,9 +2487,41 @@ function radixSort(arr) {
 	return arr;
 }
 
+/* Sorting Choices
+Stable vs Unstable sort: A stable one, for inputs that have the same value, in the final output, it returns them in the same order as they were in the initial input.
+Remember quick sort has a worst case of O(n^2), but it's space complexity is only O(logn).
+But merge sort is always O(nlogn), but space complexity is O(n).
+Forget about - bubble, insertion, selection.
+
+//#1 - Sort 10 schools around your house by distance:
+Small input, so insertion sort. Space coplexity is O(1).  Use it for small data.
+
+//#2 - eBay sorts listings by the current Bid amount:
+Radix sort, because input is only integers. An amounts are betwenn 0 and some 100,000
+
+//#3 - Sport scores on ESPN
+Input has decimal places and there different formats for scores in different sports. Quick Sort.
+
+//#4 - Massive database (can't fit all into memory) needs to sort through past year's user data
+Something that takes less space. Merge sort. Be safe.
+
+//#5 - Almost sorted Udemy review data needs to update and add 2 new reviews
+Since almost sorted, Insertiin sort.
+
+//#6 - Temperature Records for the past 50 years in Canada
+Not sure. If they are all integers, radix sort. If there are floats, then quick sort.
+
+//#7 - Large user name database needs to be sorted. Data is very random.
+Merge sort if there is enough memory or just use quick sort
+
+//#8 - You want to teach sorting for the first time
+bubble sort and selection sort
+
+*/
 
 
-// Dynamic Programming: Solving a complex problem by breaking it down into a collection of simpler subproblems, solving each of those subproblems just once and storing their solutions.
+// Dynamic Programming: Solving a complex problem by breaking it down into a collection of simpler subproblems, solving each of those subproblems just once and storing their solutions. It has nothing to do with word "dynamic" or "programming".
+// Dynamic programming is almost: Divide & Conquer (through recursion) + Memoization. You memoize subproblems.
 // The name is very misleading, this is not AI generated programs! It is just a more optimal way to solve an already solved problem.
 // DP can be used on a problem if it has these characteristics -
 // 1)Overlapping subproblems: the problem can be broken down into subproblems which are solved and reused several times. Fibonacci has it, but merge sort has subproblems that don't overlap!! Each subproblem in merge sort is a different array ,that you are trying to merge.
