@@ -1,0 +1,126 @@
+Postman is a browser
+You can call an API without the need of a website interface
+
+Every Request has-
+>method
+>url
+>params
+>auth
+>headers
+>body
+>pre-req
+>tests
+>settings
+>cookies
+
+Every Response has-
+>status
+>time
+>size
+>body
+>cookies
+>headers
+>test results
+
+Workspaces -> Collections -> Requests
+Environments and Global are can be shared between workspaces.
+
+
+OPTIONS method: For a particular resource, in the body headers, "allow" tell you what all method you can do on that resource like "POST,GET,DEL"
+HEAD method: similar to GET.  Response body will always be empty, even if the reponse is successful. Also, the reponse header "Content-Length" will have the length of the response. HEAD is useful in pinging a server, but you don't really need the response body.
+
+Request Header Presets
+>Create a bunch of name-value pairs and save them under a request header preset.
+>Whenever you create any request, just select your preset.
+
+Collections:
+>Organise and save requests into folders.
+>You can create documentation for a collection easily. Just add description to all folders and requests. Then click publish for the collection. It creates a public link website, with full docs about your collection.
+>You can export/download your entire collection in JSON format
+>You can share your collection with other workspaces or even create a public link (this uploads it to postman's public server)
+>You can also import collections (the JSON files)
+
+Collection Runner
+>Run a whole collection of requests in one shot. (or run a collection sub-folder)
+>Once you run a test, you can export/download the results as JSON. Later, you can import these results into the runner to see the results again.
+>You can also import a data set (file) in your runner test. Your request will use this file as it's body.
+
+Import: You can import mutliple kinds of requests
+>A whole collection JSON
+>Just an environment JSON
+>Paste raw text (JSON/CURL/raml/waml/Any language) It will convert it into a postman request.
+
+Environments
+Any company normally has dev server, qa server, staging server and production server. All 4 URLs are different.
+An environment in postman, lets use define a bunch of variable names with value. You can then access these variable names in your requests. So the same variable name will exist in different environments, but it's value will be different in different environments. So you can define "host" as a variable, and values can be "majorqa-samsclub", "samsclub", "staging.samsclub" etc.
+Then do GET {{host}}/search?q=tape
+
+Global variable
+This variable is accessible to all environments.
+
+Apart from restFUL apis, you can even do SOAP apis, just do POST and request body- content is text/xml. You will get back an XML body response.
+
+Proxy:
+You can turn on the proxy in postman. All network traffic from your browser, will now appear in the history tab of postman.
+
+Mock Api
+Often times, the API is not ready yet. So the front end team creates and uses mock apis that provide fake responses.
+Disadvantages: high effort to create mock api, it will not provide realistic experience (network latency, error states etc)
+You can create a mock server in postman, and send requests to it. The mock server url will be some public postman url...
+
+oAuth 2.0
+You need to give postman your clientID, clientSecret, the tokenURl end point i.e the authServer of that company.
+Postman will use the above three, make a request and get a new access token
+
+Scripting (all scripting in postman is in JS)
+Pre-request script -> Request -> Response -> Test Script
+
+You can even get/set/remove environemnt/global variables -
+console.log("Pre-request script");
+console.log(pm.environemnt);
+pm.environment.get("variable_key");
+pm.globals.get("variable_key");
+pm.variables.get("variable_key");
+pm.environment.set("variable_key", "variable_value");
+pm.globals.set("variable_key", "variable_value");
+pm.environment.unset("variable_key")
+
+When you set/get/remove these for a particular request. They also modify the current environment chosen while executing this request
+
+In the pre-request script: You can also access the entire reequest. It will be available to you under the "request" object. request {data: ,headers:}
+In the test script: you can access the entire 'response' object {code: ,time: ,data: , headers: }
+
+The "tests" object in postman lets you write assertions in the post-request test script. (or you can use pm.test())
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include("ipod");
+});
+
+
+Postman also provides some JS libraries. Lookup the docs.
+Example: The btoa library, takes a clientID and clientSecret and provides a base64 encode value of "clientID:clientSecret". In your pre-request script you write this JS and store the base_64 value into an environemnt variable, then set the request header "Authorisation" to "Basic {{your_base64_env_variable}}.
+So Pre-req scripts runs -> you set an env variable with value as the base64 clientID:clientSecret -> the request header "Authorisation" picks up this value -> Request is made.
+Now in your post-req test script, access the response object and store the access_token as an environment variable.
+All of this is one request called "GetAccessToken"
+All the subsequent requests in this collection will now use this environmenr variable having the access token as their "Authorisation" header. (no auth required for all the subsequent requests)
+
+Newman is a command line equivalent of postman's runner. So you connect Jenkins to newman to postman. Automated testing!
+Just export your collection into a folder
+ls <folder name>
+newman run <collection-json-file-name>
+It will run the collection and show you results on the terminal
+
+If your collection needs to run in an envornment, export the environment from newman into your folder.
+newman run <collection-json-file-name> -e <env-file-name>
+To run many iterations of the collection, give -n 5
+To provide a delay for the collection, give --delay-request 2000
+
+
+
+
+
+
+
+
