@@ -1,6 +1,17 @@
 // Notes from  https://github.com/getify/You-Dont-Know-JS
 // First Edition of the book
 
+/* astexplorer.net
+JS Inline caching: https://richardartoul.github.io/jekyll/update/2015/04/26/hidden-classes.html
+JS Optimization of arguments: https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#3-managing-arguments
+memory leak at soundcloud: https://developers.soundcloud.com/blog/garbage-collection-in-redux-applications
+js runtime loop: http://latentflip.com/loupe/?code=ZnVuY3Rpb24gcHJpbnRIZWxsbygpIHsNCiAgICBjb25zb2xlLmxvZygnSGVsbG8gZnJvbSBiYXonKTsNCn0NCg0KZnVuY3Rpb24gYmF6KCkgew0KICAgIHNldFRpbWVvdXQocHJpbnRIZWxsbywgMzAwMCk7DQp9DQoNCmZ1bmN0aW9uIGJhcigpIHsNCiAgICBiYXooKTsNCn0NCg0KZnVuY3Rpb24gZm9vKCkgew0KICAgIGJhcigpOw0KfQ0KDQpmb28oKTs%3D!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D
+JS Coercion comaprison table: https://dorey.github.io/JavaScript-Equality-Table/
+ECMA == algorithm: https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
+
+
+
+*/
 promises 2829
 #ktek - further reading
 /*
@@ -18,7 +29,7 @@ String()
 instanceof
 JSON.parse();
 JSON.stringify();
-Array.isArray();
+Array.isArray(); Array.from(some non-array)
 */
 
 /* Index
@@ -307,6 +318,42 @@ The document element is not part of the JS spec. (it is a c/c++ interface part o
 alert() and console.log() are again provide by the browser.
 Your browser provides such mechanisms and hooks them up to the developer tools.
 
+JS Compiler Basics -
+JS Engine = Compiler + memory heap + call stack.
+JS Engine: Translates JS to binary. There are over 50 different JS engines. Anyone can build one, it is just a program.
+Chrome V8 is a common JS engine wrote in C++ by the Chromium Project at google. (in 2008 they initially wrote it for google maps)
+Brendan Eich (creator of JS) wrote the first JS engine, SpiderMonkey. (mozilla uses it)
+Engine = Parser -> Abstract Syntax Tree -> Interpreter -> Profiler -> Compiler -> Bytecode (optimized  binarycode)
+The browser converts byte code to machine code. "Web Assembly" is now the aggred upon standard machin code format.
+Interpreter is about translating to byte code, Compiler is about optimizing the code...
+V8 uses JIT Compiler (just in time compiler), it is a compiler ssss+ interpreter.
+
+JS Compilers don't like: eval(), for..in, with, delete, func arguments (because it is an array like object)! Try to skip these. It won't optimize such code.
+
+Compilers normally use 'hidden cache' and 'hidden classes'. Look it up.
+
+Call Stack: Current point of execution (a stack of func stack frames) (stack overflow is possible)
+JS has only one call stack, that means it is single threaded. Only one piece of code ever executes.
+
+Every stack frame is an execution context. It contains all vars within that scope (lexical scope).
+The Runtime, automatically starts the stack with a global() execution context (this is always there on the stack), this is the global scope. There is no relation between the scopes of adjacent call stacks (it is not dynamic scope, it is lexical scope)
+
+Memory Heap: Memory allocation (large memory location) every function, var and class sits here.
+Garbage Collection: When JS allocates memory for a value. If there are no more refs to that value, it clears that memory. It prevents memory leaks. (running out of memory) (infinite loop pushing values into an array)
+Common causes of memory leaks: Too many global vars, Not removing event listeners in SPAs, vars inside setInterval.
+
+JS Runtime = JS Engine + Web API + Event Loop (callback queue)
+Web apis = dom tree and events, fetch() http stuff, setTimeout(), window object - This is provided by the browser too.
+
+Any webAPI task is done asynchronously. I.e it is passed on to the webapi and stack is freed. When you call setTimeout(), it removes it from the call stack. Once XYZ time is done, setTimeout is added to the callback queue, and once the call stack is empty, setTimeout is brought back on to the call stack.
+function abc() {
+	while(x < 100000){
+		setTimeout(abc,0);    // this does not cause stack overflow!! the callback queue is filled up, but stack is not!!
+		abc()  -> this will cause a stackoverflow
+	}
+}
+NodeJS is a JS runtime! Like a browser. NodeJS is a c++ program (node.exe). So you can install node on your server and run js code that access's your file system, do http stuff etc. Even node has v8 engine + event loop + it's own APIs.
+
 ---------------------------------------------------------------------------------------------------------------
 Chapter 2 : SCOPE AND CLOSURES
 Do what you love. Maybe it was something when you were young/school.
@@ -526,7 +573,7 @@ var baz;       //this line is ignored, it is a NO OP.
 
 foo();
 function foo(){ }
-Here the var decleration foo along with its value i.e the func code is hoisted.
+Here the var decleration foo along with its value i.e the func code is ALSO hoisted.
 
 Function declerations are hoisted but function expressions are not.
 foo();                         // not ReferenceError, but TypeError! (illegal operation foo does not have a value yet) (the var foo part is hoisted)
@@ -538,6 +585,9 @@ var foo;
 foo();
 bar();
 foo = function(){ var bar = self; }
+
+Even this is not hoisted -
+(function goo () {})
 
 Function declerations are hoisted before variable declerations!
 foo();    //what does foo give?
@@ -894,7 +944,7 @@ In all these cases, it resorts to default binding and does not throw an error. (
 A good use of this is, if the func foo does'nt even care about or use "this" in its definition
 function foo (a,b) { console.log(a+b) }
 foo.apply(null,[2,3]);  //gives 5
-var b = foo.bind(null,1);
+var b = foo.bind(null,1);   // (this is called currying, partially locking down args)
 b(4)    // gives 5
 b(10)   /gives 11  (it has now become like a +1 function)
 i.e you can ALSO use bind to lock down some arguments (and not just the THIS object)
@@ -1060,9 +1110,11 @@ That's why JS does not have an API to copy objects. because how do you copy such
 Only JSON safe objects can be copied
 var newObj = JSON.parse(JSON.stringify(obj))
 
-Object.assign(destination, source1, source2, sourceX); //this returns destination object with all the 'enumberable' properties of all the sources.
+Object.assign(destination, source1, source2, sourceX); //this returns destination object with all the 'enumberable' properties of all the sources. (creates a clone!, a whole new value) (it is a SHALLOW clone!)
 var newObj = Object.assign( { }, obj1, obj2);
 newObj is now { a:5, b:6, c:7 }
+
+To do an actual deep clone, do var obj2 = JSON.parse(JSON.stringify(obj1));  //but this will take up a lot of memory, be careful.
 
 ES5 introduced property descriptors: value, writable, enumerable, configurable.
 var myObject = { a: 2 };
@@ -1747,6 +1799,9 @@ JS type: a type is an intrinsic, built-in set of characteristics that uniquely i
 from other values, both to the engine and to the developer.
 Coerce: Convert from one type to another
 
+JS is a dynamically typed language. Java/C/C++ are all static typed languages. You have to mention the typeof var when you declare it. You can't use that var for any other types.
+JS is also weakly typed. You can do 'boo' + 17 , it will give 'boo17'. Meaning JS tries do implicit coercion when it can. Python/ruby/closure are all also dynamically type langs, but they are "strongly" typed. They don't this coercion for you, but throw an error.
+
 7 Built in types: All of these except "object" are called primitives
 boolean, number, string,
 object, null, undefined, symbol
@@ -1777,7 +1832,7 @@ Sparse Arrays: They have empty values in some slots. The length is always till t
 a["13"] = 10   It coerces it to be a[13] = 10
 Use arrays for strictly numerically indexed values. Don't add a['test'] = 10, eventhough you can do this. (arr['push'] = 10)
 
-function foo(args){   //args is an "Array-like" object
+function foo(args){   //args is an "Array-like" object, if you don't pass any args, by default arguments is {} !!!
 	var arr = Array.prototype.slice.call(args);   //when slice is called without any arguments, it just creates a copy and returns it
 }
 
@@ -1913,6 +1968,12 @@ Object.is(NaN, NaN); //true
 Object.is(-0, -0); //true
 Object.is(0, -0); //false
 
+The value of a variable is always either a primitive value (number/boolean/string/undefined) OR the value is a pointer to a non-primitive (object/array/function) etc.
+var a = 10;
+var b = a;  //get the value of a and put into b, so now b has a value of 10 (if a's value changes, b is not affected)
+var c = {};
+var d = c;  //get the value of c (which is a pointer to a location in memory), and copy this pointer to d. (if the pointee at c changes, then even what d is pointing is to changes, it is the same thing being pointed to)
+
 Pass By Value
 Simple values (aka scalar primitives) are always assigned/passed by value-copy:
 null, undefined, string, number, boolean, and symbol.
@@ -1923,6 +1984,24 @@ always create a copy of the reference on assignment or passing. These are "refer
 References are not like references/pointers in other languages -- they are never pointed at other variables/references, they only point at the underlying VALUES.
 
 Remember: you cannot directly control/override value-copy vs. reference -- those semantics are controlled entirely by the type of the underlying value.
+
+const number = 100
+const string = "Jay"
+let obj1 = {value: "a"}
+let obj2 = {value: "b"}
+let obj3 = obj2;
+ function change(number, string, obj1, obj2) {
+    number = number * 10;
+    string = "Pete";
+    obj1 = obj2;
+    obj2.value = "c";
+}
+ change(number, string, obj1, obj2);
+ //Guess the outputs
+console.log(number);                                         //100
+console.log(string);                                         //jay
+console.log(obj1.value);                                     //a
+
 
 Since references point to the values themselves and not to the variables, you cannot use one reference to change where another reference is pointed:
 var a = [1,2,3];

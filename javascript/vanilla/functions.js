@@ -1,15 +1,15 @@
 /* Basics of JS Functions
 
-Lynda courses - 
->js-functional-lite 
->js-functional-programming 
->js-functions 
+Lynda courses -
+>js-functional-lite
+>js-functional-programming
+>js-functions
 
-Things to explore - 
+Things to explore -
 http://getify.me
 youdontknowjs.com
 MakerSquare
-LABjs (dynamic script loader), Grips (templating engine), 
+LABjs (dynamic script loader), Grips (templating engine),
 Structure and interpretation of computer programs - Gerald Jay Sussman, Hal Abelson
 Javascript - the good parts by o'rielly
 Eloquent javascript by marijn haverbeke
@@ -31,49 +31,49 @@ function addition(a,b){
 This gives you the ability to pass functions as variables to other functions, also a function can return a function*/
 
 //definition expression (function literal or anonymous function)
-var addition = function (a,b){  
+var addition = function (a,b){
 	var c = a + b;   // this is anonymous function (no name in the call stack)
 	return c;
 };                   //semicolon!
 addition(20,50);
-var b = addition;           //typeof b === "function"; 
+var b = addition;           //typeof b === "function";
 b(10,20);
 
 //You can define and call the function on the spot. use cases: 1)only need once 2)need to execute it immedietely
 var d = 5 + function(a,b){
 	return a + b;
-}(4,7);       
+}(4,7);
 
 //Another anonymous function
 var x = function junk(){
     console.log("definition expression or function expression");
-    return 10;   
-    //the variable junk is only available over here (inside the function)  
+    return 10;
+    //the variable junk is only available over here (inside the function)
 };
-junk();              //junk is undefined, it will error out. 
+junk();              //junk is undefined, it will error out.
 x();                 //x() will execute the function now. x is not 10, it is a func() that returns 10 !!!
 
 var y = function junk(a){
     console.log("function expression");
     return a+10;
-}(5); 
+}(5);
 //Here y is 15. Since the function was immedietly executed, y is not the function, but y is the value that the func returns.
 
 //Immediately Invoked Function Expression (IIFE)
 (function (y){
     var x = 10;
-	console.log('anonymous closure');        //any variable here is available in scope ONLY inside this function block. 
+	console.log('anonymous closure');        //any variable here is available in scope ONLY inside this function block.
     console.log(x+y)
 }
 )(5);
 
-//return statement: it immedietely exits the function with undefined or the given return value. 
-//NEVER do return \n 10 (i.e two lines). JS will put a ";" after the 'return' and it will return undefined and not return 10. 
+//return statement: it immedietely exits the function with undefined or the given return value.
+//NEVER do return \n 10 (i.e two lines). JS will put a ";" after the 'return' and it will return undefined and not return 10.
 
 //'this' object and 'arguments' object are two special object available inside every function.
 //The arguments object is an array-like object. It has keys "0", "1", "2", "length" etc. BUT it is not an array. You cannot do arguments.push()/pop()
 for (i = 0; i < arguments.length; i++) {
-	sum += arguments[i];       //you are just accessing the property of an object. Not iterating an array. 
+	sum += arguments[i];       //you are just accessing the property of an object. Not iterating an array.
 }
 //'this' object depends on the way the function was invoked
 
@@ -97,7 +97,7 @@ var calc = {
 		return (console.log(a+b), console.log(this), console.log(this.status), console.log(arguments));      //this will give 9, calc, "ready", [4,5]
 	}
 };
-calc.addition(4,5);  
+calc.addition(4,5);
 
 //3)Explicit (indirect invocation)
 //You can give the value of 'this' and 'arguments' in the call.
@@ -109,15 +109,15 @@ var speak = function(saywhat){
 speak.call({normal:'meow', love:'purr'} , "say hello") // now this = this object and not window object
 speak.apply({normal:'meow', love:'purr'} , ["say hello"] )  //APPLY takes an array of arguments unlike CALL
 
-//4)Constructor  
+//4)Constructor
 var c = function(){};
 var cc = new c();     // a constructor invocation returns a new empty object. cc= {}
 
-var Dog = function() {   
+var Dog = function() {
 	var name, breed;
-    return console.dir(this) //'this' points to the newly created empty object 
+    return console.dir(this) //'this' points to the newly created empty object
 }
-firstDog = new Dog();  
+firstDog = new Dog();
 // firstDog.name does not exist for now
 firstDog.name = "Rover";        // You are creating a field.
 firstDog.breed = "dalmation";
@@ -128,7 +128,7 @@ Dog.prototype.speak = speak;
 firstDog.speak('hello');       //Rover hello
 
 /*SCOPE
-vars in JS have function scope. Within a function all the vars and function declerations are hosited to the top. 
+vars in JS have function scope. Within a function all the vars and function declerations are hosited to the top.
 Any variable declared without 'var' are accessible EVERYWHERE. They have global scope.
 Scope chain: If variable does not exist in the current function, it looks up all its parent functions to find the variable
 */
@@ -143,16 +143,16 @@ function myDog(){
 }
 console.log(name);                 //this fails as 'name' does not exist outside myDog()
 
-function a() { }              //This whole deceleration is immediately hoisted to the top. 
+function a() { }              //This whole deceleration is immediately hoisted to the top.
 var a = function x(){};       //here only var a is hoisted to the top. The assignment happens later. So don't call a() before this assignment statement.
 
 //---------------------------------------------------------------------------------------------------------------------------------------------
-//Some function concepts - 
+//Some function concepts -
 
-/* 1)Pure functions: function that has no side-effects. (does not change any global vars or state of the program). 
+/* 1)Pure functions: function that has no side-effects. (does not change any global vars or state of the program).
 Pure functions operate entirely on it's own variables, it's own state, or any of the things passed into it.
 A pure function does not mean it doesn't access outside state, it means it doesn't change the outside state*/
-//an impure function - 
+//an impure function -
 function foo (x){
 	y++;
 	z = x * y;
@@ -165,7 +165,7 @@ z;   //now this gives 140 . Each time foo() is called it gives inconsistent resu
 
 //arrays, functions, objects are assigned by reference and passed by reference always (F-BONUS)
 //null, undefined, string, boolean, number are assigned by value and passed by value always (a copy is passed)
-//another impure function - 
+//another impure function -
 function doubleThem(list){
 	for(var i = 0; i < list.length; i++){
 		list[i] = list[i] * 2;
@@ -173,7 +173,7 @@ function doubleThem(list){
 }
 var arr = [3,4,5];
 doubleThem(arr);  //the global arr is now [6,8,10]
-//to make it a pure func: in the func code - create an empty array, populate it as requried and then return this new array. 
+//to make it a pure func: in the func code - create an empty array, populate it as requried and then return this new array.
 
 // 2)Assigning functions DYNAMICALLY at run time
 function printDebugMessage(stringHere) {line(stringHere);}
@@ -182,7 +182,7 @@ const DEBUG_MODE_ENABLED = false;
 var debug;
 if(DEBUG_MODE_ENABLED){
 	debug = printDebugMessage;
-} else { 
+} else {
 	debug = doNothing;
 }
 debug("Some debug message");
@@ -220,7 +220,7 @@ function doIfSafe(n, message, func){
 }
 function printMessageNTimes(n, message) { }
 function getNthLetter(n, message){ }
-function printTillN(n, message){ } 
+function printTillN(n, message){ }
 doIfSafe(5,"A string to work with", printMessageNTimes); //all these functions will go through the same check before being executed
 doIfSafe(10,"A string to work with", getNthLetter);
 doIfSafe(8,"A string to work with", printTillN);
@@ -237,8 +237,8 @@ d.function1();
 d.function2();
 
 // 6)Callback: A function that you pass as an argument to an asynchronous function. When the async function has finished running, it calls the function we passed it (with some arguments too)
-setTimeout( function(){ }, 3000);       // Async function, so it does not stop the next line from executing. 
-console.log("this is execute immidiately"); 
+setTimeout( function(){ }, 3000);       // Async function, so it does not stop the next line from executing.
+console.log("this is execute immidiately");
 
 var fs = require('fs');
 fs.readFile('message.txt','utf-8',function(err,res){   //nodeJs read-file, async function send result to your function
@@ -247,12 +247,12 @@ fs.readFile('message.txt','utf-8',function(err,res){   //nodeJs read-file, async
 });
 
 /* 7)Recursive functions: a function that keeps calling itself until a condition is met (base case is reached)
-When one function calls another function, it allocates a new stack frame for it and once execution is done, parent function deletes the stack frame. 
+When one function calls another function, it allocates a new stack frame for it and once execution is done, parent function deletes the stack frame.
 IE used to allow a total of only 13 stack frames... (i.e stack trace including libs can't be more than 13 functions deep). With recursion call stack can get huge quick! therefore people don't use it much.
 In some languages, compilers convert the recursive func into a huge iterative loop and then run it.
 
-Proper Tail Call : If the last line in func A is "return funcB()", then JS will not create a new stack frame for funcB but actually remove funcA's stackframe and use it for funcB. 
-In this way if my recursive func uses only Proper Tail Calls, then in theory JS will use only 1 stack frame for it's entire execution - constant space O(1). 
+Proper Tail Call : If the last line in func A is "return funcB()", then JS will not create a new stack frame for funcB but actually remove funcA's stackframe and use it for funcB.
+In this way if my recursive func uses only Proper Tail Calls, then in theory JS will use only 1 stack frame for it's entire execution - constant space O(1).
 Thus recusion can now be used in practice if you use PTC. PTCO is PTC-optimization. Remember: you don't have unlimited memory and unlimited cpu*/
 
 //Implement a loop as a function
@@ -284,7 +284,7 @@ function foo(){
 var x = foo();           //after this line, foo() and count are not done and garbage collected, because there is a closure there that closes over the scope of foo...
 x();    //0
 x();    //1
-x();    //2 
+x();    //2
 
 function createCounter(){
 	var count = 0;
@@ -299,7 +299,7 @@ line(myCounter.print());                          //0
 line(myCounter.printThis());                      //{3 funcs} .. no access to the interior count..
 myCounter.increment();
 
-var mc = createCounter(); 
+var mc = createCounter();
 line(myCounter.print());                          //1
 line(mc.print());                                 //0
 myCounter.count = 1000;                           // FAIL, there is no field called count! It will actually create a field and set it. And HOISTED.
@@ -316,11 +316,11 @@ Array.prototype.gap = function(gapFuncsArgumentFunction){
 var c = [10,20,30,40].gap(function(x){ return 3*x;});               //c=[30,60,90,120]
 
 //Array.filter      Implement the array.filter function, call it array.gilter
-Array.prototype.gilter = function(newGilterFuncsArgumentFunction){  
+Array.prototype.gilter = function(newGilterFuncsArgumentFunction){
 	var newArrayToreturn = [];
 	for(i=0; i<this.length; i++){
-		if(newGilterFuncsArgumentFunction(this[i]) === true){  
-			newArrayToreturn.push(this[i]);                          //add the element to new array ONLY if it passes the condition. 
+		if(newGilterFuncsArgumentFunction(this[i]) === true){
+			newArrayToreturn.push(this[i]);                          //add the element to new array ONLY if it passes the condition.
 		}
 	}
 	return newArrayToreturn;
@@ -331,7 +331,7 @@ var c = [10,21,30,40,51].gilter(function(x){ return x%2 === 0  });   //c=[10,30,
 Array.prototype.geduce = function(newGeduceFuncsArgumentFunction, newGeduceFuncsInitialValue){
 	var reducedValue = newGeduceFuncsInitialValue || 0;                          //by default, the array.reduce uses the Arrays first value as the starter value.
 	for(i=0; i<this.length; i++){
-		reducedValue = newGeduceFuncsArgumentFunction(reducedValue, this[i]);    
+		reducedValue = newGeduceFuncsArgumentFunction(reducedValue, this[i]);
 	}
 	return reducedValue;
 }
@@ -342,7 +342,7 @@ var c = t.geduce(function(accumilatedValue, arrayVal){ return accumilatedValue+a
 Array.prototype.fe = function (someFunc) {
     for (i=0; i<this.length; i++){
         someFunc(this[i], i);
-    }   
+    }
 }
 var c = [10,20,30,40].fe( (val,idx)=>console.log(idx+':'+val) );    //gives out 0:10 1:20 2:30 3:40
 
@@ -356,24 +356,24 @@ var ray = (function(){
 	var DEFAULTS = { //set a bunch of defaults for this namespace
 		say:'hello',
 		run:'normal'
-	}; 
+	};
 	return {
 		speak: function(){ // this is a module
 			var myArguments = arguments[0] || '' ;  //in JS this is called SHORT CIRCUIT evaluation
-			var statement = myArguments.say || DEFAULTS.say;  
+			var statement = myArguments.say || DEFAULTS.say;
 			console.log(statement);
-			return this;  //in your namespace, make sure each module return the calling object, then you can do CHAINING. 
+			return this;  //in your namespace, make sure each module return the calling object, then you can do CHAINING.
 		},
 		run: function(){ // module#2
-			var myArguments = arguments[0] || '' ;  
-			var statement = myArguments.run || DEFAULTS.run;  
+			var myArguments = arguments[0] || '' ;
+			var statement = myArguments.run || DEFAULTS.run;
 			console.log(statement);
-			return this;  
+			return this;
 		},
 
 	};
 })();
-ray.speak( {say:'hello'} ); //ray is an object with one field (the speak function), ray is your namespace name. 
+ray.speak( {say:'hello'} ); //ray is an object with one field (the speak function), ray is your namespace name.
 //so now you can have all your helper functions under your own namespace 'ray'.
 ray.speak().run().speak({say:'goodbye'}).run({speed:'fast'});  //will output - hello normal goodbye fast
 
@@ -387,7 +387,7 @@ function partiallyApply(usersFunction, otherArgument){
 	return function(oneValue){
 		return usersFunction(otherArgument,oneValue);
 	}
-} 
+}
 
 
 /* closure question: define a function foo so that it produces a function which remembers only the first two arguments
@@ -428,7 +428,7 @@ function a(){  return 5;  }
 function b(){  return 10; }
 
 /*question #2 :
- Write an add() function that takes two numbers and adds them and returns the result. Call add() with the 
+ Write an add() function that takes two numbers and adds them and returns the result. Call add() with the
 results of your two functions from question#1 and print the result to the console. */
 function add(x,y){ return x+y; }
 console.log(add(a(),b()));
@@ -439,7 +439,7 @@ and then sends those values to add() just like you did in question#2 above */
 function add2(fn1,fn2){  return add(fn1(),fn2()); }
 
 /*question #4 :
-Replace your two functions from (1) with a single function that takes a value and returns a function back, 
+Replace your two functions from (1) with a single function that takes a value and returns a function back,
 where the returned function will return the value when it's called.
 */
 function single(x){
@@ -449,7 +449,7 @@ function single(x){
 }
 
 /*question #5 :
-Write addn(..) that can take an array of 2 or more functions, and using only add2(..), adds them together. 
+Write addn(..) that can take an array of 2 or more functions, and using only add2(..), adds them together.
 Try it with a loop. Try it without a loop (recursion). Try it with built-in array functional helpers (map/reduce).*/
 function addn(...args){  //LOOP
 	var total = 0;
@@ -473,11 +473,11 @@ function addn(...args){ //REDUCE
 	},args[0])(); // VVIP you need to call the func
 }
 
-//You can also do 
+//You can also do
 return args.reduce(func, foo(0))(); //let zero be the intial value
 
 /*question #6 :
-Start with an array of odd and even numbers (with some duplicates), and trim it down to only have 
+Start with an array of odd and even numbers (with some duplicates), and trim it down to only have
 unique values.*/
 //??
 
@@ -486,6 +486,6 @@ Filter your array to only have even numbers in it.*/
 arr.filter(function(x){ x % 2 === 0; });
 
 /*question #8 :
-Map your values to functions, using (4), and pass the new list of functions to the `addn(..)` 
+Map your values to functions, using (4), and pass the new list of functions to the `addn(..)`
 from (5).*/
 addn(arr.map(single));
