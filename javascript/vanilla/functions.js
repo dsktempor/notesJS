@@ -151,7 +151,10 @@ var a = function x(){};       //here only var a is hoisted to the top. The assig
 
 /* 1)Pure functions: function that has no side-effects. (does not change any global vars or state of the program).
 Pure functions operate entirely on it's own variables, it's own state, or any of the things passed into it.
-A pure function does not mean it doesn't access outside state, it means it doesn't change the outside state*/
+A pure function does not mean it doesn't access outside state, it means it doesn't change the outside state
+Given the same input, it MUST give the same output. (idempotent)
+Pure functions are the foundation of FUNCTIONAL programming style (as opposed to Object Oriented style)
+The goal is to minimize side-effects in functional programming, you cant be 100% pure*/
 //an impure function -
 function foo (x){
 	y++;
@@ -163,17 +166,21 @@ z;   //this gives 120
 foo(20);
 z;   //now this gives 140 . Each time foo() is called it gives inconsistent results..
 
+//even doing a console.log() is considered a side-effect, as you are printing out something somewhere else.
+
 //arrays, functions, objects are assigned by reference and passed by reference always (F-BONUS)
 //null, undefined, string, boolean, number are assigned by value and passed by value always (a copy is passed)
 //another impure function -
 function doubleThem(list){
 	for(var i = 0; i < list.length; i++){
-		list[i] = list[i] * 2;
+		list[i] = list[i] * 2;        //or even doing something like pop() mutates the array
 	}
 }
 var arr = [3,4,5];
 doubleThem(arr);  //the global arr is now [6,8,10]
 //to make it a pure func: in the func code - create an empty array, populate it as requried and then return this new array.
+//or make copy of it: const copyArr = [].concat(givenArray);
+// for an object, make a copy of the given object and then return that one.  const copyObj = {...givenObj}
 
 // 2)Assigning functions DYNAMICALLY at run time
 function printDebugMessage(stringHere) {line(stringHere);}
@@ -199,7 +206,7 @@ doIf(x === 1,   function(){line('x is one')},   function(){line('x is not one')}
 doIf(x > 1 && x < 10,   function(){line('x is btwn 1 and 10')} ,   function(){line('done')} );
 
 // 4)Returning functions.    (higher order functions)
-function giveMeAfunctionThatReturnsAFunction(){
+function giveMeAfunctionThatReturnsAFunction(){      // OR var g = () => () => () => console.log('x');
 	return function(){
 		return function(){
 			console.log("Function is here");
@@ -274,7 +281,8 @@ mult(10,3,4,5,5);            //more than 15 arguments in ie8 will break the brow
 
 
 /* 8)Closure : A function remembers the variables around it even when that function is executed elsewhere. (lexical scope)
-Basically, you wrap a state into a function, and pass that function around, later on when the function executes, you access that state again in full*/
+Basically, you wrap a state into a function, and pass that function around, later on when the function executes, you access that state again in full
+Closures occur in JS, because JS has funcs as first class citizens and JS has lexical scope. This combo creates the phenominan called closures.*/
 function foo(){
 	var count = 0;
 	return function(){
@@ -303,6 +311,46 @@ var mc = createCounter();
 line(myCounter.print());                          //1
 line(mc.print());                                 //0
 myCounter.count = 1000;                           // FAIL, there is no field called count! It will actually create a field and set it. And HOISTED.
+
+function x() {
+	setTimeout(() => console.log(y), 5000);
+	const y = 10;
+}
+x();    //10 is printed out. By the time, the timeout finishes, the closure closed over undefined, byt it value changed to 10.
+
+// Store away a data set once, and then keep access to it.
+function heavyDuty () {
+	const bigArray = new Array(7000).fill('blah');     //store a really big data set
+	return function (index) {
+		return bigArray[index];                          //this access func closes over that big data set
+	}
+}
+var getValue = heavyDuty();
+var y = getValue(15);
+//So this way with closures, you can hide away data sets or even functions. (encapsulation).
+
+for(var i=0;i<5;i++){
+	setTimeout(function() {console.log(i)} ,2000);
+}
+//The above will print 5, 5 times! To make it print 0,1,2,3,4. Use let i = 0 OR -
+for(var i=0;i<5;i++){
+	(function(x){
+		setTimeout(function() {console.log(x)} ,2000);   //you are just somehow trying to create function scope, for the closure to close on.
+	})(i);
+}
+
+//Currying: I.e calling a function, one argument at a time. You are kind of locking down some arguments. This locked down func now becomes a new utility.
+const mutliply = (a,b) => a*b;
+const curriedMultiply = (a) => (b) => a*b;
+const curriedMultiplyBy5 = curriedMultiply(5);  // a new utility function
+//Partial application, only one arg is fixed, the rest are expected together (it is a type of currying)
+const mutliply = (a,b,c) => a*b*c;
+const partialMultiplyBy5 = mutliply.bind(null,5);  // you can now call partialMultiply(2,10) to get 100. i.e you just send it the rest of the args ALONE.
+//Composition: multiple small tasks are combined to make one big task.
+const compose = (f,g,t) => (data) => f(g(t(data)));  //you have built an assembly line
+var finalvalue =  compose(Math.abs, Math.floor, Math.sqrt)(25);
+// this kind of composition is what makes functional programming more scalable tha object oriented programming... fyi.
+//Arity: the number of arguments a function takes. In functional programming, arity must be as low as possible.
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Array.map     Implement the array.map function, call it array.gap

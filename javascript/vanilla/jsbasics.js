@@ -342,8 +342,8 @@ Memory Heap: Memory allocation (large memory location) every function, var and c
 Garbage Collection: When JS allocates memory for a value. If there are no more refs to that value, it clears that memory. It prevents memory leaks. (running out of memory) (infinite loop pushing values into an array)
 Common causes of memory leaks: Too many global vars, Not removing event listeners in SPAs, vars inside setInterval.
 
-JS Runtime = JS Engine + Web API + Event Loop (callback queue)
-Web apis = dom tree and events, fetch() http stuff, setTimeout(), window object - This is provided by the browser too.
+JS Runtime = JS Engine + Web API + Event Loop + callback queue + job queue
+Web apis = dom tree and event listeners, fetch() http stuff, setTimeout(), window object - This is provided by the browser too.
 
 Any webAPI task is done asynchronously. I.e it is passed on to the webapi and stack is freed. When you call setTimeout(), it removes it from the call stack. Once XYZ time is done, setTimeout is added to the callback queue, and once the call stack is empty, setTimeout is brought back on to the call stack.
 function abc() {
@@ -353,6 +353,11 @@ function abc() {
 	}
 }
 NodeJS is a JS runtime! Like a browser. NodeJS is a c++ program (node.exe). So you can install node on your server and run js code that access's your file system, do http stuff etc. Even node has v8 engine + event loop + it's own APIs.
+
+With ES6 Promises, when these resolve the go into the Job Queue. Things in the job queue have higher precedence over the callbackqueue.So event loop picks up things from here first and then puts it on to the call stack.
+So Promise.resolve('hello') runs faster than setTimeout(f,0);
+
+Every tab in your browser has it's own Runtime (i.e own callstack)
 
 ---------------------------------------------------------------------------------------------------------------
 Chapter 2 : SCOPE AND CLOSURES
@@ -1323,7 +1328,114 @@ Remember, the parent and child share their references to the array objects, func
 JavaScript functions can't really be duplicated (in a standard, reliable way), so what you end up with instead is a duplicated reference to the same shared function object.
 In general, faking classes in JS often sets more landmines for future coding than solving present real problems.
 
+Object Oriented Programming
+Basic object factory:
+function createElf(name, weapon) {
+	return {
+		name,      //or name: name
+		weapon,
+		attack() {return 'attack with ' + weapon}
+	}
+}
+const peter = createElf('peter','stones);
+peter.attack();
+const sam = createElf('sam', 'heather');
+In the above, for each elf, in memory, there is going to be it's own attack() function code stored (waste of memory)
+
+Amateur Object Factory:
+function Elf(name,weapon) {
+	this.name = name;
+	this.weapon = weapon;
+}
+Elf.prototype.attack = function() {return 'attack with ' + this.weapon}
+const peter = new Elf('peter','stones);
+//peter is automatically a child of the Elf function object, becuase 'new' was used. So peter does not have 'attack', but his proto parent does. peter.__proto__ points to the object at Elf.prototype
+//All elves now share one function code defintion.
+
+Intermediate Object factory:
+const elfFunctions = {
+	attack() {return 'attack with ' + this.weapon}
+}
+function createElf(name, weapon) {
+	let newElf = Object.create(elfFunctions);     //Object.create() was invented to stop using new (i.e function constructors)
+	newElf.name = name;
+	newElf.weapon = weapon;
+	return newElf;
+}
+const peter = createElf('peter','stones);
+Now peter does not have attack function, but using proto chain, it gets the attack function from the elfFunctions object.
+All elves now share one function code defintion.
+
+Note:
+var a = new Number(5);
+typeof a; //this is object!   (not number)
+
+Professional Object factory:
+class Elf {
+	constructor(name, weapon) {
+		this.name = name;
+		this.weapon = weapon;
+	}
+	attack() {return 'attack with ' + this.weapon}
+	//don't put this inside the constuctor, then every instance will now have it's own func definition (waste of memory)
+}
+const peter = new Elf('peter','stones);
+peter.__proto__; //this is Elf
+const fiona = {...ogre}   (just making a copy)
+fiona === peter; //false
+fiona.__proto__; //this is Object.prototype, has no relation to Elf.
+fiona.attack();  //attack() does not exist.
+//So use 'extends' to solve this.
+
 3.5)prototypes
+Prototype chains-
+So __proto__ of any object, actually links to the "prototype" property of it's parent. The value of this property in the parent is an object that has a lot of properties. That parent is normally a function object or just plain object.
+So every object in the chain has a __proto__ property (this ones value is a reference) and a prototype property (this ones value is an object)
+
+__proto__ ----points--to----> Parent.prototype which is an object {prop1: ,prop2, prop3, prop4}
+
+var a = [10];
+a.__proto__; this is the Array object's prototype property. (this is Array.prototype which has map/reduce/filter/every etc)
+a.__proto__.__proto__;  this is the Object object. (Object.prototype which has stuff like )
+
+var b = {x:10; y:20; z:30};
+var c = {w:5};
+c.__proto__ = b;  //Now c has ALL of b's properties and funcs  (NEVER do it this way though, for performance reasons)
+c.x;    //10   c does not have x, so it goes up the prototype chain, b has it, so it uses it.
+b.__proto__;  //this is the Object object (all object funcs and props are here)
+b.__proto__.__proto__; //null  In the begginning there was nothing, just null. Then Object came.
+b.isPrototypeOf(c); //true    b does not have func isPrototypeOf, so it goes to object and gets it.
+for (k in c);  this gives b and c props
+c.hasOwnProperty(k);  true only if k really belongs to c and is not inherited
+
+function f() {}
+f.hasOwnProperty('call/bind/apply');  //all are false
+f.hasOwnProperty('name'); // this is true!
+f.__proto__;  //the Function Object's prototype property, which is an object with properties - call/apply/bind/length
+So f.__proto__  and Function.prototype point to the same object.
+f.__proto__.__proto__; //the Object object
+
+Fact: ONLY functions have the 'prototype' property. So things like Object, Array, Function ,String-> these are all functions! (constructor functions, they start with Capital letter) (typeof Object is 'function')
+String.prototype in the String constructor, is an object that has all these funcs - charAt, indexOf, concat etc.
+every function has a prototype property and it references to an object used to attach properties that will be inherited by objects further down the prototype chain.
+const obj = {};
+obj.prototype;  //this is undefined. Only functions have this property.  (same with [].prototype,'string'.prototype etc.)
+
+Object.prototype is the real object which is the PARENT of all JS objects.
+
+To add a new functionality to every Date object
+Data.prototype.newFunc = function() {}
+So now, every child of date, if they don't have newFunc, they will go up the __proto__ chain, reach Date.prototype object, and then use that func.
+You can even overwrite any exisitng function by just redefining it.
+
+var x = someFunc.bind(thisObject,arg1,arg2);
+Function.prototype.bind = function(thisObject) {
+	self = this;
+	return function(args) {
+		return this.apply(thisObject, args);
+	};
+}
+
 Objects in JavaScript have an internal property, denoted in the specification as [[Prototype]], which is simply a reference to another object.
 Almost all objects are given a non-null value for this property, at the time of their creation.
 Think of [[Prototype]] like the [[Get/Put]] operations.. here you are looking up the protype chain.
@@ -1491,7 +1603,8 @@ Never use the set(), i.e set the __proto__ property of an object. Dangerous.
 
 JS developers call double underscore __ as dunder. So __proto__ is called as dunder proto
 
-var a = Object.create(b);  a is now a new object, which is a child of b.
+var child = Object.create(someParent);  a is now a new object, which is a child of b. This is the way to link object, don't use __proto__ like above.
+someParent.isPrototypeOf(child);  //this is true
 We don't need classes to create meaningful relationships between two objects. The only thing we should really care about is objects linked together for delegation, and Object.create(..) gives us that linkage without all the class cruft.
 function createAndLinkObject(o){  //how it is probably implemented
 	function F(){}
@@ -2671,6 +2784,26 @@ foo(2);	  // 42 (linked) If you pass an argument, the arguments slot and the nam
 foo();	  // undefined (not linked) If you omit the argument, no such linkage occurs.
 But in strict mode - there is no linkage, arguments[] is what you send to the func, that's it.
 
+Error Handling:
+You can create errors with: throw new Error('some message here');
+Technically you can 'throw' anything, F-BONUS.
+Every Error object thrown has three properties: name, message and stack
+Other Error Object you can throw: new SyntaxError(), new ReferenceError()
+
+You can extend the Error object!
+class AuthenticationError extends Error {
+	constructor(msg) {
+		super(msg);
+		this.name = 'app specific auth error';
+		this.someNewProp = 'abc'
+	}
+}
+throw new AuthenticationError('login failed');
+
+When the current function on the call stack throws an error, JS engine, runs DOWN wards on the call stack to see if any function has a catch block to handle this error. All the stack frames in between are removed from the stack, and that catch block is executed. If there is nothing to catch it, the runtime will have a default catcher. Browsers have oneerror() and nodeJS has process.on('uncaughException') to catch errors.
+
+Use try{} catch(error){} finally{}
+
 Try-catch
 try only requires either catch or finally. It can have both too.
 function foo() {
@@ -2678,7 +2811,7 @@ function foo() {
 		throw 42;   //or return 42
 	}
 	finally {  console.log("Hello");  }
-	console.log("never runs");
+	console.log("never runs!!!!!!!");
 }
 console.log(foo());    Prints out "Hello" followed by Uncaught Exception: 42
 So when it see return42, it determines that the completion time is here, so it runs the finally{} block and THEN returns the completion value of 42
@@ -2705,6 +2838,11 @@ for (var i=0; i<10; i++) {
 	}
 	console.log('never comes here');
 } // prints out 0 to 9.  In each iteration, the continue triggers the end of the block, so it goes to finally and executes it. It then does i++ and starts the next iteration.
+
+Error Handling for async code.  try-catch won't work
+Promises: use .catch() at the end of all your .then()  to catch any errors in the .then()s ..
+If your promise generation code creates an exception, it will reject, so it will hit .catch()
+try-catch will work for asynch-await
 
 Switch Statement
 switch (a) {
@@ -2795,6 +2933,9 @@ Asynchrony: Chunks of code that run "later".
 Standard Ajax requests don't complete synchronously. They are "non-blocking" calls.
 You can force AJAX calls to be blocking, BUT you should never, ever do it, under any circumstances, because it locks the browser UI (buttons, menus, scrolling, etc.) and prevents any user interaction whatsoever.
 
+Synchonous Code: Next line is not executed untill the current line is DONE
+JS is a single-threaded language that can be non-blocking.
+
 Asynch console: since console is not part of JS spec, each JS enviroment has it's own implementation.
 On some browsers, sometimes, console.log is async! because I/O is a very slow and blocking part of many programs (not just in JS). So sometimes it runs async in the background
 the browser may feel it needs to defer the console I/O to the background, so the console.log(x) will happen some 1 second later (and that latest value of x will be used)
@@ -2831,9 +2972,10 @@ An event loop, by contrast, breaks its work into tasks and executes them in seri
 Non-deterministic: In multi-threading, different statements in different threads are interleaved, outcomes can be unpredictable especially if different threads are accessing the same memory/variables.
 Run-to-completion: Once an event is popped and executed, it is executed till it finishes.
 
-Concurrency: Even though events are running one after an other on the event loop, their parent task are kind of running in parallel.
+Concurrency: Even though events are running one after an other on the event loop, their parent task are kind of running in parallel. JS has concurrency on it's single thread. It does not have parallelism. (well, apart from web-workers that run on other threads)
 Concurrency is when two or more chains of events interleave over time, such that from a high-level perspective, they appear to be running simultaneously (even though at any given moment only one event is being processed).
-The single-threaded event loop is one expression of concurrency
+The single-threaded event loop is one expression of concurrency.
+You have only one mouth to chew, but you can feed yourself with two,three hands in parallel. But at any instant, only one hand's food is being chewed. this is concurrency.
 
 Race condition: You don't know which one will run first.
 Best way to identify race conditions: The JS debugger, using breakpoints and stepping through code line by line , don't depend on console.log()
@@ -3358,6 +3500,22 @@ request("http://some.url.1/").then( function(response1){return request( "http://
 	request("http://some.url.1/").then( res,rej ).then( res,rej );
 	your reject handler can still send a safe value to the next then()
 
+ES9(ES2018) introduces .finally()  It runs after .then()/.catch()
+
+const urls = ['someRESTurl1', 'someRESTurl2', 'someRESTurl3'];
+Promise.all(urls.map(url => {
+	return fetch(url).then(resp => resp.json())
+})).then(results => {console.log(results[0], results[1], results[2])});
+
+ES9(ES2018) introduces for-await-of
+const getData = async function () {
+	const arrayOfPromises = urls.map(url => fetch(url));
+	for await(let request of arrayOfPomises) {
+		const data = await request.json();
+		console.log(data);
+	}
+}
+
 Promises normalize asynchrony and encapsulate time-dependent value state, and that is what lets us chain them together in this useful way.
 
 .then(null,function(err){ .. }) pattern --  only handling rejections (if any) but letting fulfillments pass through -- has a shortcut in the API: catch(function(err){ .. })
@@ -3512,6 +3670,40 @@ It prints out 200 599
 >Performance: Promises are slower as compared to naked, untrustable callbacks. It is difficult to say by how much. Promises make everything async, which means that some immediately (synchronously) complete steps still defer advancement of the next step to a Job/tick
 
 Promises don't get rid of callbacks, they just redirect the orchestration of those callbacks to a trustable intermediary mechanism that sits between us and another utility.
+
+Running promises in parrallel, in sequence and in a race
+const promisify = (item, delay) =>
+  new Promise((resolve) =>
+    setTimeout(() =>
+      resolve(item), delay));
+
+const a = () => promisify('a', 100);    //i.e if you call a(), you will get a promise, which will resolve with value 'a' after 100ms
+const b = () => promisify('b', 5000);
+const c = () => promisify('c', 3000);
+
+async function parallel() {
+  const promises = [a(), b(), c()];     //this runs all three promise defintion codes, i.e all 3 timeouts start in parallel
+  const [output1, output2, output3] = await Promise.all(promises);  //the RHS will be done only after all three are done
+  return `parallel is done: ${output1} ${output2} ${output3}`
+}
+
+async function race() {
+  const promises = [a(), b(), c()];     //starts all setTimeouts in parallel
+  const output1 = await Promise.race(promises);      //the RHS will be done as soon as one of them is done
+  return `race is done: ${output1}`;
+}
+
+async function sequence() {
+  const output1 = await a();
+  const output2 = await b();
+  const output3 = await c();
+  return `sequence is done ${output1} ${output2} ${output3}`
+}
+
+sequence().then(console.log)
+parallel().then(console.log)
+race().then(console.log)
+//Guess the outputs
 
 5.4)Generators
 Run-to-Completion - once a function starts executing, it runs until it completes, and no other code can interrupt and run in between.
@@ -3815,7 +4007,7 @@ async function main() {
 		var text = await foo(11,31);
 		console.log( text );
 	}
-	catch (err) {
+	catch (err) {     //asynch-await does'nt have .catch() function, so just use normal sync try-catch blocks
 		console.error( err );
 	}
 }
@@ -5362,7 +5554,23 @@ ES6 rules- read the book again to undersand these
 >The properties and methods you expose on a module's public API are not just normal assignments of values or references. They are actual bindings (almost like pointers) to the identifiers in your inner module definition.
 >Importing a module is the same thing as statically requesting it to load (if it hasn't already) (blocking load)
 
-ES6 Syntax: new keywords - import and export
+Previous Scope Chain: Global -> Function -> Block
+New Scope Chain: Global -> Module -> Function -> Block
+i.e you can share things between different modules, but these are still hidden from global scope (to prevent getting overwritten by someone else)
+In a particular module, you specify what all funcs/vars you need -> you do something -> then you export some funcs/vars.
+
+Nomrmally modules would be IIFEs.. everything is private in the IIFE. (these are SAFE from global scope)
+var myModule = (function(outerWorldInfo){ do some thing })(sendSomeGlobalVarsToIt);  //myModule is an object that has all funcs/vars
+So different teams work on different modules/silos. They also return an object {} (myModule) that other teams can use.
+
+The problem with IIFEs
+>The IIFEs are run in the correct sequence. Because they each depend on one an other. So they have to run/load on the page in the right order
+>The LHS of the IIFE is still in global scope! What is the point? it can still be overwritten by some other script.
+Solution for above two problems: CommonJS i.e it uses require() and module.exports={} - this is still used in nodeJS.
+Modules are loaded synchronously, hence commonJS was mostly used on server side code. Other solutions (with different syntax) are AMD and UMD.
+
+ES6 Syntax: new keywords - import and export. JS eventually started natively supporting modules. (no need to use commonJS,amd,umd)
+If any .js file on the page has import/export in it. All the vars in it are private. Unless you export something out from that file. And in the outer global scope or inside any other module script, you have to explicitly 'import' that variable/func to use it.
 import and export must always appear in the top-level scope of their respective usage. i.e They must appear outside of all blocks and ALL functions.
 
 EXPORT statement
@@ -5623,6 +5831,8 @@ a.length;					// 3
 a;							// [1,2,3]
 a.first();					// 1
 a.last();					// 3
+
+instanceof this is used to see if childClass is some descendant of parentClass
 
 new.target
 a new "magical" value available in all functions. (though in normal functions it will always be undefined)
@@ -6034,6 +6244,7 @@ string.repeat();
 Fetch function. Works natively with browsers to fetch data.
 fetch('http://api.open-notify.org/astros.json').then(console.log); //it outputs the entire response object.
 it has a then function that runs as soon as the fetch resolves
+
 */
 
 Useful -
@@ -6067,3 +6278,9 @@ num.toPrecison(x)
 num.toFixed(x)
 
 
+/*
+Others -
+
+
+
+*/
