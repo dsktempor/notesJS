@@ -43,7 +43,7 @@ strings.unshift('aa'); //insert at beginning is O(n)
 strings.splice(2, 0, 'cc'); //insert at middle is O(n)
 strings.shift(); //remove at beginning is O(n)
 
-class MyArray {
+class MyArray {    //Arrays in JS are anyway just integer based objects, that have a length property.
 	constructor() {
 		this.length = 0;
 		this.data = {};
@@ -79,7 +79,7 @@ class MyArray {
 
 // Hash tables: Collection of key-value pairs. The keys are not oredered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a 'value' will be O(n).
 // Python has dictionary, JS- Objects and Map, Java go and Scala have Maps, Ruby has Hashes
-// You take an key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size)
+// You take an key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size) The key need not just be a string, it can be anything - array, object, function whatever. JS Map() does the same thing, but it maintains the order of insertion (i.e when you loop through the keys, you go in the order of insertion)
 // So at array index '10', you store a key of 'pink' and a value of '#ff69b4'. Your hash function converted your key 'pink' to index '10'.
 // Hash function must return a value in O(1) time (be very fast), it must distribute values uniformly AND for the same input it must give the same output (must be deterministic or idempotent)
 // Handling collisions
@@ -87,14 +87,14 @@ class MyArray {
 // 2) Linear Probing: You store only one value at one index. If there is a collision, search through the array to find the next empty spot.
 // Worst case - all values hashed to one place (bucket). Acesss becomes O(n)
 // Hashtables don't store data in order like arrays do. You insert it in one order, but in memory, these will be spread at random locations, depending on the hashed index.
-// Advantage: fast access (assuming no collisions), insert, flexible keys (like JS Maps)
+// Advantage: fast access (assuming no collisions),fast insert, flexible keys (like JS Maps)
 // Disadvantage: unordered, slow key iteration (need to go through whole memory space to get all keys), high memory O(n)
 class HashTable {
 	constructor(size = 53) {
 		this.keyMap = new Array(size);         // A HashTable of fixed size (default size is 53). Most hashTables use a HUGE array.
 	}
 
-	_hash(key) {   // function that returns a value between 0 to this.keyMap.length everytime. _VARNAME means, do not access this from outside this class (dev standard)
+	_hash(key) {   // function that returns a value between 0 to this.keyMap.length everytime. _SOMEVARNAME means, do not access this from outside this class (dev standard)
 		let total = 0;
 		let WEIRD_PRIME = 31;      // Prime numbers help in spreading out keys more evenly
 		for (let i = 0; i < Math.min(key.length, 100); i++) {        // Constant time, you can do i<key.length, then it becomes O(n)

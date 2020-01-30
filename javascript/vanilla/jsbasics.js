@@ -4629,6 +4629,10 @@ Javascript is a living breathing standard, with browsers rolling out support for
 Transpile = transformation + compile
 Pollyfills/Shims = You define the function if the function is not already there.
 
+ES7 (ES2016) introduced just two new features: array.includes(), string.includes() and exponential operator 2**10 (2 to the power 10)
+ES8 (ES2017) introduced string.padStart(10), string.padEnd(5), Object.values(someObj), Object.entries(someObj), Async-Await
+ES10 (ES2019) introduced array.flat(howDeepToFlatten), array.flatMap(), string.trimStart(), string.trimEnd(), Object.fromEntries(someArrayOfArrays), catch block in a try-catch need not catch an (error), it can just be: catch { }
+
 6.2: Syntax
 6.2.1)Blocked Scope Decleration
 The only way in ES5 to get block scope was to declare the var in an (IIFE(){})()
@@ -5553,6 +5557,13 @@ ES6 rules- read the book again to undersand these
 >ES6 modules are singletons. That is, there's only one instance of the module, which maintains its state. Every time you import that module into another module, you get a reference to the one centralized instance.
 >The properties and methods you expose on a module's public API are not just normal assignments of values or references. They are actual bindings (almost like pointers) to the identifiers in your inner module definition.
 >Importing a module is the same thing as statically requesting it to load (if it hasn't already) (blocking load)
+
+How to port JS:
+>Inline script: On different html files, copy paste your code inline: <script> your HUGE code here </script>
+>Script tags: Put all your code into a JS file, then import that file using <script source=/path/index.js></script> Resue your file on multiple html pages. Make sure your scripts are in the right sequence.
+>IIFEs in your js-files / inline-scripts
+>Have lots of small little js files, in each of them use CommmonJS to do require() and module.exports{}. Then use "browserify" (module bundler) to compile all the different scripts into one big unreadable BUNDLE.js with all dependencies resolved.
+>ES6 import and export. Different small JS files use export and import for vars. Then use "WEBPACK" (module bundler) to create one big file.
 
 Previous Scope Chain: Global -> Function -> Block
 New Scope Chain: Global -> Module -> Function -> Block
