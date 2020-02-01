@@ -8,11 +8,13 @@ memory leak at soundcloud: https://developers.soundcloud.com/blog/garbage-collec
 js runtime loop: http://latentflip.com/loupe/?code=ZnVuY3Rpb24gcHJpbnRIZWxsbygpIHsNCiAgICBjb25zb2xlLmxvZygnSGVsbG8gZnJvbSBiYXonKTsNCn0NCg0KZnVuY3Rpb24gYmF6KCkgew0KICAgIHNldFRpbWVvdXQocHJpbnRIZWxsbywgMzAwMCk7DQp9DQoNCmZ1bmN0aW9uIGJhcigpIHsNCiAgICBiYXooKTsNCn0NCg0KZnVuY3Rpb24gZm9vKCkgew0KICAgIGJhcigpOw0KfQ0KDQpmb28oKTs%3D!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D
 JS Coercion comaprison table: https://dorey.github.io/JavaScript-Equality-Table/
 ECMA == algorithm: https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
-
+Operator Precedence and Associativity: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+Underscore JS: Best JS utilis function library! Read them all!!! https://underscorejs.org/#once, Same with Lodash: https://lodash.com/
+Use Moment.js to work with Date() stuff
+Try to read and understand the entire jQuery.js file. It is pretty easy.
 
 
 */
-promises 2829
 #ktek - further reading
 /*
 No person's opinion, no framework's assumptions, and no project's deadline should be the excuse for why you never learn and deeply understand JavaScript.
@@ -86,6 +88,7 @@ a = b * 2; this has 4 expressions: a,b,b*2,a=b*2
 
 b * 2; this is an expression statement (it's really not doing anything)
 alert(a); another expression statement
+An expression is a unit of code that returns a value
 
 The JavaScript engine actually compiles the program on the fly and then immediately runs the compiled code. (its not exactly an interpreted language)
 
@@ -204,13 +207,13 @@ If you try to access a variable's value in a scope where it's not available, you
 
 There is implicit auto-global variable declaration when you omit the keyword var
 
-Let - works in the same way as var. Scoping is at a block level, there is no hoisitng for these variables!
+Let - works in the same way as var. Scoping is at a block level, there is no hoisting for these variables!
 
 switch - if there is no break for a case, there will be 'fall through'
 conditional operator  boolean ? statement : statement ;
 
-"use strict"
-put this inside any function or on top of the file.
+"use strict";
+put this inside any function or on top of the file. If you put this in global scope, then it applies to every script on the page.
 It tightens the rules for certain behaviors.
 It makes your code generally more optimizable by the engine
 
@@ -326,10 +329,10 @@ Brendan Eich (creator of JS) wrote the first JS engine, SpiderMonkey. (mozilla u
 Engine = Parser -> Abstract Syntax Tree -> Interpreter -> Profiler -> Compiler -> Bytecode (optimized  binarycode)
 The browser converts byte code to machine code. "Web Assembly" is now the aggred upon standard machin code format.
 Interpreter is about translating to byte code, Compiler is about optimizing the code...
-V8 uses JIT Compiler (just in time compiler), it is a compiler ssss+ interpreter.
+V8 uses JIT Compiler (just in time compiler), it is a compiler + interpreter.
 
 JS Compilers don't like: eval(), for..in, with, delete, func arguments (because it is an array like object)! Try to skip these. It won't optimize such code.
-
+Execution Context: this is always there, it is the base, there will be a global object (window) and a 'this' pointer. This context is created by the JS engine. Every stack frame is it own execution context. These contexts are created on the fly as and when functions are called.
 Compilers normally use 'hidden cache' and 'hidden classes'. Look it up.
 
 Call Stack: Current point of execution (a stack of func stack frames) (stack overflow is possible)
@@ -352,6 +355,9 @@ function abc() {
 		abc()  -> this will cause a stackoverflow
 	}
 }
+The same with any click handlers, the click callback is executed ONLY after the entire function call stack is empty. i.e All synchronous code is done.
+Any asynchronous callbacks are first placed on the callback queue, and then brought to the stack once it is empty.
+
 NodeJS is a JS runtime! Like a browser. NodeJS is a c++ program (node.exe). So you can install node on your server and run js code that access's your file system, do http stuff etc. Even node has v8 engine + event loop + it's own APIs.
 
 With ES6 Promises, when these resolve the go into the Job Queue. Things in the job queue have higher precedence over the callbackqueue.So event loop picks up things from here first and then puts it on to the call stack.
@@ -572,6 +578,9 @@ The second statement, a=2, the assignment, is left in place for the execution ph
 Only the declarations themselves are hoisted, while any assignments or other executable logic are left in place. Obviously.
 Hoisting is done, for each scope. i.e the scope is informed that these variables exist for these blocks. The JS Engine, during execution will ask for these (LHS or RHS references)
 So, variable decleration is done during compilation and not run time! (HOISTING). During run time, it is essentially a NO OP!
+During compilation, the JS engine needs to know how much memory is needed (how many variables) before it starts executing code (it is creating an execution context i.e a wrapper), so it reads all the var declerations and sets them to undefined. Function decleration are saved in memory as is (the whole code takes space).
+If you don't even declare a var and then use it later. The JS engine never pre-reserved any memory for that var during compilation, so during execution it will give referenceError(there is no such thing in memory).
+
 var baz = 2;
 typeof baz;    //'number'
 var baz;       //this line is ignored, it is a NO OP.
@@ -641,6 +650,14 @@ class x
 Only the first two are hoisted in their scope, func go above the var.
 
 TLDR: all declarations in a scope, regardless of where they appear, are processed first before the code itself is executed.
+
+var x = 25;
+function b(){
+	var x;
+	console.log(x);   //this will be undefined not 25! ONLY IF x is not declared inside this function, then it would print 25!
+}
+b();
+So, only if the var is not in memory for the currently executing execution context, THEN only, it will look at its outer lexical scope, it does'nt matter how many stack frames below, that this var is there, it will get the value from there.  this is lexical scope not dynamic scope. The base stack frame / execution context is the global scope. This process is called going down the scope chain to find a var.
 
 2.5)Scope closure
 elusive, mythological part of the language: closure.
@@ -888,7 +905,7 @@ Now whenever you call g, it will call foo where only people is the "this" object
 g is exactly the same same as foo, the only difference is, for it, "this" is people.
 
 ES5 provides this with Function.prototype.bind - this returns a new function. On any function object you can call .bind()
-var g = foo.bind(obj);      //For g alone, you are explicitly binding foo to obj.
+var g = foo.bind(obj);      //For g alone, you are explicitly binding foo to obj. It creates a COPY of the function defintion! (in memory)
 And in ES6, g.name will give you "bound foo"  (new property is set)
 
 Function.prototype.newBind = function(obj){   // ~ pollyfill for bind()
@@ -1029,8 +1046,13 @@ To summarise: Determining the "this" binding (to an object) for an executing fun
 Once examined, four rules can be applied to the call-site, in this order of precedence: New, Explicit, Implicit, Default.
 
 3.3)Objects
+In JS, everything is either an object or a primitive. period.
 Literal syntax: { a: 4 };
 Constructor syntax: var b = new Object(); b.x = 5;  (very rarely people use the constructor syntax)
+Here variable 'b' stores a pointer. That pointer points to an object. That object has a bunch of variables, each storing more pointers, that point to their values.
+So unlike an array, these memory locations are not contigious. The DOT operator is left-associative (the operator is  used to go through these memory locations, underneath the hood, even this operator is a function that is doing all the work)
+
+In JSON, property names MUST be wrapped in quotes. This is not mandatory in JS objects. Also, in JSON, functions can't be values. So in this way, JSON is a subset of JS objects.
 
 JS spec has 6 primary types: BNS, null, undefined, object. All 6 are distinct.
 typeof null incorrectly gives object, this is a bug in JS.
@@ -1098,6 +1120,9 @@ var someFoo = foo;
 In the above, the three variables foo, obj.someFoo, someFoo are all the SAME and are just seperate references to the same function object foo.
 It does'nt mean foo is a method of obj
 If you do someFoo.count=10, then even foo.count and obj.someFoo.count are both updated to 10.
+
+Functions Objects -
+A function object can have these properties: primitive values, object as a value, function as a value, some callable code, a name (anonymous ones dont have this). The code is just on of the properties of the object.
 
 Arrays-
 var arr = [10, 'bar', 'baz'];
@@ -1254,6 +1279,10 @@ Now use var it = myObject[Symbol.iterator]();
 or for (var v of myObject) { }
 You can even declare it as myObject[Symbol.iterator]= function(){ } . The reason we used define() was to make the iterator non-enumerable.
 
+Method Chaining:
+obj1.func1().func2().func3();   //all 3 funcs affect obj1
+To be able to do this, each of the funcs 1,2,3 must return "this". Then only you can chain like this.
+
 3.4)Mixing Class objects
 Procedural programming pattern: code which only consists of procedures (aka, functions) calling other functions, without any higher abstractions
 Class Design Pattern: Like Java.
@@ -1352,6 +1381,17 @@ const peter = new Elf('peter','stones);
 //peter is automatically a child of the Elf function object, becuase 'new' was used. So peter does not have 'attack', but his proto parent does. peter.__proto__ points to the object at Elf.prototype
 //All elves now share one function code defintion.
 
+Semi-pro Object Factory
+function HumanMaker (sex,name) {  //must be a CAPITAL letter!! (constructor functions)
+	this.sex = sex;
+	this.name = name;
+}
+HumanMaker.prototype.func1 = function (a,b) { this.a = a};     //All humans share one function code defintion. (no wasting memory)
+HumanMaker.prototype.func2 = function (c,d) { this.c = c};
+var albert = new HumanMaker('male','albert);
+albert.func1('sleep');
+//This is how all the built-in function constructors work - Object, Array, String, Date etc. You can add any new funcs you want to them by doing Obj.prototype = func() {}. But don't do this. Other scripts on the page may break.
+
 Intermediate Object factory:
 const elfFunctions = {
 	attack() {return 'attack with ' + this.weapon}
@@ -1369,6 +1409,8 @@ All elves now share one function code defintion.
 Note:
 var a = new Number(5);
 typeof a; //this is object!   (not number)
+Don't use these primitive function constructors! things like new Number(3) === 3 is FALSE...  object is not equal to number
+Even for Arrays, dont use for-in, it will give you all the new custom made properties of the Array.prototype too.... just use simple for loops for arrays.
 
 Professional Object factory:
 class Elf {
@@ -1411,9 +1453,9 @@ c.hasOwnProperty(k);  true only if k really belongs to c and is not inherited
 function f() {}
 f.hasOwnProperty('call/bind/apply');  //all are false
 f.hasOwnProperty('name'); // this is true!
-f.__proto__;  //the Function Object's prototype property, which is an object with properties - call/apply/bind/length
+f.__proto__;  //the Function Object's prototype property, which is an object with properties - call/apply/bind/length  (same as Function.prototype)
 So f.__proto__  and Function.prototype point to the same object.
-f.__proto__.__proto__; //the Object object
+f.__proto__.__proto__; //the Object object (same as Object.prototype)
 
 Fact: ONLY functions have the 'prototype' property. So things like Object, Array, Function ,String-> these are all functions! (constructor functions, they start with Capital letter) (typeof Object is 'function')
 String.prototype in the String constructor, is an object that has all these funcs - charAt, indexOf, concat etc.
@@ -1609,7 +1651,7 @@ We don't need classes to create meaningful relationships between two objects. Th
 function createAndLinkObject(o){  //how it is probably implemented
 	function F(){}
 	F.prototype = o;
-	return new F();
+	return new F();    //the new object created here will point to 'o' which is it's parent. F is just a dummy intermediary.
 };
 Object.create = createAndLinkObject;
 
@@ -2617,6 +2659,8 @@ If both are strings, which alphabets/digits came first?
 ["42"] < ["043"]   		//false   ["42"]<["043"] to "42"<"043"   "0" is less than "4"
 [4,2] < [0,4,3]    		//false       [4,2]<[0,4,3] to "4,2"<"0,4,3"
 {b:42} < {b:43}         //false    [object Object] < [object Object]
+1 < 2 < 3            //true
+3 < 2 < 1           //also, true! it does false<1 -> 0<1 -> true
 
 Implicit coercion must be used responsibly and consciously. Know why you're writing the code you're writing, and how it works. Strive to write code that others will easily be able to learn from and understand as well.
 
@@ -2699,6 +2743,8 @@ otherData({a:10,b:20,c:30});
 Operator Precedence:  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
 b = a++, a;     //the , operator has a lower precedence than the =, so it does b=a++ and then a;
 
+In any language, operators are just syntactic sugar for an underlying function that is doing the actual computation.
+Associativity: What order operators get called in: left-to-right or right-to-left. Every operator, apart from precedence, also has an associativty. Look it up. (link on the top)
 Ze order of ze precedence:
 ()
 func() call
@@ -2747,6 +2793,10 @@ return (
 		a * 2 + 3 / 12
 	);   --> ASI adds it over here....
 ASI is an "error correction" routine, specifically, a parser error.
+return 	-->ASI adds it over here. Bad! Move the open bracket to be on the same line of the return, then ASI won't happen
+{
+	firstname: 'tony'
+}
 
 JS Errors
 >Compile time:
@@ -6294,4 +6344,171 @@ Others -
 
 
 
+*/
+
+
+/* Sample Framework/Library
+
+;(function(global, $) {
+
+    // 'new' an object
+    var Greetr = function(firstName, lastName, language) {
+        return new Greetr.init(firstName, lastName, language);
+    }
+
+    // hidden within the scope of the IIFE and never directly accessible
+    var supportedLangs = ['en', 'es'];
+
+    // informal greetings
+    var greetings = {
+        en: 'Hello',
+        es: 'Hola'
+    };
+
+    // formal greetings
+    var formalGreetings = {
+        en: 'Greetings',
+        es: 'Saludos'
+    };
+
+    // logger messages
+    var logMessages = {
+        en: 'Logged in',
+        es: 'Inició sesión'
+    };
+
+    // prototype holds methods (to save memory space)
+    Greetr.prototype = {
+
+        // 'this' refers to the calling object at execution time
+        fullName: function() {
+            return this.firstName + ' ' + this.lastName;
+        },
+
+        validate: function() {
+            // check that is a valid language
+            // references the externally inaccessible 'supportedLangs' within the closure
+             if (supportedLangs.indexOf(this.language)  === -1) {
+                throw "Invalid language";
+             }
+        },
+
+        // retrieve messages from object by referring to properties using [] syntax
+        greeting: function() {
+            return greetings[this.language] + ' ' + this.firstName + '!';
+        },
+
+        formalGreeting: function() {
+            return formalGreetings[this.language] + ', ' + this.fullName();
+        },
+
+        // chainable methods return their own containing object
+        greet: function(formal) {
+            var msg;
+
+            // if undefined or null it will be coerced to 'false'
+            if (formal) {
+                msg = this.formalGreeting();
+            }
+            else {
+                msg = this.greeting();
+            }
+
+            if (console) {
+                console.log(msg);
+            }
+
+            // 'this' refers to the calling object at execution time
+            // makes the method chainable
+            return this;
+        },
+
+        log: function() {
+            if (console) {
+                console.log(logMessages[this.language] + ': ' + this.fullName());
+            }
+
+            // make chainable
+            return this;
+        },
+
+        setLang: function(lang) {
+
+            // set the language
+            this.language = lang;
+
+            // validate
+            this.validate();
+
+            // make chainable
+            return this;
+        },
+
+        HTMLGreeting: function(selector, formal) {
+            if (!$) {
+                throw 'jQuery not loaded';
+            }
+
+            if (!selector) {
+                throw 'Missing jQuery selector';
+            }
+
+            // determine the message
+            var msg;
+            if (formal) {
+                msg = this.formalGreeting();
+            }
+            else {
+                msg = this.greeting();
+            }
+
+            // inject the message in the chosen place in the DOM
+            $(selector).html(msg);
+
+            // make chainable
+            return this;
+        }
+
+    };
+
+    // the actual object is created here, allowing us to 'new' an object without calling 'new'
+    Greetr.init = function(firstName, lastName, language) {
+
+        var self = this;
+        self.firstName = firstName || '';
+        self.lastName = lastName || '';
+        self.language = language || 'en';
+
+        self.validate();
+
+    }
+
+    // trick borrowed from jQuery so we don't have to use the 'new' keyword
+    Greetr.init.prototype = Greetr.prototype;
+
+    // attach our Greetr to the global object, and provide a shorthand '$G' for ease our poor fingers
+    global.Greetr = global.G$ = Greetr;
+
+}(window, jQuery));
+
+//Using the library
+// gets a new object (the architecture allows us to not have to use the 'new' keyword here)
+var g = G$('John', 'Doe');
+
+// use our chainable methods
+g.greet().setLang('es').greet(true).log();
+
+// let's use our object on the click of the login button
+$('#login').click(function() {
+
+    // create a new 'Greetr' object (let's pretend we know the name from the login)
+    var loginGrtr = G$('John', 'Doe');
+
+     // hide the login on the screen
+    $('#logindiv').hide();
+
+     // fire off an HTML greeting, passing the '#greeting' as the selector and the chosen language, and log the welcome as well
+    loginGrtr.setLang($('#lang').val()).HTMLGreeting('#greeting', true).log();
+
+});
 */
