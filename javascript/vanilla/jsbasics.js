@@ -1422,7 +1422,7 @@ class Elf {
 	//don't put this inside the constuctor, then every instance will now have it's own func definition (waste of memory)
 }
 const peter = new Elf('peter','stones);
-peter.__proto__; //this is Elf
+peter.__proto__; //this is Elf  (i.e Elf.prototype)
 const fiona = {...ogre}   (just making a copy)
 fiona === peter; //false
 fiona.__proto__; //this is Object.prototype, has no relation to Elf.
@@ -2311,6 +2311,7 @@ a.x = 10;
 a[mysym] = "foobar";
 Object.getOwnPropertySymbols(a);  // [Symbol(my own symbol)]  (an array of one item)
 Object.getOwnPropertyNames(a);   // [x]   (an array of one item)
+The symbol properties of an object won't appear in for-in loops. Even if you console.log the object, the symbol properties won't appear.
 
 Native Prototypes: Each of the built-in native constructors has its own .prototype object -- Array.prototype, String.prototype, etc. These objects contain behavior unique to their particular object subtype.
 For example, all string objects, and by extension (via boxing) string primitives, have access to default behavior as methods defined on the String.prototype object.
@@ -4974,6 +4975,8 @@ then put {remove:true,enable:false,instance:{}} into  {remove=true,enable=false,
 Now, take the remove field and put it into remove. If the remove field has no value, then put true into remove. So now local variable remove has a value.
 Restructuring: Take options variable and put it into options. Take remove variable and put it into remove.
 
+Array destructuring is done by position and Object destructuring is done by property name
+
 6.2.6)Object Literal Extensions
 concise property (RHS): During decleration, on the RHS, If you need to define a property that is the same name as a lexical identifier, you can shorten it from x: x to x
 var x = 2, y = 3;
@@ -4992,13 +4995,14 @@ computed property names
 var prefix = "user_";
 var o = {
 	baz: function(..){ .. },
-	[prefix+"foo"]: function(){  },
+	[prefix+"foo"+" some space"]: function(){  },
 	[prefix+"bar"]: function(){  },
 	[prefix+"fam"](){  },     //concise method property names too. The function is anyway anonymous, because that's what concise methods are.
 	*[prefix+"jam"](){  }
 };
 Any valid expression can appear inside the [ .. ], this is all for that particular property name of the object
 This is most used with Symbol-  {[Symbol.toStringTag]: "really cool thing"}
+You have to use [] notation to access "string" property names, you can't use dot notation (it is not safe if there are weird chars in the name). So you must do o["user_foo some space too"]();
 
 //ES5 way
 var a = 1;
@@ -5050,6 +5054,8 @@ var name = "Kyle";
 var greeting = `Hello ${name}!`;                  //"Hello Kyle!"  this is still a string type
 var greeting = `Hello ${convertUpper(name)}!`;    //a function
 Line breaks (newlines) and spaces in the interpolated string literal are preserved in the string value.
+You can put anything inside the  ${  } as long as it returns a STRING!
+To actually print $, use escape. So `some output \${this is not dynamic} output`
 
 Tagged template literals (should have been called tagged string literals)
 This is a new function invocation way, called Tag. (tag functions)
@@ -5296,7 +5302,8 @@ You cannot and should not use new with Symbol(), it is not a constuctor. Nor doe
 You can only pass a string as a parameter (or send nothing)
 sym.toString();	   //"Symbol(some optional description)"
 
-No two symbols are ever equal to each other. Even if they have the same name
+No two symbols are ever equal to each other. Even if they have the same name.
+BUT, if you create them using Symbol.for(), then they are equal. i.e Symbol.for('age') == Symbol.for('age); //true (both symbole are equal)
 
 The internal value of a symbol itself -- referred to as its name -- is hidden from the code and cannot be obtained.
 The main point of a symbol is to create a string-like value that can't collide with any other value
@@ -5322,6 +5329,37 @@ Symbol.isConcatSpreadable;
 
 var a = [1,2,3];
 a[Symbol.iterator];			//a native function
+
+There are some well-known built-in symbols, like Symbol.iterator. There are others, look it up. Example-
+let numArr = [1,2,3];
+numArr[Symbol.toPrimitive] = () => 999;
+console.log(numArr + 1);  //gives 1000!
+
+ler numArr = [1,2,3];
+let it = numArr[Symbol.iterator]();
+it.next();  //gives {done:false, value:1}  .. it will give values until {done:true, value:undefined}
+
+let person = {
+	name: 'max',
+	hobbies: ['sports', 'cooking', 'tv'],
+	[Symbol.iterator]() {
+		let i= 0;
+		let hobbies = this.hobbies;
+		return  {
+			next() {
+				let value = hobbies[i];
+				return {
+					done: i > hobbies.length ? true : false,
+					value: value;
+				};
+			}
+		};
+	}
+	age: '28'
+};
+for (let h of person) {
+	console.log(h);  //gives out sports, cooking, tv.
+}
 
 6.3)Organisation
 code is about communicating to other developers AND feeding the computer instructions.
@@ -5699,6 +5737,7 @@ foo,bar,baz must match named exports inside that module.
 Note:All imported bindings are immutable and/or read-only. In this new module, if you do bar=10 //runtime TypeError!
 i.e you can alter the API that you have just imported. (obviously)
 A module can change its API members from the inside, but ES6 modules are intended to be static, so deviations from that principle should be rare. You don't want to do this.
+remb: you are not importing the value, but you are importing the reference to that value.. So values will change with time.
 
 import { foo as theFooFunc } from "foo";    //you can rename it
 
@@ -6162,12 +6201,12 @@ var m = new Map(ANY iterable that produces an array like the above format);
 Other apis-
 m.delete(propertyName);
 m.clear();  //removes all property-value pairs
-m.size();   /total count of first level properties
+m.size();   //total count of first level properties
 
-m.keys();  an iterator that goes over all the property names
+m.keys();  an iterator that goes over all the property names  [for k of m.keys() {}]
 var keys = [...m.keys()];     //produces an array of property names
 
-m.values(); returns an iterator for all the values
+m.values(); returns an iterator for all the values    [for v of m.values() {}]
 var vals = [...m.values()];   //you get an array of values
 
 m.entries(); an iterator that goes over each name-value pair of the Map
@@ -6246,7 +6285,30 @@ s.add( y );
 x = null;						// x is GC-eligible
 y = null;						// y is GC-eligible
 
+Just like the WeakMap, this is not enumerable. You can't loop through its values as JS does not know if some of them exist anymore.
+this has add() and has(). It does not have clear(), size() etc.
+
 6.6)API Additions
+Reflect API: manipulate object metadata. A lot of different object functionalites bundled into one new central namespace called Reflect.
+class Person {
+
+}
+let person = Reflect.contruct(Person, [args to the constructor], optionalNewPrototypeObjectForThisChild);  //object creation. First argument can be a class or a constructor function.
+Reflect.apply(funcName, newThisObject, argsToFunc);
+Reflect.getPrototypeOf(someChildObject);   //returns the parent object
+Reflect.setPrototypeOf(child, newParent);
+Reflect.get(objectName, propertyName);
+Reflect.set(objectName, propertyName, propertyValue);
+Reflect.ownKeys(objectName);   //not inherited properties
+Reflect.defineProperty(objectName, propertyName, {writable: value: enumerable: configurable: });
+Reflect.delete(objectName, propertyName);    //instead of- delete object.prop;
+Reflect.preventExtensions(objectName);   //cannot add any new props to the object.
+Reflect.isExtensible(objectName);   //true/false , can you add new props to it or not?
+
+Proxy API: A wrapper around an existing object. This wrapper adds new functinonality to this object. Look it up.
+var newProxyObject = new Proxy(existingObject, objectWithAllNewFunctionalities);
+No you can use newProxyObject and all the new functionalities to access/manipulate the underlying existingObject.
+
 ES6 adds many static properties and methods to various built-in natives and objects
 
 Array
