@@ -11,8 +11,8 @@ in 1943, neuroscientists developed models to describe how nervous system works. 
 in 1968, Ken thompson implements regex in "ed", a unix editor, and this is where it started in computer science.
 g/Regular Expression/p  (was what was used in the unix editor) -> This is where the  /.../ slashes come from!!
 Global search - regex match - and print the output
-a.k.a grep : global regex print 
-grep has now become a stand alone program in unix world. 
+a.k.a grep : global regex print
+grep has now become a stand alone program in unix world.
 As unix grew, grep/regex also grew.
 1986: henry spencer releases a regex library in C (provided consistency)
 1987: lary wall release Perl and used spencer's regex library.
@@ -20,14 +20,22 @@ After that, a lot of perl compatible languages came out: C++, C#, VB, .NET, Java
 The modern syntax of regex really comes from PERL. And all other languages followed that.
 PCRE is in lots of languages: Perl Compatible Regex
 
-Each language has its own regex engine. They have slight variations.
+Each language has its own regex engine. They have slight variations. (c,c++,java,php,JS,python,mysql,unix,apache,perl)
 So be careful, and see language specific specs. (only advanced stuff is different between languages)
+
+JS Syntax:
+Create a regex 'r' using literal syntax /regex-here/ or new Regexp('regex as a string','modes') (function constructor)
+r.test(someString);     //true/false if atleast one match was found
+r.exec(someString);     //an array of matches  (exec also returns a lot of other info, MUST read the MDN spec)
+someString.match(r);    //an array of matches
+someString.search(r);   //index of the first match
+someString.replace(r, 'new-value-string');     //returns a new string with the matches replaced.
+someString.split(r);    //an array split on the matches (the matches won't be there in the array)
 
 Terminology
 Regex mode, Literals, Escaping, Metacharacter, Character Set, Character Range, Negative/Negate, Shorthand Chartacter Set, Repetition, Quantified Repetition,
 Lazy Repetition, Grouping, Alternations, Anchored Expression, Word Boundaries, Backreferences, Lookaround Assertion (positive, negative)
-Wildcard, digit, alphabet, whitespace, word character, 
-
+Wildcard, digit, alphabet, whitespace, word character,
 
 Index:
 0)Regex Modes
@@ -74,7 +82,7 @@ If you escape certain literals, they become special characters   (\n\t\r\d\w\s\D
 
 1)Literals : Literally match the exact character
 /car/  m 'car'  They are case sensitive by default!!
-/car/  m 'carnival' (first three letters) 
+/car/  m 'carnival' (first three letters)
 /car/  xm 'c a r'
 /zz/  m  'zz' in 'pizzazz'
 /zz/g m  zz,zz in 'pizzazz'
@@ -83,7 +91,7 @@ how matching works
 /cat/ and 'The cow, camel and cat communicated'
 for camel, it comes to the letter c, it sees c matches, so it thinks maybe the regex matches here, so it next sees a , even it matches, it then see m, ok fail.
 it is now done for 'c'. it starts from 'a'. a does not match c. ok fail
-it is now done for 'a'. it starts from m and so on. 
+it is now done for 'a'. it starts from m and so on.
 it next starts with a. a does not match c
 
 Regex engines are 'Eager'/'greedy'. They want to always return the biggest possible match. Remember that.
@@ -111,7 +119,7 @@ This is the whole list.
 
 
 Wildcard Metacharacter  (like in a deck of cards, this card can be any card)
-.  Any character EXCEPT new line
+.  Any character EXCEPT new line            (use \n to match new line)
 /h.t/ m hat,hut,hit,h t,h:t   xm heat,h/nt
 /9.00/ m 9.00,9500,9j00,9-00,
 
@@ -120,20 +128,20 @@ Wildcard Metacharacter  (like in a deck of cards, this card can be any card)
 
 Escaping metacharacter  (when you literally want to match the meta character)
 \ escape a metacharacter. You should never escape a literal character! Because if you escape a literal character it GIVES THEM new meaning. (its called special character)
-Apart from escaping the above metacharacter list (including \ itself too), the only other one you should escape is /  (so that you tell the engine you are not done with your regex yet). 
-/ is not a metacharacter but you need to escape it to match it. 
+Apart from escaping the above metacharacter list (including \ itself too), the only other one you should escape is /  (so that you tell the engine you are not done with your regex yet).
+/ is not a metacharacter but you need to escape it to match it.
 
 Example: \. match a period
 /9\.00/ m 9.00  xm 9500,9-00
 Quotation marks are not metacharacters, so you need not escape them. They are literal characters.
 
 m his_export.txt, her_export.txt:       /h.._export\.txt/   Used . and \. here
-m resume1.txt, resume2.txt  xm resume3_txt.zip :      /resume.\.txt/  
-m /home/user/document.txt    :  /\/home\/user\/document\.txt/    escape the / to tell engine you are not done with your regex. 
+m resume1.txt, resume2.txt  xm resume3_txt.zip :      /resume.\.txt/
+m /home/user/document.txt    :  /\/home\/user\/document\.txt/    escape the / to tell engine you are not done with your regex.
 
 3)Special Characters (escaping literals)
 Space:  this is a regular character for regex. To match it just use a LITERAL space!
-tab:  match it with  \t . You are escaping a literal 't', but now it becomes a special meaning.	 
+tab:  match it with  \t . You are escaping a literal 't', but now it becomes a special meaning.
 line returns:  \r, \n, \r\n  depends if it is windows/unix/mac file. r is for carriage return and n is for new line
 unicode characters:  \u(0000-FFFF)
 /c a t/ m 'c a t' , xm 'c axt'
@@ -142,7 +150,7 @@ unicode characters:  \u(0000-FFFF)
 4)Character Sets
 [ beginning of character set
 ] ending of character set
-Matches any ONE of several characters that inside the set. 
+Matches any ONE of several characters that inside the set.
 It will match ONLY one character.
 Order of characters in the set do not matter.
 It is just that "these are the items that can match"
@@ -170,7 +178,7 @@ This is exactly as if you would have typed the entire range out inside the [char
 Remember this is character matching, these are not string or number matching.
 
 [A-za-z] m hello, it gives you 5 matches, each letter is its own match. so 5 in total.
-m 949-396-1234 (phone-number):  /[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]/ .  
+m 949-396-1234 (phone-number):  /[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]/ .
 Here you used the "-" literal, and "-" inside a [] which means range
 
 6)Negative Character set.
@@ -217,7 +225,7 @@ so: [ABC] is A OR B OR C , [^ABC] is NOT A AND NOT B AND NOT C
 
 [\w\- ] m every character in 'blue-green paint'    you need to escape - inside a character set (range)
 
-POSIX has it's own shorthand ranges: [:alpha:] is "a-zA-z", [:digit:], [:alnum:], [:lower:], [:upper:] etc. 
+POSIX has it's own shorthand ranges: [:alpha:] is "a-zA-z", [:digit:], [:alnum:], [:lower:], [:upper:] etc.
 That is the equivalent of '\d', the []is not character set. So to use them, you have to put them in []
 so [[:alpha]] means [a-z,A-z]
 You can use these in Perl, PHP, Ruby and Unix
@@ -234,8 +242,8 @@ Item can be a literal, character set, shorthand character set, some complex expr
 how many times that item can be repeated
 
 /apples*/  m apple, apples, applessss   * applies only to the preceding item s
-/apples+/  m apples, applessss   xm apple  (s must be there) 
-/apples?/  m apple, apples   m 'apples' in applessssss 
+/apples+/  m apples, applessss   xm apple  (s must be there)
+/apples?/  m apple, apples   m 'apples' in applessssss
 3 digits or more: /\d\d\d\d*/  OR  /\d\d\d+/
 
 This matches ALL characters in the pattern, so /apples*/ matches applesss in 'applesss565'
@@ -243,13 +251,13 @@ This matches ALL characters in the pattern, so /apples*/ matches applesss in 'ap
 Repetition is greedy
 Greed strategy:Match as much as possible before giving control to the next expression part in the regex.
 
-What does /\d+\w+\d+/ match in '01_FY_07_report_99.xls' ? 
-it matches: '01_FY_07', 
+What does /\d+\w+\d+/ match in '01_FY_07_report_99.xls' ?
+it matches: '01_FY_07',
 wrong, it matches the whole thing. '01_FY_07_report_99' (the \w+ takes it all)
 
 What does /".+", ".+"/ match in '"Milton", "Waddams", "Initech,inc."'
 it matches: "Milton", "Waddams"
-wrong, it matches the whole thing. "Milton", "Waddams", "Initech,inc." where -->  "Milton", "Waddams" came from the first ".+" 
+wrong, it matches the whole thing. "Milton", "Waddams", "Initech,inc." where -->  "Milton", "Waddams" came from the first ".+"
 
 What does /.+\.jpg/ match in "filename.jpg"
 the first .+ will match the whole thing from f to g, then it realises there is no \. after g, so it backtracks
@@ -260,14 +268,14 @@ it does so it returns 'Page 266' where 'Page 26' is from .* and '6' is from [0-9
 It will keep backtracking until it finds a match for the regex.
 
 10)Quantified Repetition
-{  start quantified repetition of preceding item 
-}  end quantified repetition of preceding item 
+{  start quantified repetition of preceding item
+}  end quantified repetition of preceding item
 {min,max}
 Both must be positive numbers, there has to be comma in between them. nothing else.
-min must always be included, can be zero too. 
+min must always be included, can be zero too.
 max is optional
 \d{4,8}  m  123456  xm 123f   m (1-8) in 123456789
-\d{4} It must have exactly 4 digits   m 1234, (1234) in '12345'    xm 123f
+\d{4} It must have EXACTLY 4 digits   m 1234, (1234) in '12345'    xm 123f
 \d{4,} It must have 4 to infinite digits
 
 \d{0,1} is same as \d?
@@ -280,22 +288,23 @@ Get all words:  /\s\w+\s/   (not super accurate for words like abc-xyz, abc'xyz 
 
 11)Lazy Repetitions Meta Characters
 ?  make the preceding quantifier lazy (match as less a possible, not the usual greedy way for repetition)
-Syntax - 
+Syntax -
 *?       (lazy star, match zero characters preferably)
 ??       (lazy question mark, match zero characters preferably)
 +?       (lazy plus, match only one character preferably)
 {4,10}?   (lazy repetition is there even for quantified repetitions)
 
-Lazy Strategy: Match as little as possible before giving control to the next expression part. 
+Lazy Strategy: Match as little as possible before giving control to the next expression part.
 It still defers to overall match.
+/.*[0-9+]/ and 'agent 007' : here .* matches 'agent 00' and [0-9]+ matches '7'. It is greedy by default.
 /.*?[0-9]+/ and 'Page 266', it matches 'Page 266'
-First it does .*, oh dot star means zero or more, so i will do zero, so does [0-9] match P? oh no it does not. 
+First it does .*, oh dot star means zero or more, so i will do zero, so does [0-9] match P? oh no it does not.
 It now matches P to .* and says does [0-9] match a? no, ok let .* match Pa ... and so on.
-eventually,  .* matches P to space. and [0-9] matches 266 
+eventually,  .* matches P to space. and [0-9] matches 266
 
 /.*?[0-9]*?/ matches nothing in 'Page 266' because both are optional, so it does not go past P. It is lazy.
 
-What does /\d+\w+?\d+/ match in '01_FY_07_report_99.xls' ? 
+What does /\d+\w+?\d+/ match in '01_FY_07_report_99.xls' ?
 it matches: '01_FY_07',   word character tries to match and handover control to the next exp as quickly as it can.
 Now lazy
 
@@ -303,8 +312,8 @@ What does /".+?", ".+?". match in '"Milton", "Waddams", "Initech,inc."'
 it matches: "Milton", "Waddams"
 Now lazy.
 
-The use of repetition metacharacters (greedy OR lazy) has a big impact on the efficiency of the regex parsing, mostly because now the matched string can be of an indeterminate length. 
-So the parser can assume that one part of the expression, like a character set, equals one character. 
+The use of repetition metacharacters (greedy OR lazy) has a big impact on the efficiency of the regex parsing, mostly because now the matched string can be of an indeterminate length.
+So the parser can assume that one part of the expression, like a character set, equals one character.
 Now it's going to have to move back and forth along the string, trying many different possibilities.
 
 Efficient Matching + less backracking = speedy results
@@ -329,6 +338,8 @@ CANNOT be used inside a character set. Inside [] ( and ) are just literals
 m A1B2C3D4E5:  ([A-Z][0-9])+   it returns one match which is the whole string, without the +, it returns mutiple - A1,B2,C3 etc.
 ([A-Z][0-9]){3} this returns A1B2C3 !!
 
+You can use groups to just make your regex more readable. Just don't put any quantifiers to these groups. /([a-z]+[0-9]{1-3}) team-name/
+
 13)Alternations
 |   match expression on the left or the one on the right
 It is ordered, the leftmost one gets preference
@@ -349,21 +360,28 @@ will give 'FY2005_report' because \w+ matches it so it is done. It is eager to r
 
 Using (three|see|thee|tree) on 'I think those are thin trees', what does the regex return?
 It see thi it does not match thr, so it goes back to t in 'think' to compare it with 'see'.
-For (three|see|thee|tree) and 'I tree those three', it will return 'tree' eventhough "three" is the first option in the alternations. The regex pointer searches from left to right in the given string. 
+For (three|see|thee|tree) and 'I tree those three', it will return 'tree' eventhough "three" is the first option in the alternations. The regex pointer searches from left to right in the given string.
 
 To write faster working alternations, put your "most" specific regex in the beggining of the alternation
 / \w+_\d{2,4} | \d{4}_\d{2}_\w+ | export\d{2} /
 You see in this one, export is more specific than the others. Even \d is more specific that \w+ , so reverse the order!
-/ export\d{2} | \d{4}_\d{2}_\w+ | \w+_\d{2,4} / 
+/ export\d{2} | \d{4}_\d{2}_\w+ | \w+_\d{2,4} /
 This way if e-x-p does not match it immedietly tries the \d and parses through the string faster..... if you started with \w+ it would take longer
 
 (AA|BB|CC|DD){6} matches "AABBCCDDAABB", after the first AA matches the next match can again be either on of the alternations it does'nt matter
 
+You can even have nested alternations: (abcs(dhs|sdasd|sdasd)sdas|xbnmvxcvm(xvn|wpwe))
+
 14)Anchored Expressions
-^   Start of string/line
-$   End of string/line 
+^   Start of string/line (a line means till the \n !!)
+$   End of string/line
 \A  Start of string, never end of line  (supported by java, .net, perl, php, python, ruby)
 \Z  End of string, never end of line  (supported by java, .net, perl, php, python, ruby)
+These metacharacters must be at the start of end of your regex. Nowhere else.
+
+Often with anchored expressions, you want to use multi-line mode. (treat each line (uptill \n) as a seperate string)
+So in multilinemode, ^ and $ are positioned at the beg and end of EACH line (lines are delimited by \n)
+In singlelinemode, ^ is postioned at the absolute start and $ is postioned at the absolute end. (at the end of the LAST line)
 
 Anchors refer to a postion, not an actual character. They have zero length
 /^robot/  or  /\Arobot/     It has to start with robot, it will match that robot only.
@@ -374,7 +392,7 @@ Anchors refer to a postion, not an actual character. They have zero length
 /^w+/m  for multi-line mode. It treats each line as a new string, and retrurn all the first words of each line.
 
 
-15)Word Boundaries
+15)Word Boundaries: Like anchors, these are just positions.
 \b   word boundary, start or end of a word
 \B   not a word boundary
 They reference a position and not an actual character. They have zero length. Space is not a word boundary!
@@ -387,9 +405,9 @@ everytime it shifts between a word character and a non word character, it will b
 
 The boundaries are automatically found by regex engine. You just need to use them as positions in your regex
 /\b\w+\b/  Any word between two boundaries...
-finds four matches in "this is the best." 
+finds four matches in "this is the best."
 
-There are four word boundaries in 'top-notch' : before t, after p, before n, after h. 
+There are four word boundaries in 'top-notch' : before t, after p, before n, after h.
 there are four word boundaries in '@%>word man=': before w, after d, before m, after n.
 
 /\B\w+\B/ for "This is a test". Any word between NOT Boundaries
@@ -398,16 +416,16 @@ it will give hi, es !!
 For "Shall summer's day"
 /\b\w+\b/  gives shall, summer, s, day
 /\b[\w']+\b/  gives shall, summer's, day  (it is greedy) when it hit ', it keeps consuming chars until it runs out of \w (ignoring boundaries)
-/\b[\w']+?\b/ gives shall, summer, s, day (it is lazy), when it 
-hits ' it first tries to see if it is the next exp which is \b and it is. 
+/\b[\w']+?\b/ gives shall, summer, s, day (it is lazy), when it
+hits ' it first tries to see if it is the next exp which is \b and it is.
 
 To match 'apples' in 'We picked apples', why is /\b\w+s\b/ more efficient than /\w+s/ ??
-Because when it is seeing 'picked', if it is going to see \w for each of those letters 
+Because when it is seeing 'picked', if it is going to see \w for each of those letters
 it will go picked nope, icked nope, cked nope ...d nope
-instead of looking for \w if it start looking for \b: it will go picked nope, i nope, c nope, k nope.. d nope. 
+instead of looking for \w if it start looking for \b: it will go picked nope, i nope, c nope, k nope.. d nope.
 It avoids iterating through icked, cked etc.. and goes straight to apples
 
-Boundaries are just a position. 
+Boundaries are just a position.
 So "apples and oranges" actually matches /\bapples\b \band\b \boranges\b/ !! there are 6 boundaries (boundary positions)
 
 --------------------------------------------------------------------------------------------------------------------------
@@ -448,13 +466,13 @@ For the entire file, replace the first name with last name and vice versa
 /^\d{1,2},[\w.]+? [\w.]+?,\d{4}/  gives you "1,George Washington,1789"
 Now capture everything and put them back in a different order, use groups
 so match with this:  /^(\d{1,2}),([\w.]+?) ([\w.]+?),(\d{4})/
-replace with this: /\1,\3 \2,\4/  DONE   ,OR $1,$3 $2,$4 
+replace with this: /\1,\3 \2,\4/  DONE   ,OR $1,$3 $2,$4
 
-Non-capturing group- Match but don't store.
+Non-capturing group- Match but don't store.   (makes the regex faster too)
 You can tell the regex to engine to NOT automatically store (capture) matched grouping values.
 ?:   Specify a non-capturing group (non storing)
 It has to be the first two characters of the group (). It turns off captures and back references.
-/(/w+)/ becomes /(?:/w+)/  it is now not stored 
+/(/w+)/ becomes /(?:/w+)/  it is now not stored
 
 ? means give this group a different meaning (the ? HAS TO BE the first char in the group)
 : that meaning is non-capturing
@@ -464,7 +482,7 @@ All types: (?:) (?=) (?!) (?<=) (?<!)  (1 for non-capturing group and 4 for look
 matches 'oranges and apples to apples'  (only apples is captured)
 
 Find all 'a' surrounded by 'b' in 'abababacb'
-/(?:b)a(?:b)/ - this will give only 1 'a' instead of 2. 
+/(?:b)a(?:b)/ - this will give only 1 'a' instead of 2.
 Because the cursor moves to abab|abacb after finding the first 'a'  (unlike an assertion explained below)
 You have to use /(?<=b)a(?=b)/  to get two 'a'. Look around assertions! You have to move the cursor by each character to understand.
 
@@ -480,27 +498,33 @@ Look aheads are by default non capturing/storing and non-matching.
 Syntax
 /(?=someRegex)/
 
+/a(?=b)/  match every a, which is followed by b
+/(?=ab)a/  same syntax as above. match every a, after an ab. Which is the same as above.
+
 (?=shore) It moves the cursor to scan for shore, and if it finds it or does not find it, it still bring the cursor back to the beginning of the string.
 
-/sea(?=shore)/ matches 'sea' in 'seashore. does not match 'shore', it only asserts for it, that's all. Shore is not even stored. 
+/sea(?=shore)/ matches 'sea' in 'seashore. does not match 'shore', it only asserts for it, that's all. Shore is not even stored.
 /sea(?:shore)/ matches 'seashore' in 'seashore', it matches shore, but nothing is stored.
 /sea(shore)/ matches 'seashore'. it also stores shore.
 
 Find all words that are followed by a comma
 /\b[a-zA-z']+\b,/ will give you 'finished,'   'started,' i.e the word and the comma
-/\b[a-zA-z']+\b(?=,)/ look ahead for the comma, but give me only the word. (match the word)
+/\b[a-zA-z']+\b(?=,)/ look ahead for the comma, but give me only the word. (match the word, don't give me the comma)
+
+Give me every word that is followed by a comma. That word must end with 'ce' and it must have a capital O in it.
+/(?=\w*ce)(?=\w*O)\b\w+\b(?=,)/g
 
 /(?=seashore)sea/ matches 'sea' in 'seashore'
-even  /sea(?=shore)/  does the same thing. 
+even  /sea(?=shore)/  does the same thing.
 In 1, it attempts the assertion before it tries to look for a match
-in 2, it matches for sea before it looks for the assertion. 
+in 2, it matches for sea before it looks for the assertion.
 So which one is optimal.
-IF 1 finds the assertion to be true, it rewinds back to the begginning of the string and start to look fo a match of the actual regexp. 
+IF 1 finds the assertion to be true, it rewinds back to the begginning of the string and start to look fo a match of the actual regexp.
 2, runs through the  entire string only once (doing the assertion as and when a match is found)
 
 Check if it is a phone number and it must have only 0-5 in the digits
-/ (?=[^0-5\-]+$) \d{3}-\d{3}-\d{4} / matches '543-123-5432' 
-the number must also have 4321 in it. 
+/ (?=[^0-5\-]+$) \d{3}-\d{3}-\d{4} / matches '543-123-5432'
+the number must also have 4321 in it.
 / (?=[^0-5\-]+$) (?=.*4321) \d{3}-\d{3}-\d{4} / basically you have 3 regexes in one. It must be 0-5 only, must have 4321, now check the phone no format. The first two are assertions, if they don't assert it won't try a match for the third part.
 
 Find all words that have gh and are followed by ,
@@ -510,8 +534,10 @@ Negative Lookahead assertion: It should NOT be followed by it.
 ?!  nla
 
 /(?!regex)/  Means not this regex
+/a(?!b)/  match every a, which is not followed by b
+/(?!ab)a/  same syntax as above. match every a, that is not after an ab. Which is the same as above.
 
-/sea(?!shore)/ matches sea in seaside, nothing in seashore. It is looking for the opposite condition. 
+/sea(?!shore)/ matches sea in seaside, nothing in seashore. It is looking for the opposite condition.
 /(?!seashore)sea/  same
 
 The regex engine actually still looks for seashore, if it can't find it, then it will do the matching!
@@ -521,7 +547,7 @@ Find the black that is not followed by the word dog.
 Find the last black in the sentence
 /\bblack\b (?!.*\bblack\b/) /
 
-Look Behind Assertion: Not supported in JS, Ruby1.8, Unix. Unless your expression is simple. 
+Look Behind Assertion: Not supported in JS, Ruby1.8, Unix. Unless your expression is simple.
 ?<=   positive lookbehind assertions
 ?<!	  negative lookbehind assertions
 It has to be in the beginning of the group.
@@ -530,17 +556,17 @@ If lookbehind assertion fails, the match will not occur.
 Zero width: meaning it does not include the group in the match
 
 /(?<=regex)/  it just has an arrow pointing backwards
-/(?<!regex)/  
+/(?<!regex)/
 
 /(?<=base)ball/ look behind every ball and see if base is there. matches 'ball' in 'baseball'
 regex engine, goes to each letter, and looks back to find 'base', if it is not there go to next letter
 if it is there, start looking for ball from this letter.
-same for /(?<!base)ball/ 
+same for /(?<!base)ball/
 
 18)Positions
-Assertions allow for testing of regex apart from matching. 
-If your regex has only assertions, it won't match anything, so after the engine tests all the assertions, 
-it brings back the pointer to the start of the string. 
+Assertions allow for testing of regex apart from matching.
+If your regex has only assertions, it won't match anything, so after the engine tests all the assertions,
+it brings back the pointer to the start of the string.
 
 Find all values that don't precede with $, get 64.00 in '$54.00 and 64.00'
 /(?>![$\d]) \d+\.?\d\d /    \d is there with $ to not match 4.00 ?!what
@@ -558,11 +584,11 @@ this will give you the pointers in front of 4 and 7. You can use this in find an
 
 19)Unicode
 Singe Byte Character Encoding:
- Use one byte (8 bits) to represent a character. 
+ Use one byte (8 bits) to represent a character.
 So 2 to the power of 8 combinations possible. : 256 characters can be stored in a single byte (a-z,A-Z,0-9,punctuations,symbols)
 
 Double Byte Character Encoding:
-Use two bytes to store one character. (16 bits). So 65000 characters possible. 
+Use two bytes to store one character. (16 bits). So 65000 characters possible.
 
 You need to accomodate other languages and symbols too.  (over 100K characters)
 
@@ -574,7 +600,7 @@ Example: infinity sign is U+221E
 Unicode is relatively new compared to regex
 
 use \u(0000-FFFF) to match unicode chars (java,JS,.NET,python,ruby)  (it is \x in PHP,perl)
-for cafe -> /caf\u00E9/ matches the e with an accent. 
+for cafe -> /caf\u00E9/ matches the e with an accent.
 the accent e is actually two characters e+accent so it is U+0065 and U+0301
 Be careful with regexes parsing non-roman characters
 
@@ -586,28 +612,28 @@ I am not putting /..../ for each of these
 1)Matching Names
 ^\w+$  (multiline)
 if your name must not have digits then /^[A-Za-z]+$/m
-What if the name has J.R or j' or kevin-bacon 
-/^[A-Za-z'.\-]+$/m 
-well what if it is two such words, just double it 
+What if the name has J.R or j' or kevin-bacon
+/^[A-Za-z'.\-]+$/m
+well what if it is two such words, just double it
 /^([A-Za-z'.\-]+) ([A-Za-z'.\-]+)$/m
 what if there is a middle name too? then just put three of the same things seperated by space
 
 2)Matching Postal Codes
 USA: 5 digits or 5 digits dash 4 digits
-^\d{5}(-\d{4})?$ 
+^\d{5}(-\d{4})?$
 if you want to match it but not capture the last 4 digits, then make it non capturing group (?:   )
 
 Canada: A9A 9A9
 ^[A-Z]\d[A-Z] \d[A-Z]\d$
 
-UK: Have a number of formats 
-A9 9AA 
+UK: Have a number of formats
+A9 9AA
 A99 9AA
 AA9 9AA
 AA99 9AA
 A9A 9AA
 AA9A 9AA
-need to make some sense out of it. 
+need to make some sense out of it.
 ^[A-Z]{1,2}\d{1,2}[A-Z]? \d[A-Z]{2}$
 
 but the [A-Z]? can be there only if there is a single digit so just add an alternation [A-Z]{1,2}\d[A-Z]
@@ -633,9 +659,9 @@ http://nowhere.com#anchor3
 
 ^https?:\/\/\    covers the https:// part
 for subdomain and domain use the email one after the @ symbol    [\w.\-]+\.[a-zA-Z]{2,6}   (i just used [\w.]+)
-in fact just use [\w.\-]+(\.[\w\-]+)+ 
+in fact just use [\w.\-]+(\.[\w\-]+)+
 for path and query params just do .*$   There is nothing you can really do
-FINAL: ^https?:\/\/\   [\w.\-]+(\.[\w\-]+)+   .*$ 
+FINAL: ^https?:\/\/\   [\w.\-]+(\.[\w\-]+)+   .*$
 
 5)Match decimal numbers and currency
 5.1
@@ -645,13 +671,13 @@ FINAL: ^https?:\/\/\   [\w.\-]+(\.[\w\-]+)+   .*$
 23
 
 ^(\d*\.?\d*)$ matches all of them including a blank line! so if there is no decimal, have an alternation
-^(\d*\.\d+|\d+)$   
+^(\d*\.\d+|\d+)$
 
 To match currency start it with ^\$<decimal regex>  use other currency vals in a alternation
 ^(\$|\u00A3|\u00a5|\uffe5)(\d*\.\d+|\d+)$    this is for dollar, euro and yen has two unicodes
 
 6)Match IP addresses
-it goes from 0 to 255 
+it goes from 0 to 255
 0.0.0.0
 255.255.255.255
 999.999.999.999 (invalid)
@@ -667,7 +693,7 @@ You are trying to match numbers as strings:
 so 250 to 255, 200 to 249, 000 to 199
 
 7)Matching Dates
-Sample year,month,date 
+Sample year,month,date
 2000-11-15
 2000-6-9
 2000-06-09
@@ -726,8 +752,8 @@ one symbol
 You have to use look ahead assertions
 It check each assertion, rewinds and checks the next assertion.
 It then checks the regex.
-Put the assertion that is most likely to fail at the beggining, so that it exits faster. 
-^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[~!@#$%^&*()\-+}{\[\]]:;<>?/) 
+Put the assertion that is most likely to fail at the beggining, so that it exits faster.
+^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[~!@#$%^&*()\-+}{\[\]]:;<>?/)
 
 .*[A-Z] means there can be any character zero or more time, followed by [A-Z].
 somewhere in the string it must be there
@@ -788,16 +814,16 @@ C)THESIUS
   THESIUS: Now, fair Hippolyta, our nuptial hour
       Draws on apace: four happy days bringing in.
       Another moon but 0 methinks how slow
-  
+
   Find:^([A-Z]+)\n
-  Replace:$1: 
+  Replace:$1:
   This moves the first line up
 
-  Find:^(?!([A-Z]+)|\[|\n|Act :|Scene :|Location :) :   
+  Find:^(?!([A-Z]+)|\[|\n|Act :|Scene :|Location :) :
   Use negative look ahead assertion to find the regular sentences.
   Any string that does not start with character name or does not start with [, act, scene, location.
   Replace: four spaces
-  The above find was just a look ahead assertion, so it has zero width. Just put the 4 spaces now. 
+  The above find was just a look ahead assertion, so it has zero width. Just put the 4 spaces now.
 
 
 DONE
