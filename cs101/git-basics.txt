@@ -1,3 +1,6 @@
+Git was invented for the Linux Kernel Open Source Project. (spring 2005)
+It is a de-centralized version control software
+
 Commands
 
 which git
@@ -24,12 +27,62 @@ git ls-tree
 git branch
 git merge
 git stash
+git rebase
+git tag
+git cherry-pick
+git gc
+git clean
 
 git remote
 git fetch
 git push
 git pull
 git clone
+
+4 stages of git - 3 of them are local
+Working directory (the/project folder)
+Staging area
+Local Git Repository  (the /.git folder)
+Remote Git Repository
+
+To completely remove git from a folder. Go to the parent: rm -rf .git
+
+Fork: Copying an entire repo from one github account to another github account. Once you fork it, into your account, you can do whatever changes you want.
+git ls-files  //gives the list of all tracked files in the entire repo
+
+Once you've made changes to file1 and added it to staging with git add. To go back to original state:
+git reset HEAD file1.js   //this removes the changes from staging. the changes are still there in working directory.
+git checkout -- file.js   //this removes the changes from working directory too.
+
+git rebase master   Do this when you are on a feature branch and want to bring it on all the latest changes from master into your feature branch. (this might have conflicts) (it first removes all your feature commits, applies all the master commits, then applies all your feature commits on top of that, so now the commit logg of your feature branch will look like as if you created your branch just today from the base branch)
+	git rebase --abort (when it coudn't rebase due to merge conflicts)
+	git rebase --continue (when there were merge conflicts, you resolved and saved each of the filess) (once you do this, the rebase is complete)
+	git pull --rebase origin master  (fetch latest from master, THEN rebase your local master on top of the newly pulled master)
+
+git tag    (add a tag to the previous commit, or if you specify a SHA then do it for that particular commit)
+	git tag  (lists out all tags)
+	git tag -l 'rebase*'   (lists out all tags with name rebase*)
+	git tag 'some-tag-name' <optional-SHA>  (this is for light-weigth tag)
+	git tag -a 'some-tag-name' <optional-SHA> (this is for annotated tag) (it will open vim for you to enter a detailed message if you want too)
+	git tag 'some-tag-name' -m 'some huge message'  (another way to do an annotated tag)
+	git tag --list   (lists all the tags in the branch)
+	git tag --delete <some-tag-name>
+	git show <some-tag-name>  OR git diff tag1..tag2 etc..
+On github, releases are identified by tags. You need to push each tag one by one, for them to turn up on github. They don't all turn up just because their commits are there on github.
+	git push <tag-name> origin master   (to push a particular tag to github)
+	git push origin master --tags        (to update github with all tags from local)
+	git push origin  :<tag-name>        (to delete a tag from remote, but keep it on local, i.e push nothing for the tag called tag-name to remote)
+
+git reflog -n  (a history of all locations HEAD was located at)
+
+git cherry-pick <SHA>
+	When you are on a branch, just pick a random commit from some other branch and apply those changes to your branch.
+	It will apply: that commit and eveything in between that commit and the point at which this branch branched off.
+
+git gc --prune=now
+	garbage collects (deletes) all unconnected commits out there
+
+git clean   (TBD)
 
 Notes -
 1) There is no such thing as a central branch (no single failure point) Each has their own complete repo.  (distributed version control)
@@ -55,14 +108,12 @@ Notes -
 	sha is generated based on change set + meta data (user name, commit message, parent commit SHA# etc)
 14) HEAD: Like a head pointer in a record player. Whatever it points to… the next time you start recording , it will start recording from there only. Head always points to tip of current branch in repo (never to staging or to working dir). It points to the parent of the next commit. It points to where you last checked out of (whichever branch that is, bcoz that Is where you can commit to anyways) (points to the tip of the currently checked out branch)
    To see which commit HEAD points to , open the file HEAD in .git folder (cat .git/HEAD)
-15) git diff   (working and staging [+repo])
-	git diff --staged (staging and repo)  (--cached)
-	git diff HEAD (working and repo)
-	git diff --color-words  (shows inline changes only!! )
-16) Deleting a file. Just delete it. Then do git rm <file> (not git add), then just commit it.
-	If you directly do: git rm <file> (It will permanently remove the file) Now all you can do is a commit.
-17) Renaming a file. Just rename it. Then do git add <new-file>, git rm <old-file> , then just commit that.
-	OR use git mv <old-filename> <new-filename> , then just commit that.
+16) Deleting a file. Just delete it in the file system. Then do git rm <file> (not git add), then just commit it.
+	If you have done git rm file1.txt, and now you want to back out .. git reset HEAD file1.txt and then git checkout -- file1.txt
+	If you directly do: rm <file> (It will permanently remove the file) Now all you can do is a commit.
+17) Renaming a file. Just rename it in the file system. Then do git add <new-file>, git rm <old-file> , then just commit that.
+	OR use git mv <old-filename> <new-filename> , then just commit that.  (when you do git mv, it automatically adds that change to staging, you just have to commit it now)
+	If you did'nt like the file name change, before you commit, just do git mv newname oldname. DONE. It reverts the changes in the staging and working directory is clean again.
 18) Moving a file, this is same as renaming a file . The new file name is just a path to the new location along with the file name.
 	git mv <old-filename> <newPath/../../../same-file-name> , then just commit that.
 19) git reset HEAD <file> (to unstage a file i.e replace what is in staging with what is in the repo's HEAD) (bcoz default is --mixed) (it means git reset to HEAD)
@@ -72,6 +123,7 @@ Notes -
 20) git status : difference between working, repo and staging.
 21) You can't alter an old commit, bcoz its SHA will change, then its child's SHA will also change and so on.
 22) Amend Latest commit: git commit --ammend -m "new msg to overwrite old one" (no need to change and add any file etc)
+You can change any code too and then do this. It will just rewrite the previous commit.
 23) checkout: it is used to replace contents in your staging and working directory. (it moves HEAD)
 	git checkout <SHA> -- <file> brings a file to your staging & working.   (-- means current branch only)
 	If you commit it right now, it will revert that old <SHA> commit completely.
@@ -88,7 +140,7 @@ Notes -
 27) If you want to delete untracked files from you repo
 	git clean -n (it will show you a list of files that are untracked and can be deleted)
 	git clean -f (deletes all untracked files, not even go to recycle bin! )
-28) .gitignore  (create it in the root of the project and commit this file)
+28) .gitignore  (create it in the root of the project and commit this file, it must be part of your project and must be tracked by git)
 	generally  *.zip, *.gz, *.txt, log/*.log
 	temps/ , assets/photoshop/
 	!temp.txt  (don't ignore this guy)
@@ -106,6 +158,7 @@ Notes -
 35) git log --oneline  (5 digit SHA and message only)
 	git log -n 10
 	git log --format=oneline (will show full SHA)
+	git log --oneline --graph --decorate
 	git log --oneline -5
 	git log --since="2016-10-30"
 	git log --until="2016-10-30"
@@ -113,6 +166,7 @@ Notes -
 	git log --author="Ktk"
 	git log --grep="bug"  (looks at commit message alone) (grep= global regular expression)
 	git log ac32asd..cv2321sda  (shows commits in that range)
+	git log -- file1.txt (show all commits where this file changed)
 	git log ac32asd tempfile.txt  (show all commits since that point where this file had changed, put a -p before it to get diffs too)
 	git log -p     (shows each commit along with each diff in each commit)
 	git log --stat  (#additions deletions for each file in each commit)
@@ -121,11 +175,18 @@ Notes -
 	git log --oneline --graph -all --decorate   (all branches)
 36) git show <SHA/tree-ish>   (shows that commit in detail along with diff)   git show HEAD~4
 	git show <SHA of an tree/blob from any commit>   (it should be a SHA)
-37) git diff <SHA>   (diff btw working directory and that commit) (can put a filename too)
+37) git diff   (working VS staging)
+	git diff --staged HEAD (staging VS repo i.e the last commit in this branch)  (--cached)
+	git diff HEAD (working VS repo i.e the last commit in this branch)
+	git diff master origin/master (repo VS remote)
+	git diff --color-words  (shows inline changes only!! )
+	git diff -- <filename>
+	git diff <SHA>   (diff btw working directory and that commit) (can put a filename too)
 	git diff <old-treeish>..<newer-treeish>   (some subfolder etc)
-	git diff --stat --summary <SHA-old> <SHA-new>
+	git diff --stat --summary <old-SHA> <newer-SHA>
 	git diff -b  (or --ignore-space-change)
 	git diff -w  (or --ignore-all-space) (i.e all white space)
+	git diff HEAD HEAD^3    (diff of head and head minus three)
 
 
 38) git branch
@@ -152,8 +213,9 @@ Notes -
 43) git merge <branch-to-merge-from>  (be on the receiver, to merge two branches) (use --squash to squash and merge)
 44) Fast Forward Merge: Occurs when the receiver has not moved forward ever since the branch was made. When merging, git takes the branch that needs to be merged and looks for the HEAD pointer of the current branch in It's log. IF the HEAD is indeed there (meaning the current branch did not move forward) it just merges the two without creating a new merge commit. You can now permanently delete the branch.
 	You will never have a merge conflict in a fast forward merge.
-45) git merge --no-ff <branch-name>  Forces git to create a new merge commit, if in case a fast-forward merge is indeed possible.
+45) git merge <branch-name> --no-ff <branch-name>  Forces git to create a new merge commit, if in case a fast-forward merge is indeed possible. (this does not do a squash, what goes on to the base branch is: all the individual branch commits + one merge commit)
 	git merge --ff-only <branch-name>  (do a merge only if a fast-forward merge is possible, or else abort)
+	git merge <branch-name> -m "some message"  - DO this if master has moved ahead, but you want to merge your branch by making a merge commit.
 46) True Merge: Occurs when the branch you are trying to merge does not have the current branch's HEAD in it's log.
 47) Resolving Merge Conflicts
 	Abort: git merge --abort  (this abort the whole merge process and you go back to original state)
@@ -175,6 +237,8 @@ Notes -
 	You can obviously restash your stashed changes that you just now applied on your working directory.
 	git stash drop <stash#>  (to delete a particular stash)
 	git stash clear   (completely deletes all stashes)
+	git stash save -u    (by default stash only saves tracked files, incase you added a new file which is untracked i.e you didn't do git add <file>, this -u will save that untracked file too)
+	git stash branch <new-branch-name>  (this does: git stash save 'temp' + git branch <new-branch-name> + git pop 'temp) (so just moving all of this into a new branch)
 	You can stash changes at any commit point, let the branch move forward, then you can access & apply the stash at a later commit.
 
 
@@ -268,6 +332,8 @@ Notes -
 	git merge todays-branch
 	git push
 66) git config --global alias.status sts  (to setup aliases of any command at a user level)
+	or git config --global alias.logg "log --all --oneline --graph --decorate"  - So now "git logg" is an alias
+	To view all aliases: cat ~/.gitconfig (or just use git config --list)
 	co - checkout,  ci - commit, dfs - "diff --staged", logg - "log --all --decorate --graph --oneline"
 67) These two should point to the same SHA  (if you have fetched origin/master)
 	cat .git/refs/heads/master
