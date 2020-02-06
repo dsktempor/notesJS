@@ -1,0 +1,79 @@
+Algorithms
+Data Structures
+
+
+Javascript
+ReactJS
+NodeJS
+Angular
+Typescript
+
+HTML
+CSS
+
+MongoDB
+
+
+Regex
+Git
+Unix Terminal
+
+REST API development
+Postman
+
+
+Adobe Analytics
+
+
+Docker
+Kubernetes
+Jenkins
+Github
+JIRA / Confluence
+
+
+SQL (MySQL, OracleSQL)
+R
+Python
+Business Analytics & Intelligence
+Microsoft Power BI
+MS Excel
+Tableau
+
+Hadoop
+Apache Kafka
+Apache Spark
+
+
+Statistics
+Probability
+
+
+Amazon Web Services Certification
+Microsoft Azure Certification
+
+C
+C++
+Java
+iOS
+Android
+Swift
+
+Operating Systems
+Cyber Security
+
+Machine Learning
+Deep Learning
+Artificial Intelligence
+Neural Networks
+Tensor Flow
+Computer Vision
+Natural Language Processing
+
+Chrome Extension Development
+
+
+
+
+
+
