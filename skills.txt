@@ -6,6 +6,7 @@ Javascript
 ReactJS
 NodeJS
 Angular
+jQuery
 Typescript
 
 HTML
@@ -23,7 +24,8 @@ Postman
 
 
 Adobe Analytics
-
+Adobe Test & Target
+Google Analytics
 
 Docker
 Kubernetes
@@ -44,6 +46,7 @@ Hadoop
 Apache Kafka
 Apache Spark
 
+D3.js
 
 Statistics
 Probability
@@ -61,6 +64,7 @@ Swift
 
 Operating Systems
 Cyber Security
+Software Architecture
 
 Machine Learning
 Deep Learning
@@ -71,6 +75,15 @@ Computer Vision
 Natural Language Processing
 
 Chrome Extension Development
+Charles Proxy
+IBM Tealeaf
+
+Spanish
+
+Piano
+
+Digital Marketing
+Search Engine Optimization
 
 
 
