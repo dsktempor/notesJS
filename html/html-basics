@@ -1,1 +1,28 @@
-//init
+Hypertext Markup Language
+
+Structure of the webpage.
+
+
+<html>
+
+<head>
+
+<meta>
+	http-equiv=X-UA-Compatible
+	charset=UTF-8
+	content=
+
+<link>
+	rel=some-icon-name, stylesheet,
+	href=icon.png, my.css
+
+<title>
+
+
+<body>
+
+<main>
+<section>
+
+<h1>
+

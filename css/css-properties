@@ -1,0 +1,785 @@
+CSS Properties
+MDN Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference
+
+Common Ones:
+	margin
+			margin-top, margin-right, margin-bottom, margin-left
+	padding
+			padding-top, padding-right, padding-bottom, padding-left
+	border
+			border-width (border-top-width, border-right-width, border-bottom-width, border-left-width)
+			border-style (border-top-style, border-right-style, border-bottom-style, border-left-style)
+			border-color (border-top-color, border-right-color, border-bottom-color, border-left-color)
+			border-top, border-right, border-bottom, border-left
+	width
+		min-width, max-width
+	height
+		min-height, max-height
+	display
+	visibilty
+	box-sizing
+
+	color
+	font
+			font-style  font-variant  font-weight  font-size   line-height   font-stretch    font-family
+	text-decoration
+			text-decoration-line, text-decoration-style, text-decoration-color, text-decoration-thickness
+	text-align
+	vertical-align
+
+	background
+			background-color, background-image, background-origin, background-position, background-repeat, background-clip, background-attachment, background-size
+	border-radius
+			border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius
+
+	list-style
+			list-style-type, list-style-image, list-style-postion
+
+	box-shadow
+
+	cursor
+
+	outline
+		outline-style, outline-width, outline-color
+		outline-offset
+
+	float
+
+	position
+		top, right, bottom, left, z-index
+	overflow
+		overflow-x, overflow-y
+
+	filter
+
+	flex flow
+		flex-direction, flex-wrap
+	flex
+		flex-grow, flex-shrink, flex-basis
+
+	align-content, align-items, align-self
+	justify-content, justify-items, justify-self
+
+	order
+
+	grid-template-columns, grid-template-rows
+	grid-area
+		grid-row
+			grid-row-start, grid-row-end
+		grid-column
+			grid-column-start, grid-column-end
+	gap
+		row-gap, column-gap
+	grid-template-areas
+	grid-auto-flow
+
+	transform-origin
+	transform
+	transform-style
+	backface-visibilty
+	perspective
+	perspective-origin
+
+	transition
+		transition-property, transition-duration, transition-timing-function, transition-delay
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+List Of All Properties
+
+align content
+	single value sets the distribution of space between and around content items along a flexbox's cross-axis or a grid's block axis. (i.e align on the y-axis of the grid)
+	center | start | end | flex-start | flex-end
+	normal
+	baseline | first baseline | last baseline
+	space-between | space-around | space-evenly | stretch
+	safe center | unsafe center
+	inherit | initial | unset
+
+align-items
+	single value sets the align-self value on all direct children as a group. In Flexbox, it controls the alignment of items on the Cross Axis. In Grid Layout, it controls the alignment of items on the Block Axis within their grid area.
+	normal | stretch
+	center | start | end | flex-start | flex-end
+	baseline | first baseline | last baseline | safe center | unsafe center
+	inherit | initial | unset
+
+align-self
+	single-value overrides a grid or flex item's align-items value. In Grid, it aligns the item inside the grid area. In Flexbox, it aligns the item on the cross axis.
+	auto | normal | stretch
+	center | start | end | flex-start | flex-end | self-start | self-end
+	baseline | first baseline | last baseline | safe center | unsafe center
+	inherit | initial | unset
+
+ANIMATION
+	animation
+	animation-delay
+		sets when an animation starts.
+		750ms | 35s | 0s | -1500ms
+	animation-direction
+		whether an animation should play forwards, backwards, or alternating back and forth
+		normal | reverse | alternate | alternate-reverse
+		inherit | initial | unset
+	animation-duration
+		sets the length of time that an animation takes to complete one cycle
+		750ms | 35s | 0s
+	animation-fill-mode
+		sets how a CSS animation applies styles to its target before and after its execution
+		none | forwards | backwards | both
+	animation-iteration-count
+		sets the number of times an animation cycle should be played before stopping.
+		If multiple values are specified, each time the animation is played the next value in the list is used, cycling back to the first value after the last one is used.
+		infinite | 5 | 10 | 5.5 | 20.2
+	animation-name
+		sets one or more animations to apply to an element. Each name is an @keyframes at-rule that sets the property values for the animation sequence.
+		none | slide | bounce | <some-custom-name>
+	animation-play-state
+		paused | running
+		inherit | initial | unset
+	animation-timing-function
+		sets how an animation progresses through the duration of each cycle
+		ease | ease-in | ease-out | ease-in-out | linear | step-start | step-end
+		steps()
+		cubic-bezier()
+		inherit | initial | unset
+
+backface-visibilty
+	single-values whether the back face of an element is visible when turned rotated the user.
+	hidden | visible
+	inherit | initial | unset
+
+BACKGROUND
+	background
+		image color position size repeat clip origin attachment
+		Different backgrounds are seperated by commas.
+	background-attachment      (applies only to image and not color) (rarely used)
+		sets the scrolling behaviour of the background image
+		whether a background image's "position" is fixed within the viewport, or scrolls with its containing block. If you have multiple backgrounds, you can specify multiple comma seperated values for each background.
+		fixed			 (it is fixed and does not move while the contents are being scrolled in the foreground, it is also fixed to the viewport, even if the viewport scroll, this wont budge)
+		scroll     (it is fixed and does not move while the contents are being scrolled in the foreground, if you scroll on the viewport, you scroll though the background too)
+		local			 (complicated)
+	background-blend-mode
+	background-clip       (applies to both image and color)
+		uptill where should the elements background extend?
+		border-box    (it extends to the outside edge of the border but underneath it)
+		padding-box   (it extends to the outside edge of the padding. but nothing is under the actual border)
+		content-box 	(it is painted within the content box / element)
+		text 					(it is painted within the foreground text)
+	background-color
+		only one single <color> allowed  (you can have many images, but only one color!)
+		currentcolor | transparent |
+		inherit | initial | unset
+	background-image
+		You can specify multiple comma seperated values. They will stack on top of one another, First item specified is the front most one.
+		url("testFront.jpg"), url("testBack.jpg"), url("testMostBack.jpg")
+		linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url("test.jpg");
+	background-origin         (applies only to image and not color)
+		within the element, the background should be positioned relative to what? What is (0,0) i.e top-left corner's postion for the background.
+		border-box
+		padding-box    (the default)
+		content-box
+	background-position   (defined by background-origin, applies only to image and not color)
+		top | bottom | left | right | center    (top means no cropping of the top and so on, same as 0% 0%)
+		em | cm | %
+		single-value:  distance-from-left-edge   (y is 50%)
+		two-values:    distance-from-left-edge     distance-from-top-edge
+		three-values:  top/bottom/left/right  cropping-for-the-preceding-value
+		four-values:   cropping-for-x  left/right  cropping-for-y  top/bottom
+	background-repeat         (applies only to image and not color)
+		how to repeat the background within the element?
+		<horizontal value> <vertical value>
+		<single value>  which means do it for both
+		possible values:
+		repeat-x			same as: repeat no-repeat     (only one row of images)
+		repeat-y			same as: no-repeat repeat			(only one column of images)
+		repeat				same as: repeat repeat				(repeat x and repeat y, no spaces in between)
+		space					same as: space space          (first and last imgs are pinned to either side of the element, THEN whitepsace is distibuted evenly)
+		round					same as: round round          (complicated)
+		no-repeat			same as: no-repeat no-repeat   (only one image present, the position defined by background-position)
+		repeat/space/round/no-repeat  repeat/space/round/no-repeat    (either one for horizontal, and either one for veritcal)
+		inherit | initial | unset
+	background-size        (applies only to image and not color)
+		sets the size of the element's background image.
+		cover | contain
+		single-value:  width <length>    (the height defaults to auto, meaning it maintains the aspect ratio)
+		two-values: 	 width<length>    height<length>     (you might distort the natural aspect ratio of the image)
+		Comma seperated list of the above, each one applies to each background (i.e when you have multiple backgrounds)
+		Note: <length> is em | px | %
+
+BORDER
+	border
+		three values must be set: width  style  color
+		It applies to all 4 borders.
+
+  border-top-color, border-right-color, border-bottom-color, border-left-color
+		one single <color> value
+		currentColor | transparent
+		inherit | initial | unset
+	border-color
+		one-value:     all sides
+		two-values:    top-bottom   left-right
+		three-values:  top    left-right    bottom
+		four-values:   top   right   bottom   left
+
+	border-top-style, border-right-style, border-bottom-style, border-left-style
+		one single value: none | hidden | dotted | dashed | solid | double | groove | ridge | inset | outset
+		inherit | initial | unset
+	border-style
+		one-value:     all sides
+		two-values:    top-bottom   left-right
+		three-values:  top    left-right    bottom
+		four-values:   top   right   bottom   left
+
+	border-top-width, border-right-width, border-bottom-width, border-left-width
+		one single <length> value-
+		thin | medium | thick
+		px | em | ex
+		inherit | initial | unset
+	border-width
+		one-value:     all sides
+		two-values:    top-bottom   left-right
+		three-values:  top    left-right    bottom
+		four-values:   top   right   bottom   left
+
+	border-top, border-right, border-bottom, border-left
+		three values must be set: width  style  color
+
+
+	border-block
+	border-block-color, border-block-start-color, border-block-end-color
+	border-block-style, border-block-start-style, border-block-end-style
+	border-block-width, border-block-start-width, border-block-end-width
+	border-block-start
+	border-block-end
+
+	border-inline
+	border-inline-color, border-inline-start-color, border-inline-end-color
+	border-inline-style, border-inline-start-style, border-inline-end-style
+	border-inline-width, border-inline-start-width, border-inline-end-width
+	border-inline-start
+	border-inline-end
+
+	border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius
+		one-value:    <length> | <percentage>    (it applies to both horizontal and vertical edge)
+		two-values:   <length> | <percentage> for horizontal edge  AND  <length> | <percentage> for veritical edge
+		Percentage - What percentage of the vertical/horizontal edge must be an arc... so 80% for vertical means, 80% of that vertical border will be an arc, only 20% will be straight line.
+		Length - radius of the circle to use for the border in that corner. If there are two values, it becomes an ellipese, one value for horizontal major axis, the other for vartical major axis
+	border-radius
+		You basically give two values: first radius / second radius  (10px 100px / 120px). Each radius can have one to four values:
+		one-value:     all 4 corners
+		two-values:    topLeft-bottomRight   topRight-bottomLeft
+		three-values:  topLeft    topRight-bottomLeft   bottomRight
+		four-values:   topLeft   topRight   bottomRight   bottomLeft
+		inherit | initial | unset
+
+	border-collapse
+		sets whether cells inside a <table> have shared or separate borders.
+		single value: collapse | seperate
+		inherit | initial | unset
+
+	border-spacing
+		sets the distance between the borders of adjacent <table> cells. This property applies only when border-collapse is separate.
+		one-value:     <length> for horizontal and vertical spacing
+		two-values:    horizontal-spacing <length>      vertical-spacing <length>
+
+	border-image
+	border-image-outset
+	border-image-repeat
+	border-image-slice
+	border-image-source
+	border-image-width
+
+	border-start-end-radius
+	border-start-start-radius
+	border-end-end-radius
+	border-end-start-radius
+
+box-shadow
+	adds shadow effects around an element's box (i.e content+padding+border)
+	For a box (0,0) lies at the top left. So offsetX means how much to the right?, offsetY means how much to the bottom. If you give negative values, it means left and top..
+	two-values:     offsetX   offsetY  <optional-color>
+	three-values:   offsetX   offsetY   blur-radius   <optional-color>
+	four-values:    offsetX   offsetY   blur-radius    spread-radius   <optional-color>
+	inherit | initial | unset
+	If you prefix any of the above with "inset", it applies the shadow INSIDE the box and not OUTSIDE.
+	You can give multiple comma seprated set of values. (multiple shadows in different directions)
+
+box-sizing
+	sets how the total width and height of an element is calculated
+	content-box | border-box
+
+color
+	the single color of the element's text and text decorations. It also set the currentcolor value.
+	<color>
+	currentcolor
+
+column-gap
+	the thickness of the CSS grid column line. It creates a gutter/space between two columns.
+	normal | px | em | rem | %
+	inherit | initial | unset
+
+cursor
+	sets the type of cursor, if any, to show when the mouse pointer is over an element.
+	url(abc.png), url(fallback1.png), url(fallback2.png)   (i.e any list of urls)
+	auto | default | none
+	pointer | wait | progress | help | context-menu
+	cell | crosshair | text | vertical-text
+	alias | copy | move | no-drop | not-allowed | grab | grabbing
+	all-scroll | col-resize | row-resize | n/e/s/w-resize | ne/ns/nw/es/ew/sw-resize | nesw/nwse-resize
+	zooim-in | zoom-out
+
+
+display
+	none | block | inline | inline-block | list-item | flex | inline-flex | grid | inline-grid
+	inherit | initial | unset
+
+filter
+	applies graphical effects like blur or color shift to an element. (img,background,borders)
+	You can set one or more of these
+	blur()  |  brightness()  |  contrast()  |  drop-shadow()
+	grayscale()  |  huerotate()  |  invert()  |  opacity()
+	saturate()  |  sepia()
+	none | inherit | initial | unset
+
+
+float
+	left | right | none | inline-start | inline-end
+
+FLEX
+	flex
+	flex-basis
+	 single value sets the initial main size of a flex item. It sets the size of the content box unless otherwise set with box-sizing.
+	 <length value> | auto
+	 full | max-content | min-content | fit-content
+	 content
+	 inherit | initial | unset
+	flex-direction
+		single value sets how flex items are placed in the flex container
+		the horizontal direction depends on the 'dir' property of the parent (if it set to ltr/rtl)
+		row | row-reverse | column | column-reverse
+	flex-flow
+		shorthand for direction and wrap
+		flex-direction  flex-wrap
+	flex-grow
+		single integer/decimal value specifies how much of the remaining space in the flex container should be assigned to the item (the flex grow factor). Main size depends on the flex-direction. Default value is zero.
+		1 | 4 | 5.4 | 9.0 | any-decimal
+	flex-shrink
+		single integer/decimal value specifies how much space must this child lose when the window is shrinking. It depends on the flex-direction. Default value is 1.(i.e all children lose space equally). If the value is zero, it will not shrink AT ALL.
+		1 | 4 | 5.4 | 9.0 | any-decimal
+	flex-wrap
+		single value sets whether flex items are forced onto one line or can wrap onto multiple lines. If wrapping is allowed, it sets the direction that lines are stacked.
+		nowrap | wrap | wrap-reverse
+		inherit | initial | unset
+
+FONT
+	font
+		It must include font-size and font-family. Others are optional.
+		The order: font-style  font-variant  font-weight  font-size   line-height   font-stretch    font-family
+	@font-face
+	font-family
+		a prioritized comma seperated list of font-family-names for the text in the element. It picks only ONE value, it goes from left to right (whichever is available first).
+		Make sure you mention atleast one font-family-name and one gerneric-family-name  Example: "Gill Sans Extrabold", sans-serif (use quotes for font-family-name to be safe)
+		generic names: serif, sans-serif, monospace, cursive, fantasy, system-ui (default UI font of the platform), math, emoji, fangsong
+		font family names: Times, Times New Roman, Verdana, Arial, Helvetica, Georgia, Lucida Console, Courier
+	font-family (@font-face)
+	font-feature-settings
+	font-feature-settings (@font-face)
+	@font-feature-values
+	font-kerning
+	font-language-override
+	font-optical-sizing
+	font-size
+		TBD
+	font-size-adjust
+	font-stretch
+		TBD
+	font-stretch (@font-face)
+	font-style
+		any single style for the displayed font family text
+		normal  | italic  |	oblique
+		oblique <angle>             (-90 to 90)
+	font-style (@font-face)
+	font-synthesis
+	font-variant
+		TBD
+	font-variant (@font-face)
+	font-variant-alternates
+	font-variant-caps
+	font-variant-east-asian
+	font-variant-ligatures
+	font-variant-numeric
+	font-variant-position
+	font-variation-settings (@font-face)
+	font-weight
+		sets the single boldness/weight of the font
+		normal | bold
+		ligther | bolder       (relative to the parent) (only thin, normal, bold and heavy are used for this)
+		100 (thin) | 200 (extra-light) | 300 (light) | 400 (normal) | 500 (medium) | 600 (semi bold)| 700 (bold) | 800 (extra bold)| 900 (heavy)       i.e you can set a value from 1 to 1000
+		inherit | initial | unset
+	font-weight (@font-face)
+
+gap
+	shorthand for row-gap and column-gap (in CSS grid containers)
+	single-value: set both row-gap and column-gap
+	two-values: row-gap column-gap
+
+GRID
+	grid
+	grid-area
+		shorthand for 4 values in this order. Each is seperated by a forward slash. Apply this to each child of the grid-container.
+		grid-row-start / grid-column-start / grid-row-end / grid-column-end
+		Also, you can just give this child a "name" and then use grid-template-areas on the parent
+	grid-auto-columns
+	grid-auto-flow
+		controls how the auto-placement algorithm works, specifying exactly how auto-placed items get flowed into the grid.
+		row | column | dense | row dense | column dense
+	grid-auto-rows
+	grid-column
+		shorthand for start and end. There is a forward slash in between.
+		grid-column-start / grid-column-end
+	grid-column-end
+		end column line of this item
+		auto | <linenumber> | span <number of lines> | <linename>
+	grid-column-start
+		start column line of this item
+		auto | <linenumber> | span <number of lines> | <linename>
+	grid-row
+		shorthand for start and end. There is a forward slash in between.
+		grid-row-start / grid-row-end
+	grid-row-end
+		end row line of this item
+		auto | <linenumber> | span <number of lines> | <linename>
+	grid-row-start
+		start row line of this item
+		auto | <linenumber> | span <number of lines> | <linename>
+	grid-template
+	grid-template-areas
+		for the parent grid container, use this to specify the position of each named child in the grid. Give each child a name with "grid-area" property.
+		Example: "header header header"
+						 "aside main main"
+						 "aside main main"
+						 "aside main main"
+						 "footer footer footer"
+		Use a dot . to leave a blank space
+	grid-template-columns
+		defines the line names and track sizing functions of EACH grid column. Depending on the number of columns, you will set that many values. You can specify an optional name in-front-of inside [] for each value. Each value can be -
+		em | px | rem | % | fr
+		auto
+		minmax(minimumWidth, maximumWidth)
+		fitcontent(minContentHeight beyond which use the content height)
+		repeat(howManyTimes, whatValue)    like repeat(5,20%) i.e 5 columns, 20% each
+		subgrid
+		inherit | initial | unset
+	grid-template-rows
+		defines the line names and track sizing functions of EACH grid row. Depending on the number of rows, you will set that many values. Each value can be -
+		em | px | rem | % | fr
+		auto
+		minmax(minimumHeight, maximumHeight)
+		fitcontent(minContentWidth beyond which use the content width)
+		repeat(howManyTimes, whatValue)    like repeat(5,20%) i.e 5 rows, 20% each
+		subgrid
+		inherit | initial | unset
+
+
+height
+
+justify-content
+	single-value defines how the browser distributes space between and around content items along the main-axis of a flex container, and the inline axis of a grid container. (i.e justify on the x-axis of the grid)
+	center | start | end | flex-start | flex-end | left | right
+	normal
+	space-between | space-around | space-evenly | stretch
+	safe center | unsafe center
+	inherit | initial | unset
+
+justify-items
+
+justify-self
+
+line-height
+	TBD
+
+list-style-type
+	single value to determine the pointer type
+	disc | square | circle
+	none
+	decimal | georgian | kannada
+	<any string value>  like '-', '*', "\1F44D"  (thumbsUp sign)
+	inherit | initial | unset
+list-style-position
+	single value that sets the position of the ::marker relative to a <ul>/<ol> block.
+	inside | outside    (Outside means the pointer is placed to the left of the <ul> text. Inside means the pointer is place underneath the <ul> text )
+	inherit | initial | unset
+list-style-image
+	single value that uses an image as the list pointer
+	url('starsolid.gif') | none
+	inherit | initial | unset
+list-style
+	All list-style-XYZ properties may be applied to any element whose {display:list-item}
+	type  image   postion      (if type and image are given, the type is used only if image is unavailable)
+
+letter-spacing
+	TBD
+
+MARGIN
+	margin-top, margin-right, margin-bottom, margin-left
+		one single <length> value (positive or negative value)
+		em | px | %
+		auto   (this one is complex, it centers it horizontally)
+		inherit | initial | unset
+	margin
+		one-value:     all sides
+		two-values:    top-bottom   left-right
+		three-values:  top    left-right    bottom
+		four-values:   top   right   bottom   left
+
+	margin-block
+	margin-block-end
+	margin-block-start
+
+	margin-inline
+	margin-inline-end
+	margin-inline-start
+
+min-width
+	single value allowed
+	<length> | <percentage> | auto | max-content | min-content | fit-content() | fill-available
+	inherit | initial | unset
+max-width
+	single value allowed
+	<length> | <percentage> | auto | max-content | min-content | fit-content() | fill-available
+	inherit | initial | unset
+min-height
+	single value allowed
+	<length> | <percentage> | auto | max-content | min-content | fit-content() | fill-available
+	inherit | initial | unset
+max-height
+	single value allowed
+	<length> | <percentage> | auto | max-content | min-content | fit-content() | fill-available
+	inherit | initial | unset
+
+order
+	single-value sets the order to lay out an item in a flex or grid container. Items in a container are sorted by ascending order value and then by their source code order.
+	-5 | -4 | 0 | 1 | 20 | 100 | any-integer
+	inherit | initial | unset
+
+OUTLINE
+	outline-color
+		single <color> value
+		invert       (inverse of the background)
+		inherit | initial | unset
+	outline-style
+		auto | none
+		dotted | dashed | solid | double | groove | ridge | inset | outset
+		inherit | initial | unset
+	outline-width
+		single <length> value
+		thin | medium | thick
+		inherit
+	outline-offset
+		sets the amount of space between an outline and the edge or border of an element.
+		single <length> value
+		inherit | initial | unset
+	outline
+		width   style    color      (offset has to mentioned seperately)
+
+overflow-x
+	visible | hidden | clip | scroll | auto
+	inherit | initial | unset
+overflow-y
+	visible | hidden | clip | scroll | auto
+	inherit | initial | unset
+overflow
+	one-value:   applies-to-both-x-and-y
+	two-values:  x-value   y-value
+
+
+PADDING
+	padding-top, padding-right, padding-bottom, padding-left
+		one single <length> value (positive or negative value)
+		em | px | % | cm | ch
+		inherit | initial | unset
+	padding
+		one-value:     all sides
+		two-values:    top-bottom   left-right
+		three-values:  top    left-right    bottom
+		four-values:   top   right   bottom   left
+
+	padding-block
+	padding-block-end
+	padding-block-start
+
+	padding-inline
+	padding-inline-end
+	padding-inline-start
+
+perspective
+	determines the distance between the z=0 plane and the user in order to give a 3D-positioned element some perspective
+	none | <length>
+	inherit | initial | unset
+perspective-origin
+	determines the position at which the viewer is looking. It is used as the vanishing point by the perspective property.
+	single-value: x-position
+	two-values: x-position y-position
+	x-position can be <length> | % | left | center | right
+	y-position can be <length> | % | top | center | bottom
+
+
+POSITION
+	position
+		static | relative | absolute | sticky | fixed
+	top,left,bottom,right
+		specifies the position of a "positioned" element. These don't have any effect if position is not set or is set to "static". Where should this box+margin be?
+		One single <length> value. How much distance FROM the top/bottom/left/right
+		em | px | %
+		auto
+		inherit | initial | unset
+	z-index
+		sets the z-order of a "positioned element" and its descendants or flex items. Overlapping elements with a larger z-index cover those with a smaller one. This doesn't have any effect if position is not set or is set to "static".
+
+
+
+row-gap
+	the thickness of the CSS grid row line. It creates a gutter/space between two rows.
+	normal | px | em | rem | %
+	inherit | initial | unset
+
+
+SCROLL
+	scroll-behavior
+	scroll-margin
+	scroll-margin-block
+	scroll-margin-block-end
+	scroll-margin-block-start
+	scroll-margin-bottom
+	scroll-margin-inline
+	scroll-margin-inline-end
+	scroll-margin-inline-start
+	scroll-margin-left
+	scroll-margin-right
+	scroll-margin-top
+	scroll-padding
+	scroll-padding-block
+	scroll-padding-block-end
+	scroll-padding-block-start
+	scroll-padding-bottom
+	scroll-padding-inline
+	scroll-padding-inline-end
+	scroll-padding-inline-start
+	scroll-padding-left
+	scroll-padding-right
+	scroll-padding-top
+	scroll-snap-align
+	scroll-snap-stop
+	scroll-snap-type
+	scrollbar-color
+
+TEXT
+	text-align
+		one single value that sets the horizontal alignment of a block element or table-cell box.
+		left | right | center | justify
+		inherit | initial | unset
+
+	text-decoration-line
+		one or more values (all of them will apply on the same text)
+		none | underline | overline | line-through
+		inherit | initial | unset
+	text-decoration-style
+		single value that applies to the decoration
+		solid | double | dotted | dashed | wavy
+		inherit | initial | unset
+	text-decoration-color
+		single <color> value that applies to the decoration
+		<color> | transparent | currentColor
+		inherit | initial | unset
+	text-decoration-thickness
+		single <length> value that sets the thickness/width of the decoration line
+		em | px
+		from-font | auto
+		inherit | initial | unset
+	text-decoration
+		4 values in order: line   style   color   thickness
+		but, thickness is not supported in this shorthand on most browsers
+
+	text-align-last
+	text-combine-upright
+	text-emphasis
+	text-emphasis-color
+	text-emphasis-position
+	text-emphasis-style
+	text-indent
+	text-justify
+	text-orientation
+	text-overflow
+	text-rendering
+	text-shadow
+		TBD
+	text-transform
+	text-underline-offset
+	text-underline-position
+
+transform
+	one or more of these in combination
+	none
+	matrix() | matrix3d()
+	perspective()
+	rotate() | rotate3d() | rotateX() | rotateY() | rotateZ()
+	translate() | translate3d() | translateX() | translateY() | translateZ()
+	scale() | scale3d() | scaleX() | scaleY() | scaleZ()
+	skew() | skewX() | skewY()
+	inherit | initial | unset
+
+transform-origin
+	sets the origin for the 'transform' property. You are specifying how far from the left, and how far from the top.
+	single-value: <length> | % | center | left | right | top | bottom
+	two-values: <length> | % | center | left | right   AND    <length> | % | center | top | bottom
+	three-values: two-value-syntax AND <length> for z-offset
+
+transform-style
+	flat | preserve-3d
+	inherit | initial | unset
+
+TRANSITION
+	transition
+		shorthand for transition-property, transition-duration, transition-timing-function, transition-delay
+		property duration function delay, property duration function delay, property duration function delay ....
+		inherit | initial | unset
+	transition-delay
+		specifies the duration to wait before starting a property's transition effect when its value changes
+		if multiple values are given, each value will apply to a it's coressponding values inside "transition-property"
+		6s | 500ms
+		inherit | initial | unset
+	transition-duration
+		sets the length of time a transition animation should take to complete. Default is 0s.
+		if multiple values are given, each value will apply to a it's coressponding values inside "transition-property"
+		6s | 500ms
+		inherit | initial | unset
+	transition-property
+		none | all
+		any-transitionable-css-property
+		inherit | initial | unset
+	transition-timing-function
+		sets how intermediate values are calculated for CSS properties being affected by a transition effect.
+		if multiple values are given, each value will apply to a it's coressponding values inside "transition-property"
+		ease | ease-in | ease-out | ease-in-out | linear | step-start | step-end
+		steps()
+		cubic-bezier()
+		inherit | initial | unset
+
+
+vertical-align
+	single value that sets vertical alignment of an inline, inline-block or table-cell box. These values vertically align the element relative to its parent element:
+	baseline | sub | super | text-top | text-bottom | middle
+	top | bottom           (their tops/bottoms must allign)
+	<length>   em | px      aligns the baseline of the element to the given length above the baseline of its parent. A negative value is allowed.
+	<percentage>      aligns the baseline of the element to the given percentage above the baseline of its parent, with the value being a percentage of the line-height property.
+
+
+visibilty
+	shows or hides an element without changing the layout of a document.
+	visible | hidden | collapse
+	inherit | initial | unset
+
+width
+
+white-space
+	TBD

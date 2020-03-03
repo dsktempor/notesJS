@@ -1,1 +1,1100 @@
-//init
+CSS Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference
+Specificity: https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
+Margin Collapsing: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
+CSS browser support: https://caniuse.com/
+
+
+Cascading Style Sheets
+1996: CSS1
+1998: CSS2
+CSS3 is still in development
+
+
+Three ways to Add css to a webpage:
+>Inline in the html    <section style="<CSS HERE>">     (not recommended, not reusable/scalable)
+>In the <head> tag, add a <style> CSS rules here </style>
+>In the <head> tag, add a <link rel='stylesheet' href='my.css'>     (advantages: caching)
+
+
+CSS is case insensitive. So in html, don't use camel case for attribute names and attribute values, always use hyphened words.
+Comments are only with /* */ .You can't use //
+
+In every browser settings, there is a default selected font-family for - standard font, serif font, sans-serif font and a fixed width font. "font-family" in the CSS will pick up whatever these default settings in the browser are..
+
+You can add google fonts to your page <head>. <link href="https://fonts.googleapis.com/css?family=XYZ" rel="stylesheet" and then use {font-family: XYZ, sans-serif}
+
+CSS Rule =  Selector/Combinator + Property Names + Property Values
+
+Selectors -
+elements-         h1: {}
+class-            .blog-post: {}    (the html "class" attribute)
+universal-        *: {}     (every element on the page or under that element) (like div p *)
+id-               #blog-post: {}    (the html "id" attribute)
+attributes-      [attr-name]: {}    (elements with this attribute)
+attributeValues- [type='email']: {}   (element with the attribute type=email)
+attributeValues- [type~='email']: {}   (element where attribute 'type' contains the word 'email') (it should be surronded by spaces on both sides, like type='text email phone')
+attributeValues- [type|='email']: {}   (element where attribute 'type' equals OR starts with the word 'email-')
+attributeValues- [type^='email']: {}   (element where attribute 'type' starts with the word 'email')
+attributeValues- [type$='email']: {}   (element where attribute 'type' ends with the word 'email')
+attributeValues- [type*='email']: {}   (element where attribute 'type' contains the string 'email' anywhere in it)
+attributeValues- [type$='email' i]: {}   (element where attribute 'type' ends with the word 'email', be case insensitive)
+selector:not(some-other-selector)    Everything except that
+
+
+Combinators -
+Adjacent Sibling  +     h2 + p + a  (all a that directly follow a (sibling) p, that inturn directly follow a (sibling) h2)  (by follow we mean adjacent, but immediately afterwards)
+General Sibling   ~     h2 ~ p      (all p that are a sibling of a h2, it must be somewhere after the h2, does'nt have to be right after it)
+Direct Child      >			div > p			(any p that is a direct child (not grandchild) of a div)
+Descendant        <space>           (any descendant)
+
+Cascading: For any html element, and any css property for that element, multiple cascading values are applied in order of priority.
+Priority in CSS is called Specificity. The priority is applied only if there are conflicting values for any particular css property value, no conflict means, that value is directly applied (even if it is really low in the priority)
+First: Inline style
+Second: CSS files on the page,
+	>within each file, for the same kind of selector: bottom one gets more priority than the top one. (the bottom one overwites the top one)
+	>Within each page, for the same kind of selector: bottom file get more priority than the top file.
+Inspect any element in chrome and look at the CSS, read from top to bottom to understand the priority of each rule. Top ones are higher priority.
+
+Some selectors have more priority than other selectors, regardless of where the selector is placed. Meaning, the more specifically you select that element and give it a property=value, this higher chances are that value will be applied. Also: Selectors with combinators have higher specificity than those with lower number of combinators.
+Specificity of CSS- (in order of priority)
+	> inline styles
+	> #id selectors
+	> .class, :pseudo-class and [attribute] selectors
+	> <tag and ::pseudo-element selectors>
+	> * universal selectors
+	> user agent default stylesheet
+	> automatically inherited
+
+Inheritance: For certain properties, all children of that element, automatically also get that property.
+If you manually set the value to "inherit" then it's Specificity is determined by the selector that was used (this is not automatically inherited)
+
+body will not beat h1 (regardless of where body is)
+body * will beat h1   (because it is more specific)
+When you use body{} , any children that don't have that property defined will get that property..
+
+<div id='a'>
+		This is a
+				<div id='a1'>
+							This is a1
+				</div>
+</div>
+div    { color: blue; }
+div#a  { color: green; }
+div#a1 { color: yellow; }
+Now the text "This is a1" will be yellow in color because -
+first - it inherited green from div#a
+Then - div made it blue
+BUT finally - div#a1 is most specific, si it will be yellow.
+
+Special Values -
+Colors: <color>
+Strings: red, yellow, orange
+Hex Codes: #000000 to #FFFFFF
+RGB: rbg(0-255, 0-255, 0-255)
+RGBA: rbga(0-255, 0-255, 0-255, 0-1)    The last one is alphaChannel or opacity (in decimals), 0 is transparent and 1 is opaque
+hsl: hsl(0-360, 0%-100%, 0%-100%)
+	hue:0-360            where 0 is red, 120 is green and 240 is blue   (this is the base color)
+	saturation:0-100%    how shaded (grey) should it be.  100% is true color
+	lightness:0-100%     0% is black and 100% is white.   50% is true color
+hsla: hsl(0-360, 0%-100%, 0%-100%, 0-1)
+
+linear-gradient(direction/angle, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")  (linear gradients are treated as images)
+Directions -
+to left | to right | to top | to bottom | to left top | to right top | so on..
+Angle - 0 to 180
+Lookup the details
+
+radial-gradient(circle/ellipse <radius> at <top/bottom/left/right>, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")
+Default shape is ellipse.
+(circle 100px at 20% 50%, grey, transparent);
+Lookup the details
+
+Box Model: Every html element is a box.
+HTML Element = content + padding + border.
+Outside the HTML element, you also have margin. (distance from it's sibling)
+
+Your browser also loads a default stylesheet where the <body> has a margin on 8px! Watch out. set body {margin: 0px} to work around this.
+The parent element will also take on the margin of the child element.
+
+Margin Collapsing: Two adjacent block elements: Their margins are merged into one. the bigger margin wins. This is why you often see margins of elements overlapping each other. The is how CSS works, it tries to avoid extra distances between adjacent elements. To work around this use: margin-top or margin-bottom
+>adjacent siblings: bigger one wins
+>parent with children that have margins: if the first or last child or both have margins. They will respectively overlap (collapse) with the top and bottom margins of the parent. Again, the bigger one wins in each case.
+>If an item has no content, padding, border. Then it's own top and bottom margin will collapse (overlap), again, the bigger one wins.
+
+Shorthand properties: Single property that combines multiple properties.
+font, background, padding, margin,border etc.
+The values have to be given in a specific order though, it depends on the syntax of the property.
+
+Block Level Elements div/section/h1:  have default width as 100%. If you change this value to 50%, it occupy 50% of it's parent's width. If you set 110%, it will occupy 1.10 times the width it's parent is occupying. Maybe the parent itself is at some 70% width. If the parent is a block html element, its' defautl width is 100% anyways..
+Height: Every parent tries to be only as big as they need to be. THEN -> Any child that say height=100% will only take up 100% of it's parents height. So the parent first determines its own height allocated to it, it then places all its children inside it, then this particular child's height will match it's parent's original height.
+So if parent has height=100px, then any child with height=100% will now occupy 100px.
+
+Width & Height
+By default in the CSS box model, the width and height you assign to an element is applied only to the element's content box.
+Also, if box-sizing=content-box, that means any height and width you set applies to the content of that element (the H and W don't include the padding,border,margin)
+box-sizing=border-box. Now, any H and W includes the content,padding and the border.
+It is good to enforce all elements in your page to have box-sizing=border-box
+You can do body { box-sizing=border-box }, that way all children of body will inherit this value. BUT, there is a probem, the useragent applies a style sheet saying all block elements must have {display: block}, this has more Specificity that inheritance and hence overrides it. There use * { box-sizing=border-box }, this applies to all elements and has more specifity than the user-agent stylesheet.
+If you give H and W a % value, that means it is relative to it's parent. If you give px then it is an absolute value.
+
+Block Level HTML tags:
+<div>  <p>   <h1>-<h6>   <section>  <form>  <pre>
+<hr>
+<ol> <ul> <li>
+<table>   <tfoot>  <dd> <dl> <dt>
+<header>  <footer>
+<nav>   <article>  <aside>
+<address> <blockquote> <canvas> <fieldset> <figcaption> <figure> <main> <noscript> <video>
+
+Inline HTML tags:
+<span>  <a>  <img>  <script>  <label>
+<input>  <button>  <select>  <textarea>  <map>
+<tt>
+<strong>  <i>  <b> <em>  <sub>  <sup>  <small>
+<br>
+<code>  <abbr>  <acronym>  <q>  <var>
+<bdo> <big> <cite> <dfn> <kbd> <object> <output> <samp> <time>
+
+Setting margin-top and margin-bottom properties on inline elements does'nt make sense. Additionally, setting a width  or height  on an inline element also has no effect. The width and height is auto to take as much space as required by the content.
+You can convert block to inline and inline to block tags by using {display: block/inline/inline-block}
+Compared to display: inline, the major difference is that display: inline-block allows to set a width and height on the element.
+
+Note: If an element is an inline element, setting "width" will not have any effect on the element.
+
+
+Display:none removes the element, meaning the next element takes it's place. But visibility:hidden only hides it, it will be an empty space on the page.
+
+width: calc(100% - 50px);     calc() is a CSS func
+{display:inline-block} this also includes the whitespace in your html code (weird css bug)
+<a> have default {text-decoration:underline} that you can remove if you want to.
+
+Pseudo Classes: Defines the style for a special state of the chosen element.  :class-name
+Pseudo Element: Defines the style of a specific part of an element    ::element-name
+Remember: #ID selectors have higher specificity than pseudo-classes and classes...
+
+::after and ::before, you can add content to the html (from the CSS!)
+
+You can selectors that have the same css properties
+div, p ,a {         (these three selectors are completely  independant of each other, they just have the same CSS applied)
+	prop1: value1;
+	prop2: value2;
+}
+
+To have a PLP like grid of 3 elements side by side:
+<div id='container'>
+		<div class='p'>  this is a  </div>
+		<div class='p'>  this is b  </div>
+		<div class='p'>  this is c  </div>
+		<div class='p'>  this is d  </div>
+		<div class='p'>  this is e  </div>
+		<div class='p'>  this is f  </div>
+</div>
+div#container {
+	width: 100%          /*First, let the container occupy 100% width of it's parent */
+}
+div.p {
+	display: inline-block;    /*this allows you to set a width for each element. They are each inline to one an another. If you set this is to just inline, you can't set any width, they will take as much width-space as they need */
+	width: 33%;            /* each guy must take 33% width of the parent div container */
+	box-sizing: border-box;   /* vvip, the 33% width alloted to each block includes the block's border too..*/
+	border: 3px solid red;
+	padding: 2px;
+	vertical-align: middle;   /* vertical midpoints of each box are on the same line */
+}
+OR do -
+div.p {
+	display: inline-block;
+	width: 30%;
+	margin: 10px;
+	vertical-align: middle;
+}
+Since, you gave 30%, now each box has some space for a margin too. (box-sizing is set to default 'content-box')
+
+CSS Classes: If an html element has more than one class on it. Than the css properties of both those classes will apply. For conflicts, the class that was defined LATER in the css file will win!
+When you add the same class to different html elements, you can give them all the same CSS. You can use different IDs for each too, and do the same. But html IDs are also used for scroll-up-to-XYZ when the url has url?xid=10#XYZ  (so IDs have dual functionality, be careful using them)
+a.class1.class2   - select those anchors that have both class1 and class2
+
+!important
+{ color: red !important; } regardless of priority and specificity, color will ALWAYS be red.
+Never use this feature. It is not recommended.
+If two conflicting properties have !important specified, then normal specificity rules will apply to determine the priority between the two !importants ....
+
+:not()
+a:not(.active) - selects any anchor tag that does not have the class=active
+
+Regardless of what css property you use, check it's mobile and desktop browser support.
+
+How to make a header with links? i.e convert a <ul> <li> <li> .. </ul> into a header
+.main-nav {           (the parent nav html tag)
+    display: inline-block;
+    text-align: right;
+    width: calc(100% - 74px);
+    vertical-align: middle;
+}
+.main-nav__items {     (the ul html tag)
+    margin: 0;
+    padding: 0;
+    list-style: none;     (the list-style must be set for the ul/ol tag)
+}
+.main-nav__item {         (each li tag)
+    display: inline-block;
+    margin: 0 16px;
+}
+.main-nav__item a {       (each anchor tag in the header)
+    text-decoration: none;
+    color: blue;
+    font-weight: bold;
+    padding: 3px 0;
+}
+.main-nav__item a:hover,
+.main-nav__item a:active {     (some animation)
+    color: red;
+    border-bottom: 5px solid white;
+}
+
+For a box (0,0) lies at the top left. So offsetX means how much to the right?, offsetY means how much to the bottom. If you give negative values, it means left and top..
+Example:
+box-shadow: 10px 20px;     10 to the right and 20 downwards
+box-shadow: 10px -20px;    10 to the right and 20 upwards
+
+
+To remove default setting of a ul/ol list of items-
+article.plan-container ul {
+	list-style: none;
+	text-align: center;
+	margin: 0px;
+	padding: 0px;       (chrome adds a default left-padding for each <li> element of 40px! [padding-inline-start=40px])
+}
+Add some margin to each child li: margin= 10px 5px;  (they will be equaly spaced a bit)
+
+Basic button CSS
+{
+	background: rgb(8, 99, 8);
+	color: white;
+	font: bold 1.2em "Gill Sans Extrabold", sans-serif ;  (or set 'inherit', normally user-agentCSS will set some font for all buttons)
+	padding: 10px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+Also add CSS for :hover and :active of the button (same CSS for both should do)
+button:focus {
+	outline: none;
+}
+
+To view the box/outline of any element, in chrome, select the element in the HTML part and then in the CSS part, force the state="focus" in the dev tools. It will highlight the box of the element.
+Outline: It is the non-existant but thin line between the border and the margin. Outlines never take up space, as they are drawn outside of an element's content.
+Outlines never take up space (unlike a border), as they are drawn outside of an element's content (box).
+Use the property "outline" to set width/style/color and also set offset.
+Generally for <button> on focus, the user-agent adds CSS to add an outline to them.. you want to override this.
+
+How to convert an element to a perfect circle? The element could have an img/a inside it...
+{
+	width: 100px;
+	height: 100px;
+	border: 2px solid red;
+	border-radius: 50%      (this creates a perfect circle)
+	margin: auto             (circle is centered inside the box)
+}
+
+Folder Structure:
+shared.css  -  This will have all the header/footer/button generalised css for the whole website. Any universal selectors, body selectors etc.
+page1.css - just the css for the content of this page
+page2.css - just the css for the content of this page... and so on.
+On any page, first load the shared.css file, THEN load any other CSS file that will override/ set new values...
+
+Float: Overwrite the positioning of an element, by taking it out of the document flow and place it anywhere on the page. Meaning that right/left part of the container is blocked for this element. The rest of the container follows the usual dom flow. The subsequent elements will TAKE this one's place..
+The float CSS property places an element on the left or right side of its container, allowing text and inline elements to wrap around it. The element is removed from the normal flow of the page, though still remaining a part of the flow. It is shifted to the left, or right, until it touches the edge of its containing box, or another floated element.
+The only advantage of "float" is making text wrap around an image....
+
+{clear: both}      (hacky fix for elements after a floated tag)
+When this applied to any element, if clears the float to the right and to the left. Meaning this WILL NOT wrap, and anything inside this or after this element, will appear after the floated element.
+So just a create an empty div after the floated div, and apply this CSS to that div.
+
+Document Flow: The default positioning behaviour of html elements. This can be changed by "position". Elements can remain in the document flow or be excluded from it.
+Positioning context: Defines the anchor point for your position change.
+>the viewport for fixed
+>another element for absolute
+>the element itself for relative
+>the viewport and another element for sticky
+
+Positioning: How to change the position of elements
+The positon property of each html tag, by default has a value of "static", meaning, follow the document flow.. (normal way). But you can change the position of a html element with any of these values.
+top/bottom/left/right : how much distance FROM the top/bottom/left/right should the top/bottom/left/right of the element (box+margin) be moved.
+There are five kinds of position values:
+>static
+	the default value. Here if you set top/bottom/left/right, they have no effect.
+
+>fixed & absolute
+	For both of these-
+	>The element is removed from the normal document flow, and no space is created for the element in the page layout.
+	>So other elements will takes it's place AS IF it never existed.
+	>The element now becomes like an "inline-block" element, meaning it takes as less width as it needs, but you can also change it's width.
+
+	>fixed:  Where should this box+itsMargin be relative to the viewport? (You might want to set box-sizing=border-box, when you set width to 100% etc.)
+	>absolute:  Distance from it's parent container
+	If none of it's ancestors have a 'position' property than it's position is relative to the <html> tag. Or else it's position is relative to the nearest parent who has the "position" property defined (not = static, but ideally that value is 'relative' and no top/etc value specified for it).
+
+>relative & sticky
+	For both of these-
+	>The element is NOT removed from the normal document flow.
+	>The element is positioned according to the normal flow of the document, thus, the space given for the element in the page layout is the same as if position were static.
+
+	>relative: distance from it's normal position
+	Then the offset is applied relative to itself based on the values of top, right, bottom, and left. The offset does not affect the position of any other elements, this one just appears in front of the others.
+	>sticky: distance from viewport, but remain inside the parent container content (pretty new feature)
+	The offset is the distance of the element's BOX  (not box+margin) from the viewport. It is stuck to the viewport until the parent's CONTENT scrolls out of the viewport.
+
+For both fixed and absolute, the moment you put it for an element, even without putting top/bottom/left/right, the element is immediately removed from the dom flow, it becomes inline-block and it is just randomly floating on top of its siblings/nearby elements.. until you give it a position.
+So absolute, just means some absolute movement w.r.t to you parent container's final position. (the parent will have position=relative). Adding the position  property with a value different from static  to a parent element will change the child's positioning context if the child has a position value of absolute.
+
+For relative and sticky, the moment you put it for an element, even without putting top/bottom/left/right, nothing moves or breaks. You just have to give some value now.
+
+Stacking Context: z axis postioning. "0" is normal.
+By default, every html tag has a z-index of "auto". (which means zero).
+Things in the front have a higher z-index than thing that go in the back.
+z-index has no effect on html tags that don't have "postion" set , or whose position is set to "static",
+If two elements, both have position=fixed, and z-index=same. The one that came later in the html will appear on top of the one that came earlier in the html.
+
+z-index value is used only for all siblings within the same parent. If a cousin has a z-index of 5 and you have a z-index of 1000. the cousin my still appear on top of you, because your parent's z-index is lower than your cousin parent's z-index.
+Note: this is only when both parent's have position defined (preferably = relative). when position is defined and set to fiixed, you are creating a new stacking context for that element and all it's children. If position is defined and set to relative/absolute, a new stacking context is created ONLY IF you immediately specify a z-index for that element.
+
+
+Want a fixed navigation bar?
+nav#main {
+	position: fixed;
+	width: 100%;              (it becomes an inline-block element with "fixed", so change the width)
+	box-sizing:border-box;
+	top : 0px;
+	left: 0px;
+}
+If you dont' mention top=0, left=0 for "fixed", then the element will just be placed in some left part of it's container, probably overlapping one of it's former siblings.
+
+Overflow: Since you are moving elements out of the parents with "relative". On the parent, you can set overflow:hidden, meaning if the child moves relatively outside the parent, then hide it.
+caveat: when you apply overflow:hidden on the <body> tag, it removes it from the body tag and put is on the <html> tag. To make it work, you have to manually add overflow:hidden to both <body> and <html>
+Overflow has nothing to do with children that are positioned "fixed" or "absolute", because these are removed from DOM in the first place.
+Overflow also applies to ANY element, whose text is much larger than the provided "width".
+
+Move something to the bottom left of it's parent?
+parent {
+	position: relative;      //if you don't add this to the parent, it just does it relative to the <html> element (i.e for absolute)
+}
+child {
+	position: absolute;
+	bottom: 10px;                 (or use percentages for distance)
+	left: 10px;
+}
+
+
+BACKGROUND
+If you specify both background-image and background-color, whichever was declared first, that one will appear on the top.
+Spaces not covered by a background image are filled with the background-color property, and the background color will be visible behind background images that have transparency/translucency.
+
+background-size: 50% 50%
+This will create 4 images within the square.. You are using 50% height and 50% width of the parent. SO there will be a final of 4 images of equal size..
+background-size: auto 100%
+Whatever happens, occupy 100% of the height, but maintain the aspect ratio of the image (auto for width does this)
+"cover" is a very good option for "background-size". It ensures that there is not whitespace.
+"contain" ensure that the image is never cropped. In this case you will get whitespace. (but make sure you keep no-repeat for this one..)
+
+background-position: left 10% bottom 20%  (crop 10% of the left and 20% of the bottom!)
+
+Sometimes you want to put a linear-gradient() on top of your background-image, just to add some glow/effects. Just declare it before the url(xyz.png) in the "background-image" property.
+
+Remember: if you just use the shorthand "background" property, it will set default values for all 7 background properties. Be careful.
+
+It is harder to style <img> tags than to to style <div> that have a background image! So always try to add the images via css..
+Default behaviour: If you put an <img> no matter what the parent tag's height is, the image will load in full size. To set the image size, set the height/width directly on the <img> tag. Also use only px not % (% won't work if the parent is an inline element, % works if the parent is an inline-block element.)
+
+The filter CSS property has a lot of functionality. It is like a photo-editor within css.
+blur, brightness, contrast, drop-shadow, grayscale, hye, invert, opacity, saturation, sepia etc.
+IE does not support filter.
+
+SVG: Scalable Vector Graphics: A XML based markup langiage to create two dimensional images. i.e it is a text based graphical language.
+In your html you add a huge <svg> tag to it.
+With CSS you can change some of the markups.
+
+SIZES AND UNITS
+If you hardcode font-size in "px", then, even if the browser changes font-size in settings, this font will not change it's size.
+px - pixels     (cm,mm are rarely used)
+% - percentage
+rem - root em (font size)
+em -  a font size
+vh - viewport height
+vw - viewport width
+Which properties use these?
+font-size
+padding, border, margin, width, height
+top, bottom, left, right
+
+How is size calculated?
+Absolute Lengths : These mostly ignore any user/browser settings. Like hardcoding "px" values.
+px, cm, mm
+Viewport Lengths : adjust to the current viewport
+vh, vw, vmin, vmax
+Font-Relative Lengths : adjust to the default font size
+rem, em
+Percentages : some percentage of something else
+"auto" - for margin
+
+Percentages: For a specific element, it depends on the element's "position" value...
+>if position=fixed, width=80% means 80% of the viewport (not the parent element)
+>if position=absolute, width=80% means 80% of some ancestor's content+padding (not box). i.e closest ancestor who has position=relative/absolute/fixed/sticky  (not static)
+>if position=static/relative, width=80% means 80% of some ancestor's content (not padding,box), i.e the closest ancestor which is a block level element (full width)
+Note: So it is not always immediate parent, it is closest ancestor that satisfies the condition.
+
+Using the chrome dev-tools, use the pointer and hover over any element it will give you width-px X height-px, these are dimensions of the BOX, you can look at the box and see if content+padding+borders adds up to this value that you see on hover.
+
+height=100% works only if the (immediate, i think) ancestor has height=100% hardcoded to it... (TBD)
+
+Make the background fade when overlays appear on the website?
+.backdrop {           (child of the body tag)
+	position: fixed;
+	display: none/visible;  (based on JS code)
+	top: 0;
+	left: 0;
+	z-index: 100;
+	width: 100%;
+	height: 100%      (make sure even <body> has height=100%)
+	background: grey/transparent
+}
+
+Use width=30% along with max-width=300px, min-width=50px For your PLP grid elements. This makes sure your images/elements don't get too small or too big.
+
+font-size=75%    This means 75% of the browser default  (people can change the browser defaults in settings)
+Don't try to use "px" for font-size. You don't want to hardcode and fix the size for the user. It must be changeable by the user.
+
+<h1> to <h6>, the user-agent will add a font-size stylesheet for these elements: h1 is 2em, h2 is 1.5 em, so on. So this style sheet will overwrite you inheritance style sheets. <p> have 1em
+To see the font-size of any element, click the element and see the "Computed" tab next to the "styles" tab, it will show you the final applied values for all CSS properties for the chose element.
+With em, things will multiply, if one says 1.2 em, and child has 1.5em, then child will have 1.2*1.5em. So use em scarsely.
+Rem is safer, there is only reference, the root (i.e the default browser setting font size sets the default size for the root element, i.e <html> element). You can use rem for non font-size CSS properties too, but it's value is always relative to the root <html> element font size.
+The default font-size of a browser = 1rem = 16px.
+So convert all length units from px to rem wherever it makes sense. Things like border, box shadow, border-radius these can remain hardcoded in px, you don't want these to increast too much..
+
+vw and vh: What percent of the viewPort height and width is this length value.
+100vw means 100% the width of viewport, 80vh means 80% the height of the view port..
+vmin: what percent of the viewport height OR width (whichever is currently the smaller value)
+80vmin means 80% of the vh OR vw , depending on which one is the smaller one
+vmax: what percent of the viewport height OR width (whichever is currently the larger value)
+Internet Explorer does not support vmax
+Using vw or vh on windows, does not include the scrollbars of the viewport.
+	Add overflow-x: hidden;  to the <body> selector  to hide the horizontal scrollbar (or overflow-y: hidden  to hide the vertical scrollbar)
+	Alternatively you could also use the ::-webkit-scrollbar pseudo element. Simply add the following code to the shared.css file:
+	body: :-webkit-scrollbar {
+			width: 0
+	}
+
+Which length unit to choose? (recommended units to use)
+font-size (for the root element) : some % or nothing
+font-size (any element in general):  rem   (and then em for children only)
+padding, margin:  rem
+border: px
+width, height: vh/vw OR % (i.e % of containing block)
+max-width, mix-height: px OR vh/vw or %
+top, bottom, left, right: %
+
+To center elements: margin:auto !!!   It will put equal margin on both sides left-right and up-down.
+Or else set margin-left:auto & margin-right:auto OR margin-top:auto & margin-bottom:auto
+This works only for block level elements with an explicitly assigned width.
+
+Javascript and CSS
+Do this in the console:
+var b = document.querySelector('.some-class-name-here');
+console.dir(b);
+You will see that it is a DOM object with SO many CSS properties, handler functions etc. The "style" property here of a DOM object is ONLY the inline styles of the object. So very few properties will actually have any values set....
+b.style.display = 'block';   (you are now setting an inline style value, obviously this has highest specificity)
+In this way, you can set ANY inline CSS style property
+
+c.addEventListener('click', function(){
+
+	change-some-element-css
+
+});
+Example: Clicking some button, should change the display of the backdrop from "none" to "block".. It should also change the display of some overlay/modal from "none" to "block".
+then, clicking some button on the modal/overlay OR clicking the backdrop should change the display of BOTH the modal and the overlay back to "none".
+
+Mobile Website Side Nav ?
+.mobile-nav {
+	display: none;
+	position: fixed;
+	z-index: 101;
+	top: 0;
+	left: 0;
+	background: white;
+	width: 80%;
+	height: 100vh;
+}
+.mobile-nav-list-items {
+	width: 90%;
+	height: 100%;
+	list-style: none;
+	margin: 10% auto;
+	padding: 0;
+	text-allign: left;
+}
+You can easily create a hamburger menu icon, by have 3 spans one after another, each span has 100% width of it's container. Each span has one thick black border-top. DONE! (you just drew three horizontal lines with CSS). Clicking this hamburger icon, should toggle displaying the side nav.
+
+b.className = 'some-new-class-name';  // overwrites the class of this element
+b.classList.add('some-class-name');   // appends this class to that element
+Other things you can do: b.classList.contains(), .remove(), .toggle(), .toString()
+
+Note: All two worded CSS property names, are camelCase words in JS !!
+border-radius        -> b.style.borderRadius
+padding-top          -> b.style.paddingTop
+border-color         -> b.style.borderColor
+text-decoration-line -> b.style.textDecorationLine
+overflow-x           -> b.style.overflowX  and so on.
+An alternative syntax is using the bracket notation, there you can use the original CSS property name
+b.style['border-color'] = 'xyz';
+b.style['padding-top'] = 'xyz';  !!
+
+
+Responsive Design
+Basically: Mobile devices have more pixels per inch than desktop devices. So your whole destop website will look fit and look really small on the mobile screen. But everything looks really really small.
+
+CSS absolute lengths: https://www.w3.org/TR/css-values-3/#absolute-lengths
+1 inch = 2.54cm = 96px
+So in brower emulator mode, when you chose iPhone8, browser knows that iPhone8 is 3.9 Inches wide, so the broswer emulator will tell you that the phone is 3.9*96px = 375px wide. But in reality, it is not 375 px wide for your CSS !!! If your css says 375px for some element, it does'nt mean that element is going to take full width.
+This is where hardware pixels are different from software pixels.
+In hardware, 1 inch is not just 96px, it could be some 1000px or more (depends on the device)
+
+https://www.mydevice.io/
+Gives you hardware pixels and software pixels for each device.
+Physical width/height in px | CSS width/height in px | pixel ratio  (physical/css)| Physical PPI | Css PPI
+
+You want your website to use software pixels and not hardware pixels (phone have some 100pix per 1cm, too much)
+
+Viewport Metatag
+>Adjust the site to the device viewport (we can't control what it does)
+>does not change the css design based on device
+Add this to html <head>   (of every page of your site)
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+This one line ensures that the browser does not use hardware pixels but uses software pixes for all the CSS (by applying the right pixel ratio) (ofcourse you page is now amazingly crowded and out of order, but alteast software pixes are being used now...)
+name=viewport means this metatag must target the viewport
+content= means set viewport width to be the device width (and apply pixel ratio)
+initial-scale is the default zoom level (like 1.5 is 1.5x zoom)
+user-scalable=yes/no   (should the user be allowed to zoom or not on the site) (by default it is yes)
+maximum-scale=2.0    (you can restrict the max zoom-in allowed for the site)
+minimum-scale=0.5    (how much can they zoom-out max)
+
+
+Media Queries
+>Change CSS design based on size (these are defined by us and we have control)
+
+@media (some condition) {
+	apply these rules ONLY IF condition is TRUE
+	any normal css rules here
+}
+
+as soon as the device software pixels width is >= (min) 40rem
+@media (min-width: 40rem) {
+	#product-overview h1 {
+		font-size: 3rem;
+	}
+	#product-overview-card {
+		some other css change
+	}
+}
+So the moment, the width of the view-port goes below 640px (40rem), this rule DOES not apply. the font-size goes back to the original 1.6rem.
+
+
+Design your website MOBILE FIRST  - this is the new css standard
+meaning, all your base CSS must be for mobile devices, THEN, use media queries to specifiy css for larger devices.
+You can even have 3 designs: mobile, tablet, desktop. So have 2 @media queries, one when it goes past 400px (i.e mobile to tablet transition) and then another when it goes past 800px (i.e tablet to desktop transition). In this case make sure your CSS in the correct ORDER, the css of min60 MUST be after the css for min40. Remb: it looks at your css file from top to bottom.
+
+Standard Breaking Points:
+Use  https://www.mydevice.io/ and figure out the software pixel (Css pixel) width of all devides.
+I think - (btw use rem not px)
+>0 to 400px width is mobile
+>400px to 600 to 768px to 800ish width is tablet
+>above 800px width is def desktop
+
+Key properties you will change to make elements responsive:
+various background properties
+display: inline-block / block
+width: 30% / 100%
+margin: auto / higherORlower value
+vertical-align: middle / something else
+text-align: center or not
+min-width for mobile and max-width for desktop
+
+Logical Operators in media queries
+
+@media (mid-width: 40rem) and (min-height: 60rem) {  }      (BOTH conditions must be true)
+@media (mid-width: 40rem) , (min-height: 60rem)   {  }      (either one OR the other)
+
+Other possible conditions-
+orientation: portrait/landscape   (this is useful while testing on tablets and phones!!)
+min-height
+
+On multiple screens to places the footer at the bottom of the content, make sure your main content has the right height. Page: Header + Main Content + footer
+#main {
+	min-height: calc(100vh - 3.5rem - 2rem)     (full viewport - header height - footer height)
+}
+
+Forms, Inputs and Validations
+Normal html for any form -
+<form action='index.html' class='my-big-form1'>
+	<div>
+		<label for='title'> Title </label>
+		<select id='title> <option value='mr'>Mr.</option> <option value='ms'>Mrs.</option> </select>
+	</div>
+	<div>
+		<label for='first-name'> first Name </label>
+		<input type='text' id='first-name'>
+	</div>
+	<div>
+		<label for='last-name'> Last Name </label>
+		<input type='text' id='last-name'>
+	</div>
+	<div>
+		some other label and input
+	</div>
+</form>
+ALL of these tags are inline elements (that's why you put the divs)
+
+You can also just select all these particular html elements in the CSS and say
+.my-big-form1 label, .my-big-form1 input, .my-big-form1 select {
+	display:block;
+	width:100%;
+	margin-top=1rem;
+}
+General form styles
+font-weight: bold;
+
+
+For input elements, let their width be responsive
+@media (min-width: 40rem) {
+	// for large screens
+	max-width: 30rem;
+	margin: auto;
+	font: inherit;  (sometimes the user-agent keeps a different text for input elements)
+}
+Also on :focus, the user-agent adds an outline (it is something that is outside the border)
+So on :focus just set outline:none; background:light-green: border-color:green
+
+input:not([type='checkbox']) {}
+
+For <select> & <checkbox> the user-agent adds some styles to make them appear that the way they do. You have to overwrite these values
+input[type="checkbox"] {
+	-webkit-appearance: none   (disables browser appearance)
+	-moz-appearance:none       (for mozilla browsers)
+	appearance:none       (other browsers)
+}
+Now when you check the checkbox, in the background it will be checked, but it just won't appear CHECKED, because you have disabled browser css.
+
+input[type="checkbox"]:checked {
+	border:dark-green;
+	background:green;
+}
+
+To show all the form fields that are wrong, add a class called "wrong-value" to all of them through JS.
+.wrong-value {
+	background: light-red;
+	border: 1px solid red;
+}
+
+So the browser can automatically detect if an input field has an invalid property in it. It adds a state of "invalid" to that element.  Example if <input type='email'> it will auto detect invalid values for you..
+.input:invalid {     (just use this pseudo-selector)
+	background: light-red;
+	border: 1px solid red;
+}
+Similarly, there is a "valid" pseduo selector too. Lookup HTML5 form elements, they have properties like "required", "disabled", "checked"  etc.
+
+.button[disabled] {
+	cursor: not-allowed;
+	border: grey;
+	background: grey;
+	color: dark-grey;
+}
+
+Texts & fonts
+Generic family: serif, sans-serif, cursive, monospace, fantasy. These are fallbacks.
+Serif is a little tick that appears on each edge of the alphabet.... there are many serif font families..
+San-Serif - this removes the serifs for each alphabet.. there are many sans serif font families
+
+In your browser settings, you can select a font-size and then a default font-family for each Generic Family. If the browser did not find any of the font-families specified in the CSS, it will use a default one that you selected in your settings.
+
+For any element on the page: this is what is used to display its text
+>Font Family if it is specified
+>Generic family if is specifed, or if the font-family is not available
+>Browser defaults if no fonts have been specifed.   (it will be there in the "computed" tab, not in styles tab)
+
+Now, a font-family is fetched from one of these 3 places:
+>User's computer
+>3rd party web font (like google fonts)
+>Your server serves the font-family for your site (i.e you create your own fonts and serve them)
+
+User's computer: Your browser comes out of the box with some 10 fonts for each generic family. But maybe your browser also does'nt have ANY fonts in it. Then the browser asks the OS if it has any fonts stored on it
+https://www.cssfontstack.com/ is a list of fonts installed on each OS. Macs don't have some fonts, windows too don't have some fonts installed on them.
+
+For web-fonts (3rd party) (https://fonts.google.com/)
+<head> <link href=fonts.google.com/css?family=montserrat">   </head>
+Then add this font:montserrat to the main <body> element. Every other element will inherit from this one.
+So regardless of your user's browser and OS, you are getting the font for them from google.
+In the one shared.css file that will be used sitewide you can do:
+@import url('https://fonts.google.com/css?family=roboto');    (right at the top of the css file)
+In google fonts, every font-family has many "font-faces". Fontface = font-family + font-weigth + font-style Example: Robot Light 300 Italic. The problem is you have to import EACH font-face to be able to use it. You can't just import Robot:900 and then in your css set font-weight to 400, it won't work, you have to also import Roboto:400..
+
+Custom Fonts: Each font-face you make will be a.ttf file on your system. Keep your .ttf file name all lowercase (IE has a bug). At the top of you CSS file add -
+@font-face {      (this means import this font face)
+	font-family: "my own font yo";
+	src: url('../../fonts/myFont1.ttf)
+	font-display: optional;
+}
+Now for differnt CSS elements just set font-family to "my own font yo"
+Again here, yo have to EACH font-face that you need. You can't just import the whole font-family. So you have to give each font-face a unique custom name.
+With google fonts, all the font-faces under the same font-family, have the same unique name, but you have to specify a differnt font-weight/style.
+font-display is a CSS property that affects how a custom font loads on the page. (performance reasons). Possible values are : swap, block, fallback, optional, auto. I.e the page loads with default values and then the browser immediately swaps the fonts.. etc. This propery is not supported by most browsers.. (mostly coz this is related to custom fonts only.)
+
+Browsers support different font formats. Check it out on caniuse.com. Each format has a different compression.
+.ttf is a font format called "truetype" or "opentype".
+Some others are - woff (web open font format), woff2 (2.0 version of woff), eot (embedded open type font)
+
+Line-height is a CSS property that defines the height of the content box. Look it up.
+
+Flexbox
+Modern way to change the way elements are displayed. (like the "display" property). It ensures that our elements are positioned in a more dynamic, flexible way. A flexbox contains a flex-container and flex-items.
+
+To use flexbox on an element, it has to have the property of display:flex; This element is now called a flex-container (a.k.a the parent). The children are now called flex-items.
+Now for the parent (flex-container) you can set these CSS properties -
+flex-flow : flex-direction, flex-wrap,
+justify-content, align-items
+align-content
+Now for the children (flex-items), you can set these properties -
+order
+align-self
+flex : flex-grow, flex-shrink, flex-basis
+
+
+When you put display:flex. It affects how the children will be positioned inside this parent container.
+>display:flex; flex-direction:row or row-reverse;
+	All children become inline elements, their width is just width of the content. Their height is height of tallest element in that row.
+>display:flex; flex-direction:column or column-reverse;
+	All children become block elements, their width is width of parent unless some width value is specified. Their height is height of content.
+By default, if you just put display:flex; (it assumes flex-direction:row and flex-wrap:rowwrap)
+
+If you put, display:inline-flex, all the children become like inline elements, but their width and height are maintained (if width and height are specified). Their hieght is the height of the largest child.
+
+When you do flex-wrap:wrap, the last element will jump to the row BELOW,it's height will be the height of the largest element in that row.. When you do flex-wrap:wrap-reverse, the last element will jump to the row ABOVE.
+These are both are for flex-direction:row.  If flex-direction:row-reverse, then the FIRST element is the first one to move UP or DOWN.
+Flex direction defines the MAIN-axis  (Which direction should it place elements)
+Flex wrap defines the CROSS-axis (Which direction should it wrap)
+
+So- flex-direction:column; flex-wrap:wrap: align-items:flex=start/center/flex-end
+All the items will be alligned to the left-side/center/right-side of the container, vertically stacked in a column.
+So- flex-direction:row; flex-wrap:wrap: align-items:flex=start/center/flex-end
+All the items will be alligned to the top/center/bottom of the container, horizontally placed adjacent to each other in a row.
+Align-items always refers to the cross-axis!
+Justify-content always refers to the main-axis!
+
+So, flex-direction:column; flex-wrap:wrap; align-items:flex-start; justify-content:flex-end
+This makes all the children vertically stacked in the bottom left of the container. bottom becuase they have to be at the end of the main-axis, left because they have to be at the start of the cross-axis
+
+justify-content:space-between; this spaces out all the children to the corners.
+
+Flex-item CSS properties
+order : the bigger the number, the later the item is positioned along the main-axis of the flex-container (parent). By default, all children have an orde value of 0. Again, the main-axis is defined by flex-direction(row,row-reverse,column,column-reverse)
+
+align-self: it overrides the align-items values of it's flex-container (parent). So this particular child can have it's own value.
+
+flex-grow: default value is 0. When you expand the screen, there will be extra width, that extra width is normally divided equally among all elements, but now you can divide them unequally by giving each child a value of 1,3,5,6. So now first guy gets 1/15 of the extra place, second guy gets 3/15, 5/15, 6/15 of the new place.
+This is when nwrap is specified.
+If wrap is there, when you minimize, children will go to the next row/column. Each row/column has it's own "extra space" and this extra sapce is divided accordingly. If there is only one child in that row/column, it will get all the extra space.
+
+flex-shrink: default valus is 1. When you minimize the screen, the one with the higher value will lose more widht/height than the others. So when you minimize, how much width has been lost? This lost-width is normally equally applied on all elements, but now some will lose more than others. If the value is zero, it will not shrink AT ALL.
+
+flex-basis: size of the element depending on the main-axis. (if flex-direction is row, that means this is a 'width' value). If you set to 'auto' it will just follow the actual width/height property, but if you set it to any length value, it will override width/height value.
+
+flex: 0 1 auto;  A shorthand that sets flex-shrink, flex-grow and flex-basis (all three are the default values)
+
+Basic flexbox concepts from MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox
+
+CSS Grid
+Convert an element (parent) into a grid of rows and columns, Then place children in their slots.
+for the parent set- display:grid;   Child elements are automaticlly placed in rows
+Firefox is the best to debug grids.
+
+Parent
+grid-template columns, grid-template-rows : You specify these in the parent container. You specify the width of each column and the height of each row. (therby mentioning how many rows are columns should be there)
+grid-template-columns: 200px 150px 20% 1fr 2fr;
+grid-template-rows: 200px 150px
+fr means of all the remaining space, how much fraction should this column/row take.
+"auto" means just use as much width/height as the content. (or take all the remaining space)
+For 5 equally spaced columns, set it as repeat(5,20%);
+You can optionally give names (one or more names) to each line name...
+grid-template-columns: [line-1] 200px [line-2 150px [line-2-end line-3-start] 20% [line-4] 1fr [line-5] 2fr [line-5-end];
+fitcontent(12rem) means take atleast 12rem height and beyond this, use only how much ever the content needs.
+
+Children: Explicitly position them in the grid
+grid-column-start/end: the column line number/name where this element must start from and end at.
+grid-columm-start:4; grid-columm-end:7;   (this one will span between vertical lines 4 and 7)
+Same for- grid-row-start/end
+OR you can say start at "2" and end at "span 3". So it will be 2 to 5!
+
+Line number of -1,-2 means last line, second-last-line and so on.
+
+Elements can overlap one another. Whichever was specified later in the DOM, that one will be on top. If you really want something to be on top, change the z-index.
+
+Your children might wrap into new rows or columns that even you parent-container did not define... so in this case just adjust your parent container row-count and column-count definition if you want to. Basically, if JS dynamically adds new children to this container, it automatically creates new ROWS for them. You can change this default by setting grid-auto-flow: row/column (this decides where every nee/adjacent child should go)
+
+Note: If you dont' specifically mention a row AND column for a child, it will follow the DOM order and probably keep gaps in your grid. You have to mention both row and column to override the DOM order.
+
+With row-gap, column-gap (and the shorthand 'gap'): you can specify the thickness of the row/column lines. By default they have zero thickness. If you start giving them thikcness, there will be spaces between the cells in the grid. (unless a child spans over that gap)
+
+Another way to do it. Each child is given a name inside "grid-area:<some-name>" Like grid-area:header;
+Then in the parent, use
+grid-template-areas:"header header header"
+										"aside main main"
+										"aside main main"
+										"aside main main"
+										"footer footer footer"
+
+automatically generated column/row names:
+In the parent: grid-template-columns: repeat(4, [col-start] 25% [col-end])
+In the child: grid-column: col-start 2 / col-end 2   (you have now places this between col-start-2 and col-start-3) (they are automatically numbered)
+
+Note: Elements that are not part of the document flow (position=fixed/grid) will not be part of the grid. Even if their parent is part of the grid.
+
+justify-items: You set this value in the parent grid container. It positions individual elements inside their cells in the grid. center |start | end etc. So if something spans two cells, center will put in in the middle. The default value is stretch.
+align-items: Does the same thing along the y-axis.
+
+justify-content: You set this value in the parent grid container. When you have extra rows and columns. Where should the entire content of the entire grid be placed inside this grid. It justifies it along the x-axis.
+align-content : Does the same thing along the y-axis.
+
+justify-self and align-self are properties that you can apply to a individual SPECIFIC child element inside the grid.
+
+For responsiveness, use media queries and re-define a new grid.
+
+grid-auto-flow, grid-auto-columns, grid-auto-rows: These are important for how new children are placed in the grid. And if it is a new row, what should the space of that row be. This is part of the implicit grid (the auto part). The explicit grid is the the one you specify in grid-template-columns and grid-template-rows.
+
+Lookup values of "auto-fill" and "auto-fit" for grid-template-columns
+
+The moment you put "dense" inside grid-auto-flow. Then, gaps are filled with items.
+
+One grid can have another grid inside it. Just like one flexbox can have another flexbox inside it.
+
+CSS Grid: 2d positioning
+Flexbox: 1d positioning (there is only one row or one column),
+
+Grid from MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout
+Grid tutorial: https://css-tricks.com/snippets/css/complete-guide-grid/
+
+
+
+CSS Transforms
+Rotate, translate, skew, scale and 3d-rotate elements using CSS
+key properties: transform, transform-origin, transform-style, perspective, perspective-origin, backface-visibility
+key functions: rotate(), translate(), skew(), scale(),
+
+The CSS property "transform" is used for all of these. "transform-origin" sets the origin center/left/right etc for the transform that is being applied.
+
+rotateZ('45deg') this will rotate the element around it's center by 45 degs clockwise.
+You have to know the three axis - X, Y, Z
+rotateX() - the top part of the rectangle will come forward towards you, the bottom of the rectangle will go backwards away from you.
+rotateY() - the left part of the rectangle will come forward towards you, the right part of the rectangle will go backwards away from you.
+rotateZ() - the plain of the rotation is the html page itself, it will just move clockwise or counter-clockwise...
+
+CSS property "perspective": how far away from the element are you. 0px means very pixel, >1000px means far away.
+"perspective-origin" sets the angle at which you are looking at this element. By defauly you are looking straight at it, you could move 300px to the right and then see how the element looks too.. (only if the element is rotated along x or y, this will make a difference)
+
+translate() is used to move an element's position.
+So if you do rotateX() translateX(), it will first rotate it, now it will move it along it's NEW X-AXIS after the rotation, so it will no move (translate) diagonally.
+translateX(),Y(),Z() work the same as rotateX(),Y(),Z(), ie the axis are the same..
+
+For ANY parent element in CSS. If you any of it's children are protruding outside it's container. set -
+overflow:hidden;   this will hide the extra bits.
+
+skew means convert the rectangle element to some parallelogram.
+skewX(20deg) makes it a parallelogram.
+
+scale() is used to increase the size of an element. scaleX(2), double the size on the x axis.
+To scale both axis just do scaleX(2) and scaleY(2) or else just do scale(2), it will do both axis.
+
+transform-style: flat | preserve-3d. This property is set for the parent.
+Now, If the parent is rotated along y-axis by 90deg, the whole parent won't be visible because you are looking at it "side-on". If transform-style=flat, none of the childre will also be visible, whatever their rotation angles are. If transform-style=perserve-3d, now some of the children might be visible if they have a proper rotation angle that does'nt make them invisible.
+
+backface-visibility:hidden/visible - if the element is rotated such that it's back starts to appear, should the backface be visible or not.
+
+CSS transforms: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transforms/Using_CSS_transforms
+
+Transitions and Animations
+For any html element, you can delay the application of it's exisitng CSS properties one by one...
+transition: opacity 200ms, transform 500ms
+means appply the opacity value of this element over 200ms... then, apply the transform value of this element over a duration of 500ms.. So if JS applies a new opacity/transform dynamically to this element, then transition to those new values with these delays too...
+Basically in the 'transition' property, you specify all the CSS properties that you want to watch, and then specify over what time they must be applied.
+
+So instead of doing display:none; do -
+opacity:0
+transition: opacity 0.2s linear;
+Now, later, when the JS converts display:visible;, instead do opacity:100, now over 0.2s it will go from opacity=0 to opacity=100; But be careful with these..
+
+To have something slide-in from the left:
+By default: set transform: translateX(-100%)  (meaning don't be visible)
+also set transition: transform 300ms ease-out;
+Now, through JS, when user clicks, apply a class where translateX(0%);
+
+CSS transitions: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions
+
+Only some CSS properties are "transitionable"
+
+timing-function draws the graph of y-axis is completion (0 to 1) and x-axis is time (0 to 1).
+Use this easing function cheat sheet: https://easings.net/en
+Example: easeInOutQuart is cubic-bezier(0.77, 0, 0.175, 1);
+In chrome, you can click on the property value of cubic-bezier(0.77, 0, 0.175, 1);, and THEN play-around by dragging and changing the curve on the FLY!!
+
+CSS Animations : Basically enhanced Transitions
+You specify the css props of the element for each "keyframe". It will simultaneously change all props while transitioning from one keyframe to another. You can add as many properites as you want. If a CSS property is not animatable, it will just snap to its destination value.
+
+You define keyframes by -
+@keyframes <name> {
+	from {
+	}
+	to {
+	}
+}
+
+OR add multiple keyframes
+@keyframes <name> {
+	0% {   }
+	20% {  }
+	40% {  }
+	60% {  }
+	100% {  }
+}
+
+@keyframes wiggle {
+	from {
+		transform: rotateZ(0);
+		color: blue;
+	}
+	to {
+		transform: rotateZ(10deg);
+		color: red;
+	}
+}
+
+Then apply this for a particular element: {
+	animation: wiggle 200ms
+}
+
+Or rotate something on hover, by changing the transform:rotateY(someDeg);
+
+For an animation, you can set duration, delay, number of iterations, final state (fill-mode), direction of the anumation.
+
+IN JS you can addEventListeners for the animation events "animationstart", "animationend", "animationiteration" etc...
+
+CSS transtions:https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions
+CSS animations:https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations/Using_CSS_animations
+List of transitionable properties:https://www.w3.org/TR/css-transitions-1/#animatable-properties
+
+
+Future Proof CSS
+CSS variables: Define once, use in mutiple places.
+IE does not support this
+:root {     declare all your variables in the root pseudoselector
+	--my-color: #fa923f;
+	--test-variable1: value1;
+	--test-vars2: value2;
+}
+.element-1 {     use the var function to use it
+	color: var(--my-color)
+}
+You can also do- color: var(--my-color, #0e4f1f)  you can give a fallback value in the var function
+
+Vendor Prefixes: If CSS recommends a new property value for "display" called "flex". All browsers initial implement this new feature differently and at different times, they don't use the value called "flex", but they give their own names like "-webikit-box" / "-ms-flexbox" / "-webkit-flex" etc. Later, when "flex" becomes a standard, they implment the value called "flex". Those temporary names are called vendor prefixes and they remain forever. (only websites that used them in that interim time will continue to use them or they can replace them with the new value). This allows devs to implement new features ahead of time.
+Which CSS properties should you prefix? Guide: http://shouldiprefix.com/
+
+@supports
+You can execute certain css, only if the property is supported by the browser
+@supports (display:grid) and (grid-type:layout) and not (grid-color:red) {
+	body {}
+	.calass {}
+	#idDiv {}
+}
+So keep you main css above this. Then at this support block after it, and overwrite anyvalues that you would want to.
+
+Polyfills: JS packages that implement new css properties. They parse your CSS code that uses all these new css props, and then create/mimic them using old/existing css props. Only some css props have polyfills.
+
+Cross-browsers inconsitencies: The default css for html elements will not be the same across browsers.
+You can use a "reset library" like Normalize.css that you will first load on any page, this will reset all browsers to some BASE, of of which all your CSS can work.
+
+Class Names -
+Use kebab case because CSS is case-sensitive. i.e it must be All lower-case-words seperated by hyphens, like a kebab.
+Name the class by feature name (don't name by their style)
+Use BEM for naming: block__element__modifier. Example: .main-menu__item__size-big
+
+CSS Frameworks: Foundation, Bootstrap 4, Tailwind CSS
+They declare some classes for which they have written all the styling. You just blindly apply these classes on your elements. You just import this CSS on your page.
+Advantages: lot of out-of-the-box stuff, they follow best practices, no CSS expertise needed
+Disadvantages: lot of bloat css code, you don't have much control, your website will just look like someone elses.
+
+Syntactically Awesome Style Sheets (Sass)   https://sass-lang.com/
+A superset language of CSS. It does not run on the browser, it is only used during development. It has it's own simple syntax. It is then compiled to normal CSS and then deployed on an html page. (scss file converted to css file)
+Features- variables, nested rules, helper functions, inheritance, conditions and loops, mixins, partials
+
+Create a file called main.sass
+Sass does not use semicolons and braces, it uses only indentation
+If you name your file main.scss   - then this allows braces and semicolons just like css. Normal css is also valid scss, hence scss is a superset of css.
+
+Nested rules/selectors:
+a {}
+a b {}
+a c {}
+a b d {}
+can be converted to
+a {
+ b{
+	 d {}
+ }
+ c{}
+}
+You can even add the @media query of this particular element inside this selector
+
+Nested properties
+flex-direction:column;
+flex-wrap:nowrap;
+can be converted to
+flex {
+	direction:column;
+	wrap:nowrap;
+}
+
+variables
+$my-var-name: #ff532d
+and then later
+color:$my-var-name
+
+Other than storing single values in variables, you can even store lists or maps.
+$border-default:0.05rem solid black;     (a list of different css property values)
+and then later
+border:$border-default;
+or use it for font-family: Montserrat, san-serif
+
+Map: a list, where each item can be accessed individually (like an object of values)
+$color-map:(color-1:#fdcd43, color-2:#cbba32, color-3:#ccba95);
+then later-
+color:map-get($color-map, color-1);
+background:map-get($color-map, color-3);
+
+Built-In Functions: tonnes of them, look up the docs.
+You can even using arithmetic- padding:$base-padding * 5;
+Just like JS, you can split your CSS into different files and then do IMPORTS.
+
+Inheritance: If one selector has a bunch of rules for it. You can inherit/copy these rules to another one.
+.some-base-class{
+	some-base-css-rules
+}
+.child-class-1 {
+	..can have its own properties...
+	@extend .some-base-class       (it copies all the properties from base class to here too)
+}
+
+Mixins: Your own custom functions.
+@mixin my-new-func-name() {
+	..some css properties here... (no selector, just css)
+}
+.some-other-class {
+	..can-have-its-own-props...
+	@include my-new-func-name()     (it copies all those values in the func definition to here)
+}
+The function can even take arguments.. so really, endless possibilites.
+

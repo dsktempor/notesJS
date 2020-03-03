@@ -1,0 +1,79 @@
+PSEUDO Classes:
+:active
+	represents an element (such as a button) that is being activated by the user. When using a mouse, "activation" typically starts when the user presses down the primary mouse button.
+	used commonly on <a> <button>
+:any-link
+:checked
+:blank
+:default
+:defined
+:dir()
+:disabled
+:empty
+:enabled
+:first
+:first-child
+:first-of-type
+:fullscreen
+:focus
+:focus-visible
+:focus-within
+:has()
+:host()
+:host-context()
+:hover
+	triggered when the user hovers over an element with the cursor
+:indeterminate
+:in-range
+:invalid
+:is() (:matches(), :any())
+:lang()
+:last-child
+:last-of-type
+:left
+:link
+	represents an element that has not yet been visited. It matches every unvisited <a>, <area>, or <link> element that has an href attribute.
+:not()
+	represents elements that do not match a list of selectors
+	:not(*) matches any element which is not an element, so the rule will never be applied.
+	:not(.foo) will match anything that isn't .foo, including <html> and <body>
+:nth-child()
+:nth-last-child()
+:nth-last-of-type()
+:nth-of-type()
+:only-child
+:only-of-type
+:optional
+:out-of-range
+:placeholder-shown
+:read-only
+:read-write
+:required
+:right
+:root
+:scope
+:target
+:valid
+:visited
+	represents links that the user has already visited.
+	For privacy reasons, browsers strictly limit which styles you can apply using this pseudo-class.
+:where()
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+PSEUDO Elements
+::after (:after)
+	creates a pseudo-element that is the last child of the selected element. Used to add cosmetic content to an element with the content property. It is inline by default.
+	You have to add a "content":"some-value" css property
+::backdrop
+::before (:before)
+	creates a pseudo-element that is the first child of the selected element. Used to add cosmetic content to an element with the content property. It is inline by default.
+	You have to add a "content":"some-value" css property
+::cue
+::first-letter (:first-letter)
+	applies styles to the first letter of the first line of a block-level element, but only when not preceded by other content (such as images or inline tables).
+	Only a small subset of CSS properties can be used with the ::first-letter pseudo-element.
+::first-line (:first-line)
+::placeholder
+::selection
+::slotted()
