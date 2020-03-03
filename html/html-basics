@@ -1,11 +1,12 @@
 Hypertext Markup Language
-
-Structure of the webpage.
-
-
+------------------------------------------------------------------------
 <html>
 
 <head>
+
+<title>
+
+<base>
 
 <meta>
 	http-equiv=X-UA-Compatible
@@ -16,13 +17,134 @@ Structure of the webpage.
 	rel=some-icon-name, stylesheet,
 	href=icon.png, my.css
 
-<title>
+<script>
 
+<style>
 
 <body>
 
+-----------------------------------------------------------------------
+
+<div>
+<span>
+<h1> <h2> <h3> <h4> <h5> <h6> <hgroup>
+<p>
+<a>
+<img>
+<ol>  <ul>  <li>
+<pre>
+
+<table>
+<caption>
+<tbody>
+<thead> <th>
+<tr> <td>
+<tfoot>
+
+<dl>  <dd>  <dt>
+
+<br>
+<hr>
+
+<iframe>
+<noscript>
+
+-----------------------------------------------------------------------
+<form>
+<input> <label>
+<button>
+<select> <option>
+<textarea>
+<datalist>
+<dialog>
+<fieldset>
+<menu> <menuitems>
+<meter>
+
+-----------------------------------------------------------------------
+<header>
+<nav>
 <main>
 <section>
+<article>
+<aside>
+<summary> <details>
+<footer>
 
-<h1>
 
+<blockquote>  <q>
+<cite>
+<code>
+<del>
+<mark>
+<small>
+<var>
+<address>
+<abbr>
+	title="on hover, this will display this text"
+<time>
+<samp>
+<kbd>
+<dfn>
+
+<b>  <strong>
+<em> <i>
+<u>
+<sup> <sub>
+
+------------------------------------------------------------------------
+<audio>
+<video>
+<source>
+<track>
+
+
+<bdi>
+<bdo>
+
+
+<colgroup>
+<col>
+
+
+<canvas>
+
+<data>
+
+
+<embed>
+<figure> Define self contained content such as photos or diagrams.
+
+
+<ins> Useful for denoting text that has been added to an HTML file since the original version. Updates to a blog post for example. This is typically rendered as underlined text, although this can really be rendered just about any way you want with a stylesheet.
+
+
+<keygen> Used for authentication with a security certificate.
+
+<legend> Useful for making forms easier to understand.
+
+<map> Used when defining an image map.
+<area> Establishes areas in an image map. <area> is always used inside of <map>.
+
+
+<object> For embedding objects within a document.
+
+<optgroup> For grouping objects.
+
+<output> Displays the output of an action, such as from a script or form.
+
+<param> Use when parameters need to be passed to an object embedded within the document.
+
+<progress> Display the progress of an action, such as with a script.
+
+<rb> For Ruby annotations.
+<rp> Specify text to be displayed when Ruby annotations are not supported by the browser.
+<rt> Text component of a Ruby annotation.
+<rtc> Ruby Text Container.
+<ruby> Also used for Ruby annotation.
+
+<s> For marking up text that is not longer relevant, applicable, or accurate.
+
+<template> Declares HTML snippets that can be used later.
+
+<wbr> The optional line wrap.
