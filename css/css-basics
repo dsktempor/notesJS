@@ -19,10 +19,6 @@ Three ways to Add css to a webpage:
 CSS is case insensitive. So in html, don't use camel case for attribute names and attribute values, always use hyphened words.
 Comments are only with /* */ .You can't use //
 
-In every browser settings, there is a default selected font-family for - standard font, serif font, sans-serif font and a fixed width font. "font-family" in the CSS will pick up whatever these default settings in the browser are..
-
-You can add google fonts to your page <head>. <link href="https://fonts.googleapis.com/css?family=XYZ" rel="stylesheet" and then use {font-family: XYZ, sans-serif}
-
 CSS Rule =  Selector/Combinator + Property Names + Property Values
 
 Selectors -
@@ -32,7 +28,7 @@ universal-        *: {}     (every element on the page or under that element) (l
 id-               #blog-post: {}    (the html "id" attribute)
 attributes-      [attr-name]: {}    (elements with this attribute)
 attributeValues- [type='email']: {}   (element with the attribute type=email)
-attributeValues- [type~='email']: {}   (element where attribute 'type' contains the word 'email') (it should be surronded by spaces on both sides, like type='text email phone')
+attributeValues- [type~='email']: {}   (element where attribute 'type' contains the word 'email') (it should be surrounded by spaces on both sides, like type='text email phone')
 attributeValues- [type|='email']: {}   (element where attribute 'type' equals OR starts with the word 'email-')
 attributeValues- [type^='email']: {}   (element where attribute 'type' starts with the word 'email')
 attributeValues- [type$='email']: {}   (element where attribute 'type' ends with the word 'email')
@@ -60,7 +56,7 @@ Specificity of CSS- (in order of priority)
 	> inline styles
 	> #id selectors
 	> .class, :pseudo-class and [attribute] selectors
-	> <tag and ::pseudo-element selectors>
+	> html tag and ::pseudo-element selectors>
 	> * universal selectors
 	> user agent default stylesheet
 	> automatically inherited
@@ -84,7 +80,7 @@ div#a1 { color: yellow; }
 Now the text "This is a1" will be yellow in color because -
 first - it inherited green from div#a
 Then - div made it blue
-BUT finally - div#a1 is most specific, si it will be yellow.
+BUT finally - div#a1 is most specific, so it will be yellow.
 
 Special Values -
 Colors: <color>
@@ -125,7 +121,7 @@ Shorthand properties: Single property that combines multiple properties.
 font, background, padding, margin,border etc.
 The values have to be given in a specific order though, it depends on the syntax of the property.
 
-Block Level Elements div/section/h1:  have default width as 100%. If you change this value to 50%, it occupy 50% of it's parent's width. If you set 110%, it will occupy 1.10 times the width it's parent is occupying. Maybe the parent itself is at some 70% width. If the parent is a block html element, its' defautl width is 100% anyways..
+Block Level Elements div/section/h1:  have default width as 100%. If you change this value to 50%, it occupy 50% of it's parent's width. If you set 110%, it will occupy 1.10 times the width it's parent is occupying. Maybe the parent itself is at some 70% width. If the parent is a block html element, it's default width is 100% anyways..
 Height: Every parent tries to be only as big as they need to be. THEN -> Any child that say height=100% will only take up 100% of it's parents height. So the parent first determines its own height allocated to it, it then places all its children inside it, then this particular child's height will match it's parent's original height.
 So if parent has height=100px, then any child with height=100% will now occupy 100px.
 
@@ -161,7 +157,6 @@ Compared to display: inline, the major difference is that display: inline-block 
 
 Note: If an element is an inline element, setting "width" will not have any effect on the element.
 
-
 Display:none removes the element, meaning the next element takes it's place. But visibility:hidden only hides it, it will be an empty space on the page.
 
 width: calc(100% - 50px);     calc() is a CSS func
@@ -174,7 +169,7 @@ Remember: #ID selectors have higher specificity than pseudo-classes and classes.
 
 ::after and ::before, you can add content to the html (from the CSS!)
 
-You can selectors that have the same css properties
+You can combine selectors that have the same css properties
 div, p ,a {         (these three selectors are completely  independant of each other, they just have the same CSS applied)
 	prop1: value1;
 	prop2: value2;
@@ -281,7 +276,7 @@ button:focus {
 }
 
 To view the box/outline of any element, in chrome, select the element in the HTML part and then in the CSS part, force the state="focus" in the dev tools. It will highlight the box of the element.
-Outline: It is the non-existant but thin line between the border and the margin. Outlines never take up space, as they are drawn outside of an element's content.
+Outline: It is the non-existant but thin line between the border and the margin.
 Outlines never take up space (unlike a border), as they are drawn outside of an element's content (box).
 Use the property "outline" to set width/style/color and also set offset.
 Generally for <button> on focus, the user-agent adds CSS to add an outline to them.. you want to override this.
@@ -383,7 +378,7 @@ child {
 	left: 10px;
 }
 
-
+-------------------------------------------------------------------------------------------------
 BACKGROUND
 If you specify both background-image and background-color, whichever was declared first, that one will appear on the top.
 Spaces not covered by a background image are filled with the background-color property, and the background color will be visible behind background images that have transparency/translucency.
@@ -392,7 +387,7 @@ background-size: 50% 50%
 This will create 4 images within the square.. You are using 50% height and 50% width of the parent. SO there will be a final of 4 images of equal size..
 background-size: auto 100%
 Whatever happens, occupy 100% of the height, but maintain the aspect ratio of the image (auto for width does this)
-"cover" is a very good option for "background-size". It ensures that there is not whitespace.
+"cover" is a very good option for "background-size". It ensures that there is no whitespace.
 "contain" ensure that the image is never cropped. In this case you will get whitespace. (but make sure you keep no-repeat for this one..)
 
 background-position: left 10% bottom 20%  (crop 10% of the left and 20% of the bottom!)
@@ -405,19 +400,20 @@ It is harder to style <img> tags than to to style <div> that have a background i
 Default behaviour: If you put an <img> no matter what the parent tag's height is, the image will load in full size. To set the image size, set the height/width directly on the <img> tag. Also use only px not % (% won't work if the parent is an inline element, % works if the parent is an inline-block element.)
 
 The filter CSS property has a lot of functionality. It is like a photo-editor within css.
-blur, brightness, contrast, drop-shadow, grayscale, hye, invert, opacity, saturation, sepia etc.
+blur, brightness, contrast, drop-shadow, grayscale, hue, invert, opacity, saturation, sepia etc.
 IE does not support filter.
 
-SVG: Scalable Vector Graphics: A XML based markup langiage to create two dimensional images. i.e it is a text based graphical language.
+SVG: Scalable Vector Graphics: A XML based markup language to create two dimensional images. i.e it is a text based graphical language.
 In your html you add a huge <svg> tag to it.
 With CSS you can change some of the markups.
 
+-------------------------------------------------------------------------------------------------
 SIZES AND UNITS
 If you hardcode font-size in "px", then, even if the browser changes font-size in settings, this font will not change it's size.
 px - pixels     (cm,mm are rarely used)
 % - percentage
-rem - root em (font size)
 em -  a font size
+rem - root em (font size)
 vh - viewport height
 vw - viewport width
 Which properties use these?
@@ -462,12 +458,13 @@ Use width=30% along with max-width=300px, min-width=50px For your PLP grid eleme
 font-size=75%    This means 75% of the browser default  (people can change the browser defaults in settings)
 Don't try to use "px" for font-size. You don't want to hardcode and fix the size for the user. It must be changeable by the user.
 
-<h1> to <h6>, the user-agent will add a font-size stylesheet for these elements: h1 is 2em, h2 is 1.5 em, so on. So this style sheet will overwrite you inheritance style sheets. <p> have 1em
+<h1> to <h6>, the user-agent will add a font-size stylesheet for these elements: h1 is 2em, h2 is 1.5 em, so on. So this style sheet will overwrite you inheritance values. <p> have 1em
 To see the font-size of any element, click the element and see the "Computed" tab next to the "styles" tab, it will show you the final applied values for all CSS properties for the chose element.
 With em, things will multiply, if one says 1.2 em, and child has 1.5em, then child will have 1.2*1.5em. So use em scarsely.
+
 Rem is safer, there is only reference, the root (i.e the default browser setting font size sets the default size for the root element, i.e <html> element). You can use rem for non font-size CSS properties too, but it's value is always relative to the root <html> element font size.
 The default font-size of a browser = 1rem = 16px.
-So convert all length units from px to rem wherever it makes sense. Things like border, box shadow, border-radius these can remain hardcoded in px, you don't want these to increast too much..
+So convert all length units from px to rem wherever it makes sense. Things like border, box shadow, border-radius these can remain hardcoded in px, you don't want these to increase too much..
 
 vw and vh: What percent of the viewPort height and width is this length value.
 100vw means 100% the width of viewport, 80vh means 80% the height of the view port..
@@ -492,21 +489,19 @@ max-width, mix-height: px OR vh/vw or %
 top, bottom, left, right: %
 
 To center elements: margin:auto !!!   It will put equal margin on both sides left-right and up-down.
-Or else set margin-left:auto & margin-right:auto OR margin-top:auto & margin-bottom:auto
+Or else set (margin-left:auto & margin-right:auto) OR (margin-top:auto & margin-bottom:auto)
 This works only for block level elements with an explicitly assigned width.
 
+-------------------------------------------------------------------------------------------------
 Javascript and CSS
-Do this in the console:
 var b = document.querySelector('.some-class-name-here');
-console.dir(b);
+console.dir(b);      (not console.log)
 You will see that it is a DOM object with SO many CSS properties, handler functions etc. The "style" property here of a DOM object is ONLY the inline styles of the object. So very few properties will actually have any values set....
 b.style.display = 'block';   (you are now setting an inline style value, obviously this has highest specificity)
 In this way, you can set ANY inline CSS style property
 
 c.addEventListener('click', function(){
-
-	change-some-element-css
-
+	   change-some-element-css
 });
 Example: Clicking some button, should change the display of the backdrop from "none" to "block".. It should also change the display of some overlay/modal from "none" to "block".
 then, clicking some button on the modal/overlay OR clicking the backdrop should change the display of BOTH the modal and the overlay back to "none".
@@ -546,13 +541,13 @@ An alternative syntax is using the bracket notation, there you can use the origi
 b.style['border-color'] = 'xyz';
 b.style['padding-top'] = 'xyz';  !!
 
-
+-------------------------------------------------------------------------------------------------
 Responsive Design
-Basically: Mobile devices have more pixels per inch than desktop devices. So your whole destop website will look fit and look really small on the mobile screen. But everything looks really really small.
+Basically: Mobile devices have more pixels per inch than desktop devices. So your whole destop website will fit and look really small on the mobile screen. But everything looks really really small.
 
 CSS absolute lengths: https://www.w3.org/TR/css-values-3/#absolute-lengths
 1 inch = 2.54cm = 96px
-So in brower emulator mode, when you chose iPhone8, browser knows that iPhone8 is 3.9 Inches wide, so the broswer emulator will tell you that the phone is 3.9*96px = 375px wide. But in reality, it is not 375 px wide for your CSS !!! If your css says 375px for some element, it does'nt mean that element is going to take full width.
+So in brower emulator mode, when you chose iPhone8, browser knows that iPhone8 is 3.9 Inches wide, so the browser emulator will tell you that the phone is 3.9*96px = 375px wide. But in reality, it is not 375 px wide for your CSS, your CSS thinks it is some 3000px wide !!! If your css says 375px for some element, it does'nt mean that element is going to take full width.
 This is where hardware pixels are different from software pixels.
 In hardware, 1 inch is not just 96px, it could be some 1000px or more (depends on the device)
 
@@ -560,14 +555,14 @@ https://www.mydevice.io/
 Gives you hardware pixels and software pixels for each device.
 Physical width/height in px | CSS width/height in px | pixel ratio  (physical/css)| Physical PPI | Css PPI
 
-You want your website to use software pixels and not hardware pixels (phone have some 100pix per 1cm, too much)
+You want your website to use software pixels and not hardware pixels (phone have some 100px per 1cm, too much)
 
 Viewport Metatag
 >Adjust the site to the device viewport (we can't control what it does)
 >does not change the css design based on device
 Add this to html <head>   (of every page of your site)
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-This one line ensures that the browser does not use hardware pixels but uses software pixes for all the CSS (by applying the right pixel ratio) (ofcourse you page is now amazingly crowded and out of order, but alteast software pixes are being used now...)
+This one line ensures that the browser does not use hardware pixels but uses software pixes for all the CSS (by applying the right pixel ratio) (ofcourse you page is now amazingly crowded and out of order, but atleast software pixes are being used now...)
 name=viewport means this metatag must target the viewport
 content= means set viewport width to be the device width (and apply pixel ratio)
 initial-scale is the default zoom level (like 1.5 is 1.5x zoom)
@@ -575,10 +570,8 @@ user-scalable=yes/no   (should the user be allowed to zoom or not on the site) (
 maximum-scale=2.0    (you can restrict the max zoom-in allowed for the site)
 minimum-scale=0.5    (how much can they zoom-out max)
 
-
 Media Queries
 >Change CSS design based on size (these are defined by us and we have control)
-
 @media (some condition) {
 	apply these rules ONLY IF condition is TRUE
 	any normal css rules here
@@ -593,8 +586,7 @@ as soon as the device software pixels width is >= (min) 40rem
 		some other css change
 	}
 }
-So the moment, the width of the view-port goes below 640px (40rem), this rule DOES not apply. the font-size goes back to the original 1.6rem.
-
+So the moment the width of the view-port goes below 640px (40rem), this rule DOES not apply. the font-size goes back to the original 1.6rem.
 
 Design your website MOBILE FIRST  - this is the new css standard
 meaning, all your base CSS must be for mobile devices, THEN, use media queries to specifiy css for larger devices.
@@ -630,6 +622,7 @@ On multiple screens to places the footer at the bottom of the content, make sure
 	min-height: calc(100vh - 3.5rem - 2rem)     (full viewport - header height - footer height)
 }
 
+-------------------------------------------------------------------------------------------------
 Forms, Inputs and Validations
 Normal html for any form -
 <form action='index.html' class='my-big-form1'>
@@ -659,7 +652,6 @@ You can also just select all these particular html elements in the CSS and say
 }
 General form styles
 font-weight: bold;
-
 
 For input elements, let their width be responsive
 @media (min-width: 40rem) {
@@ -706,6 +698,7 @@ Similarly, there is a "valid" pseduo selector too. Lookup HTML5 form elements, t
 	color: dark-grey;
 }
 
+-------------------------------------------------------------------------------------------------
 Texts & fonts
 Generic family: serif, sans-serif, cursive, monospace, fantasy. These are fallbacks.
 Serif is a little tick that appears on each edge of the alphabet.... there are many serif font families..
@@ -723,7 +716,7 @@ Now, a font-family is fetched from one of these 3 places:
 >3rd party web font (like google fonts)
 >Your server serves the font-family for your site (i.e you create your own fonts and serve them)
 
-User's computer: Your browser comes out of the box with some 10 fonts for each generic family. But maybe your browser also does'nt have ANY fonts in it. Then the browser asks the OS if it has any fonts stored on it
+User's computer: Your browser comes out of the box with some 10 fonts for each generic family. But maybe your browser also doesn't have ANY fonts in it. Then the browser asks the OS if it has any fonts stored on it
 https://www.cssfontstack.com/ is a list of fonts installed on each OS. Macs don't have some fonts, windows too don't have some fonts installed on them.
 
 For web-fonts (3rd party) (https://fonts.google.com/)
@@ -732,18 +725,18 @@ Then add this font:montserrat to the main <body> element. Every other element wi
 So regardless of your user's browser and OS, you are getting the font for them from google.
 In the one shared.css file that will be used sitewide you can do:
 @import url('https://fonts.google.com/css?family=roboto');    (right at the top of the css file)
-In google fonts, every font-family has many "font-faces". Fontface = font-family + font-weigth + font-style Example: Robot Light 300 Italic. The problem is you have to import EACH font-face to be able to use it. You can't just import Robot:900 and then in your css set font-weight to 400, it won't work, you have to also import Roboto:400..
+In google fonts, every font-family has many "font-faces". Fontface = font-family + font-weight + font-style Example: Robot Light 300 Italic. The problem is you have to import EACH font-face to be able to use it. You can't just import Robot:900 and then in your css set font-weight to 400, it won't work, you have to also import Roboto:400..
 
 Custom Fonts: Each font-face you make will be a.ttf file on your system. Keep your .ttf file name all lowercase (IE has a bug). At the top of you CSS file add -
 @font-face {      (this means import this font face)
-	font-family: "my own font yo";
+	font-family: "my own font name";
 	src: url('../../fonts/myFont1.ttf)
 	font-display: optional;
 }
-Now for differnt CSS elements just set font-family to "my own font yo"
-Again here, yo have to EACH font-face that you need. You can't just import the whole font-family. So you have to give each font-face a unique custom name.
-With google fonts, all the font-faces under the same font-family, have the same unique name, but you have to specify a differnt font-weight/style.
-font-display is a CSS property that affects how a custom font loads on the page. (performance reasons). Possible values are : swap, block, fallback, optional, auto. I.e the page loads with default values and then the browser immediately swaps the fonts.. etc. This propery is not supported by most browsers.. (mostly coz this is related to custom fonts only.)
+Now for different CSS elements just set font-family to "my own font name"
+Again here, you have to import EACH font-face that you need. You can't just import the whole font-family. So you have to give each font-face a unique custom name.
+With google fonts, all the font-faces under the same font-family, have the same unique name, but you have to specify a different font-weight/style.
+font-display is a CSS property that affects how a custom font loads on the page. (performance reasons). Possible values are : swap, block, fallback, optional, auto. i.e the page loads with default values and then the browser immediately swaps the fonts.. etc. This property is not supported by most browsers.. (mostly coz this is related to custom fonts only.)
 
 Browsers support different font formats. Check it out on caniuse.com. Each format has a different compression.
 .ttf is a font format called "truetype" or "opentype".
@@ -751,6 +744,11 @@ Some others are - woff (web open font format), woff2 (2.0 version of woff), eot 
 
 Line-height is a CSS property that defines the height of the content box. Look it up.
 
+In every browser settings, there is a default selected font-family for - standard font, serif font, sans-serif font and a fixed width font. "font-family" in the CSS will pick up whatever these default settings in the browser are..
+
+You can add google fonts to your page <head>. <link href="https://fonts.googleapis.com/css?family=XYZ" rel="stylesheet" and then use {font-family: XYZ, sans-serif}
+
+-------------------------------------------------------------------------------------------------
 Flexbox
 Modern way to change the way elements are displayed. (like the "display" property). It ensures that our elements are positioned in a more dynamic, flexible way. A flexbox contains a flex-container and flex-items.
 
@@ -772,7 +770,7 @@ When you put display:flex. It affects how the children will be positioned inside
 	All children become block elements, their width is width of parent unless some width value is specified. Their height is height of content.
 By default, if you just put display:flex; (it assumes flex-direction:row and flex-wrap:rowwrap)
 
-If you put, display:inline-flex, all the children become like inline elements, but their width and height are maintained (if width and height are specified). Their hieght is the height of the largest child.
+If you put, display:inline-flex, all the children become like inline elements, but their width and height are maintained (if width and height are specified). Their height is the height of the largest child.
 
 When you do flex-wrap:wrap, the last element will jump to the row BELOW,it's height will be the height of the largest element in that row.. When you do flex-wrap:wrap-reverse, the last element will jump to the row ABOVE.
 These are both are for flex-direction:row.  If flex-direction:row-reverse, then the FIRST element is the first one to move UP or DOWN.
@@ -808,6 +806,7 @@ flex: 0 1 auto;  A shorthand that sets flex-shrink, flex-grow and flex-basis (al
 
 Basic flexbox concepts from MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox
 
+-------------------------------------------------------------------------------------------------
 CSS Grid
 Convert an element (parent) into a grid of rows and columns, Then place children in their slots.
 for the parent set- display:grid;   Child elements are automaticlly placed in rows
@@ -879,7 +878,7 @@ Grid from MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/
 Grid tutorial: https://css-tricks.com/snippets/css/complete-guide-grid/
 
 
-
+-------------------------------------------------------------------------------------------------
 CSS Transforms
 Rotate, translate, skew, scale and 3d-rotate elements using CSS
 key properties: transform, transform-origin, transform-style, perspective, perspective-origin, backface-visibility
@@ -916,6 +915,7 @@ backface-visibility:hidden/visible - if the element is rotated such that it's ba
 
 CSS transforms: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transforms/Using_CSS_transforms
 
+-------------------------------------------------------------------------------------------------
 Transitions and Animations
 For any html element, you can delay the application of it's exisitng CSS properties one by one...
 transition: opacity 200ms, transform 500ms
@@ -986,7 +986,7 @@ CSS transtions:https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/
 CSS animations:https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations/Using_CSS_animations
 List of transitionable properties:https://www.w3.org/TR/css-transitions-1/#animatable-properties
 
-
+-------------------------------------------------------------------------------------------------
 Future Proof CSS
 CSS variables: Define once, use in mutiple places.
 IE does not support this
