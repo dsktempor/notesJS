@@ -1,0 +1,588 @@
+Node.js: Highly performant and popular programming language.
+
+A javascript runtime. It allows you to run JS code on any machine/server and not just in a browser.
+NodeJS uses V8, a JS engine built by google used on their browsers. A JS engine converts JS to machine code and this machine code is what runs on the runtime/OS. V8 is written in C++.
+So NodeJS uses this same V8 engine and adds some new features (like file system I/O) to make JS work on an OS.
+
+Nodejs.org -> Download and install nodejs on your OS.
+in the terminal -
+node -v   (should give you the node version on your OS)
+node   (this opens REPL) -
+	now type 2+2  (gives you 4)
+	control+c  (to exit node mode)
+node abc.js  (executes that file)
+
+Things you do on the server: Communicate with database, Authentication, Input Validation, ALL the business logic that you don't want to expose on the user's browser.
+This is where nodeJS and what you will use if for mostly...
+>You write the server (and the code that is going to run on the server). I.e create a server and listen to incoming requests
+>Business Logic: handle requests, validate inputs, connect to DB
+>responses: return html,css,js,xml,json,images etc
+
+Alternatives to NodeJS - python with flask/django, php with laravel or something, ruby on rails, asp.net etc.
+
+Apart from server code, you can use on your machine for ANYTHING, utility scripts, build processes like gulp/create-react-app/web-pack etc..
+You can just write vanilla JS in you file and then test the code using "node testFile.js" (instead of using snippets on chrome)
+
+REPL: Read user input, Evaluate user input, Print output, Loop i.e wait for new inputs. If you just type "node" in the terminal, you open the REPL. Once you leave REPL (control+c), none of that code is saved, even anything you import. It is all lost. So the REPL is just a temporary sanbox.
+Use actual JS files and execute them instead of using the REPL.
+
+JS Object:
+const person = {
+	name: 'max',
+	age: 29,
+	greet1() {console.log(this.name)}
+	greet2: function() {console.log(this.name)}
+	greet3: () => {console.log(this.name)}
+}
+person.greet1() and person.greet2() will print "max", because this refers to "person"
+person.greet3 will print "undefined", because "this" refers to the window/global object!!!!
+
+Chapter 3: Understanding the basics
+Client -> enters URL -> Domain lookup on DNS (convert URl to ip) -> browser now send request to server ip -> nodeJs runs on the server -> responds to client. HTTP is the protocol for client-server communicatons.
+
+Core NodeJS Modules - http (launch server, send requests), https (launch ssl server), fs, path, os  etc.
+
+require() - a global function to import modules. It automatically adds .js.   Example: require('./https.js');
+NodeJS is heavily a event driven architecture. If X happens, do Y function.
+
+moudle.exports is used to export modules from a file
+module.exports = myCustomFuncName;
+OR
+module.exports = {
+	name1 = myCustomFunc1,
+	name2 = myCustomVar1,
+	name3 = myCustomFunc2,
+	name4 = 'hardcoded string'
+};
+then you import: const x = require('./abc.js);
+the use use: x.name1(), x.name2, x.name3()
+OR
+module.exports.name1 = myCustomFunc1;
+module.exports.name2 = nyCustomVar1;
+OR
+exports.name1 = myCustomFunc1; (new nodeJS shorthand, no need the word 'module')
+
+
+server.listen(portNumber);
+the moment it hits this, your program is now running in a continuous loop, waiting for inputs. So in the terminal, your app.js file has finished executing yet, it is in an infinite event loop. The event loop keeps on running as long as there are event listeners registered.
+Your whole node APP is running in this infinite event loop.
+NodeJS is also single threaded!
+You can exit a nodeJS with process.exit(). It will jump out of the event loop. (you will hardly use this).
+In your terminal, use control+c to exit any node application.
+
+HTML form.
+<form action="/message" method="POST">
+	<input type="text" name="msg"/>
+	<button type="submit">Send Data</button>
+</form>
+If method is post, it will automatically get the "names" of all input types and send them as a POST request on SUBMIT.
+
+__dirname means current directory (where this file is)
+fs.writeFileSync(__dirname + '/message.txt', 'dummy');
+
+Streams & Buffers
+Stream: Request Body Part1, Request Body Part2, Request Body Part3, Request Body Part4
+When a request is sent from the browsers, it is divided into chunks and sent over the internet (example: a file upload), on the server, you will receive multiple chunks at different times. So you use a BUFFER, where you wait for say 3 chunks and then process those 3 chunks.
+A buffer is like a bus stop, 3-4 people gather, THEN bus comes and picks you up.
+
+NodeJS is all async. Non blocking. You give it a function and tell it to execute it some time later.
+Node.js runs non-blocking js code and uses an event driven code (event loop) for running your logic. A node program exits as soon as there is no more work to do. By default, createServer() event never finishes.
+
+Single Thread - Event Loop - Non blocking code
+Event Loop in NodeJS - At the start of each loop, it runs any timer callbacks (setTimeouts, setIntervals),  THEN any other pending callbacks (I/O realted disk,network operations), THEN poll phase (retrieve new i/o events, execute their callbacks), THEN check phase (setImmediate callbacks), THEN close event callbacks, THEN if there is no other registered callbacks / event listeners do process.exit() and exit the loop. By default on server side, this will never happen, it will keep running in a loop.
+
+Worker Pool - Some tasks are runs as a seperate worker. They run on their own THREAD!! These don't run on your event loop. (these are normally heavy lifting tasks). Once the worker is done,it will trigger a callback and this callback will execute on the normal event looop.
+Example: 'fs' tasks
+
+NPM: Node Package Manager for JS and the world's largest software registry. It is automatically installed when you install NodeJs.
+run "npm init" in your project folder. You will get a package.json file in your folder. Remb: In JSON, both name and value have to be in " "
+In Package.json:
+"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node assignment1.js"  --> change this to "nodemon assignment1.js" after installing nodemon
+}
+This way whoever gets your project, they just have to run "npm start" and it will run the correct starter file..
+If you give some random script name like "testerKtk" then you have to use "npm run testerKtk" and not "npm testerKtk". "start" is a special node 'scripts' keyword.
+
+Dependencies: Other 3rd party packages that your node application needs. You download these from the "npm repository" and You mention these in package.json of your project. Packages can be installed as three types
+npm install abc --save-dev   development packages
+npm install abc --save       production packages
+npm install abc -g           will not install it in your project folder but it will install it globally on your machine (for this user)
+
+package-lock.json : A list of the EXACT VERSIONS that have just been installed and being used by this project right now. So if you share your project with someone, they will know which exact versions of ALL the dependencies you are using.
+
+npm install --save-dev nodemon
+This package allows you to not restart your server, EVERY time you save new changes. It constantly watches our files for changes and restarts the process. For every file change you make, you don't have to control+c and then npm start. Change you start script from "node abc.js" to "nodemon abc.js".
+
+
+Errors Types in NodeJs
+syntax errors - typos, syntax etc  (npm start will catch this.. and will give you the exact filename and approx line number)
+runtime errors - code that breaks when it runs
+logical errors - output is not as expected
+
+VS Code Debugging.
+Run -> Add configuration, add these 3 under "configuration".
+	The configuration file is where you tell it which JS file to run  (node abc.js) when you do, Run-> Start debugging
+	"restart": true,      (your server will restart if you edit any file)
+	"runtimeExecutable": "nodemon"
+	"console": "integratedTerminal"
+Also do in your terminal:   npm install nodemon -g   (install it globally)
+Kill your app if it is already running in the terminal.
+Do Run -> Start Debugging  (Also use view -> debug console)
+DON'T start you app from the terminal (run->start-debugging will start your app)
+Set breakpoints and checkout things.
+After you are done with you work, to kill the program, Run -> Stop Debugging. And in the VS code terminal, debugger is killed, kill nodemon with control+c.
+Articles:
+https://nodejs.org/en/docs/guides/debugging-getting-started/
+https://code.visualstudio.com/docs/nodejs/nodejs-debugging
+In the VS code debugger, in the variables window, you can change values of the vars at runtime, and see what outputs you will get.
+
+-------------------------------------------------------------------------------------------------------------------------
+Chapter 5: Express.js
+Package/framework that covers a lot of boiler plate server logic code that you don't have to write.
+Alternatives to express - vanilla nodejs, adonis.js, koa, sails.js
+npm install --save express
+
+Middleware
+Request -> Express Middleware 1 -> Express Middleware 2 -> Response
+You can add other plugins on express, they all just form another layer in the middleware
+
+const express = require('express');
+const app = express();
+app.use((req, res, nextFunc) => {
+			console.log('inside middleware1');
+			nextFunc();   //the nextFunc should be called, to send the request on to the next middleware. If you don't call nextFunc...no response will be sent (express does not send any default response), or else you respond right here with res.send()
+});
+app.use((req, res, nextFunc) => {
+			console.log('inside middleware2');
+			res.send('some-html');    //Content-Type by default set to 'text/html' by express
+});
+app.listen(3000);
+// In this way you can have many middlewares... with app.use()
+The requests GO THROUGH the file from top to bottom. So that's how it knows what the next middleware is.
+In any app.use(), if you are calling res.send(), then don't call nextFunc(). i.e never send more than one response, it will error out.
+
+Handling Routes
+app.use( (req,res,nextFunc) => { code-common-to-all-routes,  nextFunc()});
+app.use( '/users',     (req,res,nextFunc) => {} );
+app.use( '/gamers/users',     (req,res,nextFunc) => {});
+app.use( '/',     () => {});
+Here it is not EQUAL TO, but STARTS WITH '/users', so again, it executes it from top to bottom.. if it does'nt match the 2,3, and they both don't call nextFunc(), then it will match the third one and execute it.
+So you need to have some common code if you want, and then order your middlewares in a way that your request funnels to the right place.
+
+Parsing requests
+Assume that this path is called via POST from some form somewhere.
+npm install --save body-parser
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));    //this one is a common middleware placed above all middleware, it automatically calls next() inside itself, so that request then hit one of our middlewares
+
+.... down the line ....
+app.use('/product', (req,res,next) => {
+		console.log(req.body.someCustomFieldNameFromTheRequestPostData);    //urlencoded converts the req to a js object that you can use now
+		res.redirect('/');
+});
+
+app.use() works for ALL requests - get,post,del etc.
+app.get() works only for GET requests. Similarly app.post(), app.delete(), app.patch(), app.put() etc. So if you are interested only in POSTS then use app.post(). The difference is, for these it does an EXACT MATCH of the path, and it is not 'starts with' like in app.use()
+
+Express Router
+In some file -
+const express = require('express');
+const router = express.Router();
+
+router.use();  //same syntax as app.use()
+router.post();
+router.get();
+
+module.exports = router;
+
+Then in your main file -
+import otherRoutes = require('./routes/otherRoutes);
+
+app.use(common-code-for-all-requests);
+app.use(otherRoutes);
+app.get('/', <some-code>);
+app.use(()=>{catch-all-code-404-page});  (res.status(404).send(<h1>404</h1>)) - You can even chain methods
+
+So you just created a new middleware in a different file, there you parsed different routes, here in the main file, you just pass it to app.use(). You are kind of nesting routes.
+
+Another trick: In a seperate file, if you want to track all path under /product
+In the main file do: app.use('/products', otherRoutes);
+In the other file for each of do: router.use('/prod123', func);  router.use('/prod8768', func); Meaning you can skip the '/products' part in EACH of these, since you have mentioned it in the main file already. In reality, these will execute for /products/prod123, or /products/prop8768
+
+Serving HTML
+In your backend nodeJS layer, you will probably use a module-view-controller architecture.
+Create a 'views' folder - it will contain a bunch of html files. You can the <style> </style> in the <head> tag of the page.
+
+Serving html pages -
+Instead of res.send('string of html');
+do
+const path = require('path');
+res.sendFile(path.join(__dirname, 'views', 'shop.html'));
+Directly putting './views/shop.html' won't work, because it will go to your OS home directory and look for the "views" folder. You want to look inside the parent folder of your current file location, which is '__dirname'
+You can also do: path.join(__dirname, '..', '..', 'views', 'shop.html'); (to go up/down certain levels)
+
+You are using path.join() so that the path package builds a path that works on linux and windows systems. Don't hardcode it as (__dirname + 'views/shop.html'). Linux uses forward slash, windows uses backslash.
+
+Create a global helper function, that gives you the path to your root folder.
+const path = require('path');
+module.exports = path.dirname(process.mainModule.filename);  // this constructs a path to the app.js file (the file that starts your server)
+
+now in any other file -
+const rootDir = require('../util/rootDirHelper');
+res.sendFile(path.join(rootDir, 'views', 'shop.html'));
+
+Statically Serving files
+For any path entered in the URL, your server responds only for path that you define in your nodejs app.js code. You can't just put localhost:3000/routes/admin.js in the browser, it won't work. BUT, you can respond to certain path by serving them statically.
+In app.js ->
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+Now anything inside the public folder in your projects, can be accessed via localhost:3000/abc  (you don't have to include 'public' in the path)
+It won't go through your logic, nodeJS just automatically responds with that file.
+<link rel='stylesheet' href='/css/main.css'/>
+So different html files will just call this CSS files. The request for this CSS file is handled by nodejs automatically and returns the css statically.
+
+Chapter 6: Dynamic Content & Templating Engines
+Enough of serving static html files or html strings. You need to dynmically build the html page on your server (after talking to the DB server etc, or maybe you manage data in you nodejs layer itself).
+
+In file1: Get the data from the user and store it in a var data. Ex: data.push(req.body.title); In this file, export this "data" variable.
+In file2: Import the "data" variable, it will always have the updated value, use the updated value here.
+So basically in any file, you can import this "data" var (reference type) and use it's contents.
+So, you CAN store data within your NodeJS layer. If multiple browsers store values in "data", it will also work. The data is stored in your nodeJS server code which will give this updated data to ANY client. So many clients are working off of the same shared data. You don't want this everytime, sometimes you want user level data alone. Each user has his own data.
+
+Templating Engine: It sits on your server, It takes a HTMLish template and your nodeJS layer stored data and replaces placeholders/snippets in the template with actual HTML content. This final dynamically created HTML file is then sent to the client. The users will never get the template/placeholders. TE options --
+EJS: <p> <%= name %> </p>  (normal html and JS inside it)
+Pug: p #{name}             (normal html and custom template language inside it)
+Handelbars: <p> {{ name }} </p>   (normal html and custom template language inside it)
+
+Instead of Sending static HTML files (res.send), you will Render (res.render) templates and these templates will be filled in with values by the template engine. For your app you register a default templating engine.
+
+Pug
+npm install --save pug
+
+In app.js-
+const app = express();
+app.set('view engine', 'pug');   // you can directly put the string 'pug' over here, because when you install pug, it auto registers itself with express (not all TE do this)
+app.set('views', 'views');      // telling express to dynamically compile html files in the view folder using pug.
+
+In views/ , add shop.pug file, in this file in VScode just type html, emmet will autofill with pug style HTML...
+pug has its own HTMLish syntax
+at somepoint, instead of res.sendFile(path.join(rootDir, 'views', 'shop.html')); do res.render('shop');
+	render() looks for the default templating engine (which you setup in app.js), it figures out that it has to look for .pug files inside the /views folder. So just say render('shop')
+If you have to pass data to the template - res.render('shop', { prodsProp: myProductsArrayVariable, docTitleProp: 'shopper' });
+Now inside shop.pug, just use
+	title #{docTitleProp}
+	main
+			each product in prodProps
+			div.someClassName.someOtherClassName(randomAttribute1="randomValue1", randomAttribute2="randomValue2")#someIDvalue
+					p #{product.title}
+You just printed out an array of divs..
+Remb: when you edit anything in a template, you don't have to restart your server (even nodemon won't restart it), bcoz nodeJS just uses templates on the fly to produce outputs, so the next request, will just on the fly use your new template.
+Pug syntax has loops, conditionals etc.
+You can also have common html shared accross files etc.
+	extends layouts/main-layout.html
+	You define different "block" by giving them names. Then you just reuse these blocks across different pug files
+
+Handelbars
+npm install --save express-handlebars
+
+In app.js
+const expresshbs = require('express-handlebars');
+
+const app = express();
+app.engine('handlebars', expresshbs());    -> You are defining and creating a name "handlebars" and it will be the result of that function.
+app.set('view engine', 'handlebars');      ->Setting the above created "handlebars" as the default view engine for your app
+app.set('views', 'views');                 ->Handlebars must use all the .handlebar files in the /views folder
+In the /views folder, create abc.handlebars files
+If you call it "hbs" then all your files in /views must also be abc.hbs
+You are kind of defining the engine and the file extension at the same time
+
+The way you use app.render() does not change, you still do  res.render('shop', { prodsProp: myProductsArrayVariable, docTitleProp: 'shopper' });
+Only your template files now have a different syntax
+<title> {{ docTitleProp}} </title>
+Even handlebars has loops, conditionals etc. In handlebars you can only output values or check if values are true/false, you can't do a > b
+{{#if abc}}
+	<div> </div>
+{{else}}
+	<div> </div>
+{{/if}}
+There is also {{#each prodsArray}}  some html where i use {{this.title}}  {{}/each}    to loop through stuff
+
+To use/reuse html components,In apps.js - app.engine('handlebars', expresshbs({layoutDir: 'views/layouts/ }))
+Your reusable components use three braces {{{ body}}}
+
+EJS
+npm install --save ejs
+
+In app.js
+app.set('view engine', 'ejs');  //no require() etc.
+app.set('views', 'views');
+
+Save your files as abc.ejs inside your /views folder.
+
+<title> <%= docTitleProp %> </title>
+
+This has loops, conditionals too. Very straighforward, as it is just some JS interleaved inside some huge HTML file..
+<% any vanilla JS here!! so if(propsProducts.length > 0) { %>
+	<some heavy html>
+<% } else { %>
+	<some other huge html>
+<% } %>
+Same with loops <% for(let k in propsProducts {% >    html   <% } %>
+EJS does not suport layouts (reusable components) but you can do it through some other ways
+	<%- include('../views/header.ejs') %>   -> This is some reusabe html component
+
+Chapter 7: Module View Controller
+Seperation of concerns/logic.
+Model: working with data (save/fetch), it represents the underlying data in your code. (like data-model )
+View: rendering what the user sees, decoupled from your app code,  ligt/dumb logic
+Controllers: connect models and views, application logic that fetches data and gives it to views (like routes, routers)
+
+Model: A class based data structure that holds the data and its helper functions. This is where you talk to the DB and maintain state inside data structures.
+https://developer.mozilla.org/en-US/docs/Glossary/MVC
+Look at the mvc folder.
+
+Chapter 8:
+
+Chapter 9: Dynamic Routes & Advanced Modules
+product-list.ejs - clicking a product must take the user to that product url
+	<a href="/product/<%= product.id %>" class="btn"> Details Button </a>
+	so it will go to "/product/0.432321"
+
+Looking for dynamic routes
+router.get('/products/:someProductId', (req,res,next){});
+	this will match '/products/0.324234', and req.params.someProductId  will be EQUAL to '0.324234'
+	the colon : tells express that it is a dynamic value
+
+If you want to match '/products/delete', obviously, keep this route above '/products/:someProductId' .... so that it matches delete first.
+
+In a POST request, if you have to send data (that the user does not necessarily have to give you)
+<form action="/cart" method="post>
+	<button class="btn" type="submit"> Add to Cart </button>
+	<input type="hidden" name="productId" value="<%= product.id %>">
+</form>
+On the product-details page, on click of the add to cart button, a post request is sent to the /cart, with {productId : 4843242}
+So, in the router.post('/cart', (res,req,next){use req.body.productId and update the cart} ) (in a get request, it will be a query param, so req.params.productId)
+You can reuse the above ejs A2C code across different files
+
+<%- include('../includes/add-to-cart.ejs', {product: product});
+	In includes the a2c html code and sends it product value
+
+To access query params, use req.query.queryParamName
+
+Conditional HTML in EJS
+<button type="submit" class="btn"> <%= if(editingBoolean) { %> Edit Product <%= } else { %> Add Product <%= } %>
+
+Chapter 10: SQL Introduction
+Stop storing things in memory (variables in nodeJS layer) and in files in the nodeJS layer.
+
+Database: a program to store and retrieve bulk data. MySQL, MongoDB etc.
+>relation db: data is distributed across many many tables, each table has many records, schema of tables must be pre-defined, relation between tables (1-1,1-M,M-M), structured query language, adding more servers is difficult (horizontal scaling) as you have to make sure DBs are in sync all the time, vertical scaling is better (adding more CPU power to one server), limitations with read/write queries per second
+>non-relational db: tables are called collections, collections don't have records but have documents {JSON}, the documents inside a collection need not have the same schema but consistency is preferred, no relations/keys between collections - data is just duplicated - so you have to update multiple places, horizontal and vertical scaling is possible due to lower relations, great performance for read/write.
+
+Install mySQL community edition. (mySQL community server + mySQL workbench). In the installation, chose "legacy password encryption". Create a schema (i.e a database) in the mySQL UI.
+
+Package to work with a mySQL database server
+npm install --save mysql2
+
+In the util folder, add database.js -
+const mysql = require('mysql2');
+// you create a pool of connections, each query you run uses a seperate connection from the pool, once it is done, the connection is returned to the pool of connections.
+const pool = mysql.createPool({
+	host: 'localhost',
+	user: 'root',
+	database: 'schema-name-on-myqsl',  //Example:'node-complete'
+	password: 'test123'
+});
+// you export a promise
+module.exports = pool.promise();
+
+In App.js -
+const db = require('./util/database');  //import the pool promise;
+db.execute('select * from someTableName')
+ 	.then(res => console.log(res))
+	.catch(err => console.log(err));
+You get back an [ [array of row objects], [{object of table metadata}]]
+use db.end() if you want to close the pool of connections.
+
+NOW, you can execute ANY sql -  read/write/delete from table.
+Example:
+class Product {
+	constuctor();
+	static fetchAll() {
+		return db.execute('select * from products');     //return a promise
+	}
+	save() {
+		return db.execute('insert into products (title, price, imageUrl, description) values (?,?,?,?)', [this.title, this.price, this.imageUrl, this.description]);                 //? is replace by dynamic value ... return a promise
+	}
+	static findById(givenId) {
+		return db.execute('select * from products where id = ?, [givenId]);
+	}
+}
+Product.fetchAll().then( ([rows, metaData]) => {
+	res.render('shop/index', {
+		prods: rows,
+		pageTitle: 'All Products'
+	});
+}).catch(err => console.log(err));
+The view now gets an array of product objects.. (rows).. and it will display all the products in a grid.
+myNewProduct.save().then( () => {
+	// product has been added to catalog
+	res.redirect('/');
+});
+Product.findById(id).then(([rows, metaData]) => {
+	res.render('/pdpPage/' + id, {
+		prod: rows[0],
+		pageTitle: 'PDP'
+	})
+});
+
+Chapter 11: Sequelize Package for Relational DBs
+A package that is better than the basic 'mysql2' for you to do DB stuff.
+This package uses more of a JS like syntax for queries, instead of "some SQL in a string". An object relational mapping library - converts SQL syntax into object based syntax
+>Models - User, Product
+>Instances - const user = User.build()
+>Queries - User.findAll();
+>Associations - User.hasMany(Product)
+
+npm install --save sequelize   (this one needs mysql2 package, so install it too)
+util/database.js -
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('my-database-name', 'my-root-db-username', 'my-root-db-password', {dialect: 'mysql', host: 'localhost'});
+module.exports = sequelize;
+
+models/product.js -
+const Sequelize = require('sequelize');
+const sequelize = require('util/database.js');
+// Now create a table called 'product' (this is your model now)
+const Product = sequelize.define('product', {
+		id: { type: Sequelize.INTEGER, autoincrement: true, allowNull: false, primaryKey: true },
+		title: { type: Sequelize.STRING, allowNull: false },
+		price: { type: Sequelize.DOUBLE, allowNull: false },
+		imageUrl: { type: Sequelize.STRING },
+		description: { type: Sequelize.STRING }
+});
+module.exports = Product;
+// This Product model is now a sequelize model that is connected to the DB table.... so from now on, you directly talk to the DB table with 'Product'.
+
+app.js
+// Tell the app that whenever you start, create tables for all my models
+const sequelize = require('util/database.js');
+//this line looks at all sequelize.define lines and creates tables for all of the models
+sequelize.sync().then(res => {
+	console.log(res); // tables have now been created.
+	app.listen(3000); // start the app after tables are created
+});
+// It does: create table IF NOT EXISTS ... so only the first time you start your app, it will create the table in the DB, for every other restart of the app, the DB is not touched (nothing new is created)
+
+Using the models -
+/controller/admin.js
+const Product = require('/model/product.js');
+exports.postAddProduct = (req,res,next) => {
+	// this one line creates a new row in the table!!
+	Product.create( { title: req.body.title, price: req.body.price, description: req.body.description} )
+	.then(res => do-something-else);
+}
+
+Product.findAll().then(allProducts => {});         //returns all rows
+Product.findById(someId).then(someProduct => {});        //searches by primaryKey and returns one row
+Product.findAll({where: {id: givenId}}).then(someProducts => {});
+someRowProduct.save();  //this writes a row to the DB (updates it)
+someRowProduct.destroy(); //removes a row
+Product.destroy({where: {id: givenId}});   //also removes row(s)
+
+Creating Associations/Relations between different models. (1-1,1-M,M-M)
+In app.js -
+cons Product = require('/models/Product');
+cons User = require('/models/user');
+
+Product.belongsTo(User, {           //meaning a product can belong to ONLY ONE user. (a product can have only one creator)
+	constraints: true,
+	onDelete: 'CASCADE'          // i.e when a user is deleted, delete the product too.
+});
+User.hasMany(Product);   //a user can create/have many products
+sequelize.sync()...   // so now, sequelize will create the tables/models with these relations/constraints set up. Every product will now have a foreign key, which references the ID column in the user table
+
+Because of User.hasMany(Product); sequelize automatically gives the 'User' model, 'User.createProduct()' !!!!, so you don't have to do Product.create() anymore..
+Get all products of the cart of a partilcular user -
+req.user.getCart().then(cart => cart.getProducts().then(products => {}));
+
+You also define relations betweens tables/models
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });          User.hasMany(Product);
+User.hasOne(Cart);            Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });          Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);            User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
+
+Chapter 12: NoSQL and MongoDB
+a.k.a Humongous DB - you can store and work with big data (lots of data)
+tables -> collections, rows -> don't exist, but you have 'documents' that have no schema.
+MongoDB uses JSON to store data inside documents
+MongoDB allows for duplicates (that is why the volume is very high too), it does'nt encourage disparate data like relational DBs, so there are not a lot of relations between collections . Nested/Embedded docs - means the whole of B is rewritten somewhere inside A. References - Inside A you have a reference to some data set that is there inside B (like a pointer, when you retrieve data, you manually merge them)
+
+Download and install MongoDB community server OR use a cloud solution - MongoDB Atlas, just sign up and have a free server on the cloud.  (just like google firebase)
+build a new cluster -> leave the default settings (check that everthing is free). This is your backend now.
+Go to security -> add a new mongoDB user that has readNWrite acccess to DB
+Security -> Ip address whitelist -> add an entry of YOUR ip address
+On the clusters homepage -> choose connect -> select application -> copy the SRV address
+
+See the mongoDB docs for CRUD operations- https://docs.mongodb.com/manual/crud/
+
+In your project-
+npm install --save mongodb   (the mongoDB driver)
+
+database.js -
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+let _db;
+const mongoConnect = (callback) => {
+	MongoClient.connect('<the SRV address from mongodb cluster connect page >').then(res => {
+			console.log('connected to the remote server');
+			_db = client.db();  //store this connection inside _db, other files will just want to use this existing connection, instead of creating a new connection
+			callback();
+	}).catch(err => {
+			console.log(err);
+			throw err; //let it cascade
+	});
+};
+const getDb = () => {
+	if (_db) return _db;
+	throw 'No database found';
+}
+export.mongoConnect = mongoConnect;
+express.getDb = getDb;
+
+App.js -
+import mongoConnect = require('util/database.js');
+
+mongoConnect() => {
+	app.listen(3000);  // start the server after DB connection is ready
+});
+
+models/Product.js
+const getDb = require('util/database.js').getDb;
+class Product {
+	constructor(title, price, description, imageUrl) {
+		this.title = title;  // and so on for the other fields
+	}
+
+	save() {
+		const db = getDb(); // this is the database connection
+		// add the product to the collection, if it does'nt exist yet, it will create the collection on the fly
+		db.collection('products').insertOne(this).then(res => {
+			console.log(res);
+		});
+	}
+}
+
+On the mongoDB website, you can download and install mongoDB Compass. It is a GUI to interact with your remote DB. This is where you can see what data is there in your remote DB.
+
+Every document in an collection is given a "_id" field by default by mongoDB. This id is not a string, it a special object type, because mongoDB collections are not exactly JSON, they are BSON, so the RHS of the value is a special object type for _id, so use mongoDB.ObjectId(yourId) to access it
+
+Fetching data
+db.collections('products').find(); it returns a "cursor" object. Like an iterable. You keep getting data from it ONE by ONE.
+		but you can do .find().toArray().then(res)   to move everything in one shot into one huge array in memory
+Find a particular document in the collection -
+db.collections('products').find({_id : new mongoDB.ObjectId(prodId)}.next().then(singleProduct => {}).catch();
+

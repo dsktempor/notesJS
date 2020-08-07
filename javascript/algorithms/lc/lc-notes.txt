@@ -1,0 +1,297 @@
+function leetcodeBinaryTreeBuilder(arr) {
+	// [3, 5, 1, 6, 2, 9, 8, null, null, 7, 4]
+	// [3, 5, 1, 6, 7, 4, 2, null, null, null, null, null, null, 9, 11, null, null, 8, 10]
+	function Node(val,left=null,right=null) {
+		return { val, left, right }
+	}
+
+	if(arr.length===0) return null;
+	let root = new Node(arr.shift());
+	let tree = [root];
+
+	while(arr.length>0 && tree.length>0) {
+		let n = tree.shift();
+		if(n!==null) {
+			let v;
+			if(n.left===null) {
+				v = arr.shift();
+				if(v===null) n.left = null;
+				else n.left = new Node(v);
+				tree.push(n.left);
+			}
+			v = arr.shift();
+			if(v===null) n.right = null;
+			else n.right = new Node(v);
+			tree.push(n.right);
+		}
+	}
+
+	return root;
+}
+
+
+
+parseInt('00056') is 56
+Number('00078') is 78, but Number() is much faster than parseInt()...
+Use switch(xyz) instead of if(xyz)-elseIf(xyz)-elseIf(xyz)-elseIf(xyz).
+dont' forget the NEW keyword when calling constructors! var x = new Node(val,null);
+
+Loop through the strings/array(s) backwards or forwards
+When looping through a list: either compare (curr,curr+1) or compare (curr-1,curr)
+
+don't do: for(k in Object.key(o)) OR do for(k of Object.keys(o))... same for Object.values();
+
+hasmap counter: hm[n] = !hm[n] ? 1 : ++hm[n];
+
+s = 'temp'; s[1] = 'g'// this won't edit s!!! s will still be 'temp'. So don't reverse a string by changing its characters.
+
+convert binary number to string, use .toString(2)  110100101 will become "110100101"
+
+make sure the variable name is ALSO not a function name already.. make sure all variables and property names are disitinct.
+
+ascending sorting an integer array in JS-> nums1.sort((x,y) => x-y);   //dont just do nums1.sort();
+but remb! array.sort() does the sort in-place!! it does not return a new array
+
+Backtracking algos - https://www.youtube.com/watch?v=DKCbsiDBN6c
+
+"5" - 0 is 5, so to convert String to number, just use minus sign, no need Number("5");
+
+string  upperCase() and lowerCase() return new strings and don't edit in place
+you can't do if() if() else   the else will go to the second if and not the first if... (this is when you don't use brackets
+
+To create an empty 2d matrix of size R x C
+let final = new Array(R).fill(0).map(x => new Array(C));
+you have to do the fill(0) and then do the map x => new array .... or else x will be undefined and the map wont work
+
+make sure your === are not  =  or  ==      (common typo)
+
+flatten a 2d matrix -> nums.reduce((acc, x) => acc.concat(x), []);
+
+try and sort the input array (if you have no ideas)
+read from left or read from right.... (keep count of max and min on both sides)
+
+in recusrive code, for loops, put LET i, and not just i
+function dfs(n) {
+		ret.push(n.val);
+		for (let i = 0; i < n.children.length; i++) {  //note if you don't put LET i , it errors out !!!!!
+			dfs(n.children[i]);
+		}
+}
+
+a XOR a = 0, a XOR 0 = a
+a ^ b ^ c ^ a ^ b = c
+
+you can't do let uCount,dCount,lCount,rCount = 0;
+if you have to do each: let uCount=0,dCount=0,lCount=0,rCount = 0;
+
+need to send it an array: let s = new Set([3,4,5]);
+
+instead of
+scores.length-1 < 0 ? 0 : scores[scores.length-1] + (scores.length-2 < 0 ? 0 :scores[scores.length-2]);
+do
+(scores[scores.length-1] || 0) + (scores[scores.length-2] || 0)
+
+
+690 onwards
+[1,2,3].concat(4,5,6) is [1,2,3,4,5,6]  // remember concat returns a new array
+[1,2,3].push(...[4,5,6])  //doesnt work
+
+Use Array.from(), hashmap.entries(), hasmap.values()
+Example: let maxLength = Math.max(...Array.from(m.values()));
+
+ASCII: A-Z is 65-90 ; a-z is 97-122   someString.charCodeAt(someIndex)  ,  String.fromCharCode(65) - gives 'A'
+there are 26 alaphabets in total.
+
+look at "trie" problems
+
+licensePlate.replace(/[^a-zA-Z]/g,'');      //DONT forget the 'g' flag in regex
+use of new Regexp: S.replace(new RegExp(J, 'g'),'');   where J = 'aA[0-9]' (or some variable basically)
+
+for ([key,value] of Object.entries(hm)){
+		result.push("" + value + " " + key);
+}
+
+Array.split(' '); does not need to be based on only one character, it can be any list of chars - const words = paragraph.toLowerCase().split(/[ !?',;.]/);
+
+x = 1 - x (to flip 0 to 1 and 1 to 0)     or do  y => y^1  XOR
+
+Try to use stacks in simple string, array problems. Problem#0844
+
+In JS you can do
+let o = {};
+o[[3,4]] = 10;     o : { "3,4":10 }
+o[[-2,-6]] = 20;     o : { "3,4":10, "-2,-6":20 }
+
+common mistake: in 2-D matrix, you always say grid[i,j] instead of grid[i][j] !! throws an error
+
+IN a square 2-d matix. The two for loops are just counter for 0 to n. You can use a[i][j] OR a[j][i] inside it. See problem 0883
+
+An element appears only once in an array, if indexOf() and lastIndexOf() are equal
+
+Array.reduce to get the sue: A.reduce( (acc,x)=>acc+x, 0 )
+
+New way to find Math.floor(x/2);   do  x>>1;
+
+YOu don't have to always create a hashmap of chars of a string, maybe just do a.split('').sort().join(''). This value is unique for each string.
+
+dfs inorder traversal iteratively -
+let stack = [];
+while(root!==null || stack.length) {
+	if(root!==null){
+		stack.push(root);
+		root = root.left;
+	} else {
+		root = stack.pop();
+
+		//do something with root, you are visiting it now
+
+		root = root.right;
+	}
+}
+
+GCD
+function gcd(x,y) {
+	if(x===0) return y;
+	return gcd(y%x, x);
+}
+
+To check if x is even, don't do x%2===0, do x & 1 === 0.
+To check if x is odd, do x & 1 === 1
+
+To remove all '@' in a string. Do string.split('@').join('');
+
+arr.shift() is the same as arr.slice(1)  Except that shift does it in place and slice returns a new array.
+
+
+JS class syntax-
+class RecentCounter {
+	constructor(){
+		this.arr = [];
+	}
+	ping(t){
+		while (t-this.arr[0] > 3000) this.arr.shift();
+		return queue.push(t);
+	}
+}
+
+Arr.push(), returns the length of the new array!
+
+arr.sort((a,b)=>a-b);  If func return <0, a comes BEFORE b. If func returns >0, a comes AFTER b
+
+a.localeCompare(b) ; to compare strings. Use this in arrayOfStrings.sort(customCompareFunc);
+
+#0938: In a BST, everything to the left of this node is lower than this node.
+Everything to the right of this node is greater than this node.
+
+Heron's Formula:
+Area of triangle = Math.sqrt(s * s-a * s-b * s-c), where s=(a+b+c)/2
+A triangle has a non-zero area, IF the sum of the two shorter sides is greater than the largest side.
+
+-6%2 is -0 and not 0 (so === won't work, if you are trying x%2===0)
+
+(34).toString.split('') is ['3','4'] and not [3,4]
+
+Use BigInt(somestring) to convert '5432342351412312131' to a valid number (else you will be out of bounds)
+
+new kind of for-loop, problem 0999
+for (const [xo, yo] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
+	for (let i = x + xo, j = y + yo; i < 8 && i >= 0 && j < 8 && j >= 0; i += xo, j += yo) {
+		if (board[i][j] === "B") break;
+		if (board[i][j] === "p") { ++ret; break; }
+	}
+}
+
+For any array question, maybe it is better if you just FIRST sort your input in nlogn time and then solve the problem.
+
+How to kill a for loop without a break; ?
+for(i=0;i<10;i++){
+	if(abc) i=20;
+}
+
+if x is 1 or 0 and you need to flip it, do Math.abs(x-1)
+
+Get used to << shift operator, problem 1018
+
+In JS, if Arr = [10,20,30] A[-5] and A[50] are undefined (it won't throw an exception!!)
+
+Quick copy of an array: let b = arr.slice();
+
+JS shortcut
+if(root.left)  helper(root.left, curr);
+can be -
+root.left && helper(root.left, curr);
+
+For really large numbers use BigInt(someString) and not Number(someString)
+
+New way to convert binary to decimal
+1010101 is 85. You read it left to right, you get sums: 1,2,5,10,21,42,85  (do curr=curr*2 + bit) curr starts with zero
+
+Manhattan distance between two points in a plane = |x1-x2|+|y1-y2|
+i.e you can only travel vertically or horizontally, so just count the number of city blocks you need to travel.. length wise and breadth wise...
+
+basic gcd function
+const gcd = (a, b) => (0 === b ? a : gcd(b, a % b));
+
+counting permuations see #1128
+1 2 3 4 5
+perms are 1-2,1-3,1-4,1-5 | 2-3,2-4,2-5 | 3-4,3-5 | 4-5 = 10 perms
+keep count to 0, when 1 comes count 0,
+when 2 comes count 1, when 3 comes count 2, when 4 comes count 3 and finally count 4 for 5. total is 1+2+3+4
+
+tribonacci memozied
+var tribonacci = function(n, cache={}) {
+    if(n===0) return 0;
+    if(n===1 || n===2) return 1;
+
+    if(cache[n]) return cache[n];
+    cache[n]=tribonacci(n-1, cache) + tribonacci(n-2, cache) + tribonacci(n-3, cache);
+    return cache[n];
+};
+
+Code to check leap year
+let leapYear = false;
+if (year % 4 == 0) {
+	if (year % 400 === 0) leapYear = true;
+	else if (year % 100 === 0) leapYear = false;
+	else leapYear = true;
+}
+
+//3 points in straight line (x1,y1) (x2,y2) (x3,y3)
+function checkSlope(x,y,z){
+		let slope1 = (y[1] - x[1]) / (y[0] - x[0]);
+		let slope2 = (z[1] - y[1]) / (z[0] - y[0]);
+		if(Math.abs(slope1)===Infinity && Math.abs(slope2)===Infinity) return true;
+		else return slope1===slope2;
+	}
+Example (0,1)(1,3)(2,5) are in a straight line of slope +2. For every move of x, y moves by +2
+(0,7)(1,5)(2,3) are in a straight line of slope -2.
+(0,1)(0,0)(0,-1) are in a straight line of slope Infinity
+
+//Problem1266. Be careful when passing array refs to functions. Like coordinates myFunc([1,2],[3,4]), inside your function make copies of the value incase you are editing them (or exchanging them etc)
+
+Maybe convert the number to a string? or an array of digits?
+
+x%2===0 is the same x&1===0
+Math.floor(x) is the same as x>>0
+
+Maybe use set() ?
+
+JS max heap: https://leetcode.com/problems/the-k-weakest-rows-in-a-matrix/discuss/523705/JavaScript-Heap-%2B-Binary-Search
+
+maybe binary search?
+
+learn the Date() api
+
+to copy an array, use arr.slice() or [...arr] or Array.from(arr)
+
+Array.every(x=>true/false); //returns boolean
+arr.splice(index, howMuchToRemove, whatToInsert);
+
+
+for(x of IntegerArray) hm[x] = hm[x]+1 || 1;
+for(y in hm) {} //here y is a string !! so it will be "3" and not 3
+
+learn about TRIE data structure, problem 1408
+
+Be careful with: let max = Math.max(...someArray);   (it wont work for large arrays)
+from docs of Math.max - both spread (...) and apply will either fail or return the wrong result if the array has too many elements, because they try to pass the array elements as function parameters.

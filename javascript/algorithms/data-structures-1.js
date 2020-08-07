@@ -26,11 +26,11 @@ Your program and its data structures sit on RAM. So limited space and CPU time i
 */
 
 
-// Arrays: Organises items sequentially, i.e one after another in memory. (contiguous memory lcoations)
+// Arrays: Organises items sequentially, i.e one after another in memory. (contiguous memory locations)
 // Because they are contiguous and in order, access is very fast for the cpu.
-// access O(1), push O(1), insert O(n), delete O(n). Search is O(n)
+// access O(1), push O(1), insert O(n), delete O(n), search is O(n)
 // Static array: Fixed size. You need to know the size ahead of time. If you add extra elements later, there is no guarantee that the OS will add the new elements as part of the same original continguos memory locations.
-// Dynamic array: No size. i.e Variable size. It grows as elements are added. It copies the whole contiguos locations, creates a whole new contiguous location set and copies the values there. JS has dynamic arrays, which mean the machine automatically manages array memory locations for you and you don't have control like in C/C++. Thus sometime c/c++ is faster than high level languages like JS. So, even in JS, arr.push() might be O(n) under the hood becuase it copies and pastes everything into a new contiguous memory location. But for you, just say O(1)
+// Dynamic array: No size. i.e Variable size. It grows as elements are added. It copies the whole contiguos locations, creates a whole new contiguous location set and copies the values there. JS has dynamic arrays, which mean the machine automatically manages array memory locations for you and you don't have control like in C/C++. Thus sometime c/c++ is faster than high level languages like JS. So, even in JS, arr.push() might be O(n) under the hood because it copies and pastes everything into a new contiguous memory location. But for you, just say O(1)
 // Strings are just arrays. If you get any string question, just do str.split('') and then use array methods.
 // Advantages: access, push, pop, ordered data
 // Disadvantages: slow insert/delete, fixed size
@@ -77,9 +77,9 @@ class MyArray {    //Arrays in JS are anyway just integer based objects, that ha
 	}
 }
 
-// Hash tables: Collection of key-value pairs. The keys are not oredered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a 'value' will be O(n).
-// Python has dictionary, JS- Objects and Map, Java go and Scala have Maps, Ruby has Hashes
-// You take an key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size) The key need not just be a string, it can be anything - array, object, function whatever. JS Map() does the same thing, but it maintains the order of insertion (i.e when you loop through the keys, you go in the order of insertion)
+// Hash tables: Collection of key-value pairs. The keys are not ordered. They are O(1) for insertion, deletion and access (avg and best case). Worst case: O(n) for all, but depends. Search for a 'value' will be O(n).
+// Python has dictionary, JS- Objects and Map, Java, go and Scala have Maps, Ruby has Hashes
+// You take a key and convert it into a valid array index - which is a hash function (it takes input of variable size and gives back a hash of a fixed size) The key need not just be a string, it can be anything - array, object, function whatever. JS Map() does the same thing, but it maintains the order of insertion (i.e when you loop through the keys, you go in the order of insertion)
 // So at array index '10', you store a key of 'pink' and a value of '#ff69b4'. Your hash function converted your key 'pink' to index '10'.
 // Hash function must return a value in O(1) time (be very fast), it must distribute values uniformly AND for the same input it must give the same output (must be deterministic or idempotent)
 // Handling collisions
@@ -88,7 +88,7 @@ class MyArray {    //Arrays in JS are anyway just integer based objects, that ha
 // Worst case - all values hashed to one place (bucket). Acesss becomes O(n)
 // Hashtables don't store data in order like arrays do. You insert it in one order, but in memory, these will be spread at random locations, depending on the hashed index.
 // Advantage: fast access (assuming no collisions),fast insert, flexible keys (like JS Maps)
-// Disadvantage: unordered, slow key iteration (need to go through whole memory space to get all keys), high memory O(n)
+// Disadvantage: unordered, slow key iteration (traversal) (need to go through whole memory space to get all keys), high memory O(n)
 class HashTable {
 	constructor(size = 53) {
 		this.keyMap = new Array(size);         // A HashTable of fixed size (default size is 53). Most hashTables use a HUGE array.
@@ -97,7 +97,7 @@ class HashTable {
 	_hash(key) {   // function that returns a value between 0 to this.keyMap.length everytime. _SOMEVARNAME means, do not access this from outside this class (dev standard)
 		let total = 0;
 		let WEIRD_PRIME = 31;      // Prime numbers help in spreading out keys more evenly
-		for (let i = 0; i < Math.min(key.length, 100); i++) {        // Constant time, you can do i<key.length, then it becomes O(n)
+		for (let i = 0; i < Math.min(key.length, 100); i++) {        // Constant time, you can't do i<key.length, then it becomes O(n)
 			let char = key[i];
 			let value = char.charCodeAt(0) - 96
 			total = (total * WEIRD_PRIME + value) % this.keyMap.length;
@@ -154,24 +154,22 @@ let user = {
 }
 user.age; // this access takes O(1)
 
-// ES6 Map and Set also use hashtables. For Maps, the key does not have to be a string and map maintains the insertion order.
+// ES6 Map and Set also use hashtables. For Maps, the key does not have to be a string and the map maintains the insertion order.
 
 
-// Stack: Create a stack data structure. LIFO. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
+// Stack: LIFO. Create a stack data structure. The stack should be a class with methods 'push', 'pop', and 'peek'.  Adding an element to the stack should store it until it is removed.
 // Examples - function call stack, undo/redo actions in programs, routing browser history
 class StackWithArray {     // contiguous memory locations, so it is faster than StackWithLinkedList. But this is a dynamic array (adding values takes longer time)
+// Add at the end, also remove from the end. O(1)
 	constructor() {
 		this.data = [];
 	}
-
 	add(record) {
 		this.data.push(record);         // O(1), You can even use shift and unshift but it will be O(n)
 	}
-
 	remove() {
 		return this.data.pop();         // O(1)
 	}
-
 	peek() {                          // O(1)
 		return this.data[this.data.length - 1];
 	}
@@ -186,9 +184,10 @@ class Node {
 	}
 }
 class StackWithSinglyLinkedList {         // It has unlimited size, use more memory (head/tail pointers), nodes are scattered in memory.
+	// Add at the beginning, also remove from the beginning. O(1)
 	constructor() {
 		this.head = null;
-		this.tail = null;
+		this.tail = null;      // You don't technically need a tail pointer at all..
 		this.size = 0;
 	}
 
@@ -198,9 +197,8 @@ class StackWithSinglyLinkedList {         // It has unlimited size, use more mem
 			this.head = k;
 			this.tail = k;
 		} else {                 //Non Empty List
-			var temp = this.head;
-			this.head = k;
-			this.head.next = temp;
+			k.next = this.head;
+			this.head = k
 		}
 		return ++this.size;
 	}
@@ -222,7 +220,7 @@ class StackWithSinglyLinkedList {         // It has unlimited size, use more mem
 	}
 }
 
-// Queue: Create a queue data structure.  FIFO. The queue should be a class with methods 'add', 'remove' and 'peek'. Adding to the queue should store an element until it is removed.
+// Queue: FIFO. Create a queue data structure. The queue should be a class with methods 'add', 'remove' and 'peek'. Adding to the queue should store an element until it is removed.
 // queues are used all over the place in computer science. In JS - the event loop call back queue!
 class QueueWithArray {
 	constructor() {
@@ -242,8 +240,8 @@ class QueueWithArray {
 	}
 }
 
-//Queue can also be implemented with SinglyLinkedList. Add to the end and remove from the beginning. Both are O(1)
-//Insertion and removal are O(1).  Searching and access are O(n)
+//Queue must be implemented with SinglyLinkedList to have O(1).
+// Add to the end and remove from the beginning. Both are O(1). Searching and access are O(n)
 class Node {
 	constructor(val) {
 		this.value = val;
@@ -311,10 +309,10 @@ class Queue {
 	}
 
 	add(x) {
-		this.s1.add(x);
+		this.s1.add(x);              // O(1)
 	}
 
-	remove() {
+	remove() {                     // O(2n)
 		let retVal;
 		while (this.s1.peek()) {
 			this.s2.add(this.s1.remove())
@@ -326,7 +324,7 @@ class Queue {
 		return retVal;
 	}
 
-	peek() {
+	peek() {                     // O(2n)
 		let retVal;
 		while (this.s1.peek()) {
 			this.s2.add(this.s1.remove())
@@ -341,7 +339,7 @@ class Queue {
 }
 
 // Linked List: Unlimited length. (hashtable and static array have pre-defined lengths/memory. Though dynamic arrays can increase in length, but performance problem)
-// Nodes are scattered in memory (not like array). So CPU takes longer to get your node in linked-list. (just like hast-tables)
+// Nodes are scattered in memory (not like array). So CPU takes longer to get your node in linked-list. (just like hash-tables)
 
 
 // Implement classes Node (data, next) and Linked Lists -
@@ -366,6 +364,18 @@ class LinkedListOne {
 
 	insertFirst(data) {
 		this.head = new Node(data, this.head);
+	}
+
+	removeFirst() {
+		if (!this.head) {
+			return;
+		}
+
+		this.head = this.head.next;
+	}
+
+	getFirst() {
+		return this.head;
 	}
 
 	size() {
@@ -398,8 +408,20 @@ class LinkedListOne {
 		}
 	}
 
-	getFirst() {
-		return this.head;
+	clear() {
+		this.head = null;
+	}
+
+	insertLast(data) {
+		const last = this.getLast();
+
+		if (last) {
+			// There are some existing nodes in our chain
+			last.next = new Node(data);
+		} else {
+			// The chain is empty!
+			this.head = new Node(data);
+		}
 	}
 
 	getLast() {
@@ -412,18 +434,6 @@ class LinkedListOne {
 			node = node.next;
 		}
 		return node;
-	}
-
-	clear() {
-		this.head = null;
-	}
-
-	removeFirst() {
-		if (!this.head) {
-			return;
-		}
-
-		this.head = this.head.next;
 	}
 
 	removeLast() {
@@ -443,18 +453,6 @@ class LinkedListOne {
 			node = node.next;
 		}
 		previous.next = null;
-	}
-
-	insertLast(data) {
-		const last = this.getLast();
-
-		if (last) {
-			// There are some existing nodes in our chain
-			last.next = new Node(data);
-		} else {
-			// The chain is empty!
-			this.head = new Node(data);
-		}
 	}
 
 	getAt(index) {       //Linked List's first element's index is 0
@@ -525,9 +523,11 @@ class LinkedListOne {
 
 }
 
-//Linked List defintion 2: A data structure that contains a head,tail and length property.
+//Linked List definition 2: A data structure that contains a head,tail and length property.
 // Insertion and deletion in the middle of list is faster than in the middle of an array.
-// Insertion O(1) i.e push/unshift.   Removal O(1) for shift, o(n) for pop.
+// Insertion O(1) i.e push and unshift.
+// Removal O(1) for shift, O(n) for pop.
+// get(index), set(i, val),
 // Searching O(n), Access at particular index O(n)
 // Advantage: fast insert, fast delete, it is ordered, flexible size
 // Disadvantage: slow search, use more memory
@@ -583,6 +583,34 @@ class SinglyLinkedList {
 		}
 
 		return current;
+	}
+
+	pop2() {
+		// my implementation
+		let n;
+
+		if (this.head === null) {   // Empty list
+			return;
+		}
+
+		if (this.head.next === null) {   // 1 item list
+			n = this.head;
+			this.head = null;
+			this.tail = null;
+			this.size = 0;
+			return n;
+		}
+
+		let prev = this.head;
+		n = this.head.next;
+		while (n.next !== null) {
+			prev = n;
+			n = n.next;
+		}
+		this.tail = prev;
+		this.tail.next = null;
+		this.size--;
+		return n;
 	}
 
 	shift() {             //Remove node from the begining of the list (removeFirst)  O(1)
@@ -669,6 +697,24 @@ class SinglyLinkedList {
 		}
 		this.head = prev;          //update head here
 		return this;
+	}
+
+	reverse2() {
+		// my implemenation
+		if (this.head === null || this.head.next === null) {
+			return;
+		}
+		// list has atleast 2 elements
+		let prev = this.head;
+		let n = this.head.next;
+		let k = this.head.next;
+		while (k !== null) {
+			k = n.next;
+			n.next = prev;
+			prev = n;
+			n = k;
+		}
+		[this.head, this.tail] = [this.tail, this.head];
 	}
 
 	reverseInstructorCode() {
@@ -887,11 +933,11 @@ function fromLast(list, n) {
 	return slow;
 }
 
+// Trees are non-linear. A tree must have only one root. A node can have only one parent. Siblings: Nodes that have the same parent.  Leaf: A node with no children. Edge: The connection from the parent to a child.
+// Examples: HTML DOM, network routing, file system in OS, JSON parsers use trees, abstract syntax tree that the JS engine creates from your code, trees are used in AI for decision paths (decision trees).
 // Tree: Create a node class (data + array of children), The node class should have methods add(data) and remove(data) (i.e wrt children).
 // Create a tree class. The tree constructor should initialize a 'root' property to null.
 // Implement 'traverseBF' and 'traverseDF' on the tree class.  Each method should accept a function that gets called with each element in the tree.
-// Trees are non-linear. A tree must have only one root. A node can have only one parent. Siblings: Nodes the have the same parent.  Leaf: A node with no children. Edge: The connection from the parent to a child.
-// Examples: HTML DOM, network routing, file system in OS, JSON parsers use trees, abstract syntax tree that the JS engine creates from your code, trees are used in AI for decision paths (decision trees).
 class NodeTree {
 	constructor(data) {
 		this.data = data;
@@ -953,13 +999,15 @@ function levelWidth(root) {
 	return counters;
 }
 
-// Binary Search Tree: Implement the Node class to create a binary search tree.  The constructor should initialize values 'data', 'left', and 'right'.
-// Binary Tree : Each node can have max 2 children. BST: A BT where data must be sorted left to right.
+// Binary Search Tree
+// Binary Tree - Each node can have max 2 children. BST: A BT where data must be sorted left to right.
 // Perfect binary tree: every node has exactly 2 children. In this one, If a level has 'n' nodes, then all the levels above it, together have n+1 nodes. That mean, in PBT, the last level has about half the nodes of the whole tree.
 // The number of nodes at level n is 2^n. The levels start from level0. If there are h levels, then total nodes in the tree is 2^h -1.
+
+// Implement the Node class to create a binary search tree.  The constructor should initialize values 'data', 'left', and 'right'.
 // advantages of BST: better than o(n), ordered, flexible size
 // disadvantages: nothing is O(1)
-// Implement the 'insert' method for theNode class.  Insert should accept an argument 'data', then create an insert a new node at some appropriate location in the tree.
+// Implement the 'insert' method for the Node class.  Insert should accept an argument 'data', then create an insert a new node at some appropriate location in the tree.
 // Implement the 'contains' method for the Node class.  Contains should accept a 'data' argument and return the Node in the tree with the same value. If the value isn't in the tree return null.
 class NodeBST {
 	constructor(data) {
@@ -985,17 +1033,17 @@ class NodeBST {
 			return this;
 		}
 
-		if (this.data < data && this.right) {
-			return this.right.contains(data);
-		} else if (this.data > data && this.left) {
-			return this.left.contains(data);
+		if (val > this.data && this.right) {
+			return this.right.contains(val);
+		} else if (val < this.data && this.left) {
+			return this.left.contains(val);
 		}
 
 		return null;
 	}
 }
 
-// Or implement A BST class which has all the methods (instead of Node having al the funcs). The Node constructor will be the same as above.
+// Or implement A BST class which has all the methods (instead of Node having all the funcs). The Node constructor will be the same as above.
 // Insertion and Search are both O(logn) [best,avg case]If you double the nodes in the tree, it just adds one more level to the tree, hence log(n).
 // Worst case could all be O(n) (unbalanced BST). i.e if every node in the tree has just one child..
 // BFS and DFS have same time complexity O(n). For really wide trees, use DFS (you save memory, in BFS you store the whole layer, but in DFS you store less)
@@ -1012,7 +1060,7 @@ class BinarySearchTree {
 
 		if (this.root === null) { this.root = k; return this; }      //empty tree
 
-		let n = this.head;
+		let n = this.root;
 		while (true) {
 			if (val === n.data) return undefined;        //Do not accept duplicate values
 
@@ -1188,7 +1236,7 @@ class BinarySearchTree {
 		function goDeeper(n) {
 			if (this.left) goDeeper(this.left);
 			if (this.right) goDeeper(this.right);
-			visitedNodes.push(n);
+			visitedNodes.push(n);               //only this changes.
 		}
 
 		goDeeper(this.root);
@@ -1266,7 +1314,7 @@ class Events {
 // Binary heap: a binary tree. Max/Min binary heap: parent nodes are always larger/smaller than their two children. There is no order/relationship among siblings.
 // All the children of each node are as full as they can be and left children are always filled out first. A level must be filled up as much as possible.
 // BH are used to implement priority queues. BH are also used for graph traversal algos.
-// You can implement BH via a node and tree class, but easiest was is ARRAY. If parent is at index n, left child is at 2n+1, right child is at 2n+2.
+// You can implement BH via a node and tree class, but easiest way is ARRAY. If parent is at index n, left child is at 2n+1, right child is at 2n+2.
 // The parent of any element is at Floor(n-1)/2
 // Be default, when you insert into a binary heap, you start a whole new level ONLY after the current level is completely filled up.
 // Search is O(n), insert is O(logN), delete is O(logn)
@@ -1401,7 +1449,7 @@ class PriorityQueueMinBinaryHeap {
 
 // Graphs: A data structure that consists of a finite set of nodes/vertices V connected with a set of non-directed/directed edges E. Edges can also be weighted/unweighted.
 // Examples: Social Networks, Mapping and routing, recommendation engines, website hyperlinks, almost everywhere.
-// Storage: Use an adjaceny matrix (AM).  matrix[a][b] and matrix[b][a] = 1 if there is an edge E between them, else the value will be zero at the position.
+// Storage: Use an adjacency matrix (AM).  matrix[a][b] and matrix[b][a] = 1 if there is an edge E between them, else the value will be zero at the position.
 // Adjacency List (AL): An array to store the edges of each vertex V. [ [1,5], [4,3], [2,5], [2,4] ] Meaning vertex number 0 has edges to 1 and 5. Vertex number 1 has edges to 4 and 3.
 // Add vertex:[AL O(1), AM O(V^2)],  Add Edge:[AL O(1), AM O(1)],  Remove Vertex:[AL O(V+E), AM O(V^2)], Remove Edge:[AL O(E), AM O(1)]
 // Query:[AL O(V+E), AM:O(1)],  Storage:[AL O(V+E), AM O(V^2)]
@@ -1441,7 +1489,7 @@ class GraphAdjacencyList {             // undirected graph
 	}
 
 	// Examples for traversal: web crawlers, find closest matches/neighbours, shortest paths, AI uses shortest path to win game.
-	myDepthFirstTraversal(f) {
+	mySimpleDepthFirstTraversal(f) {
 		let randomStartNode = Object.keys(this.adjacencyList)[0];
 
 		let nodesToVisit = [randomStartNode];
@@ -1449,7 +1497,7 @@ class GraphAdjacencyList {             // undirected graph
 
 		while (nodesToVisit.length) {
 			let justVisited = nodesToVisit.shift();
-			if (!visitedNodes.includes[justVisited]) {
+			if (!visitedNodes.includes(justVisited)) {
 				visitedNodes.push(justVisited);
 				f(justVisited);
 				nodesToVisit.unshift(...this.adjacencyList[justVisited]);
@@ -1469,7 +1517,7 @@ class GraphAdjacencyList {             // undirected graph
 			resultNodes.push(v);
 
 			for (child of adjacencyList[v]) {     // it is not exactly child though, in a graph, it is like 'neighbor'
-				if (!visitedNodes[child]) {         // this is O(1) becuase it is an object and not an array.
+				if (!visitedNodes[child]) {         // this is O(1) because it is an object and not an array.
 					return goDeeper(child);
 				}
 			}

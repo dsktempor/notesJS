@@ -714,6 +714,8 @@ TEXT
 	text-shadow
 		TBD
 	text-transform
+		TBD
+		capitalize
 	text-underline-offset
 	text-underline-position
 

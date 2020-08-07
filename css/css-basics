@@ -1098,3 +1098,38 @@ Mixins: Your own custom functions.
 }
 The function can even take arguments.. so really, endless possibilites.
 
+------------
+misc
+
+------
+basic header-nav
+.Blog ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.Blog li {
+	display: inline-block;
+	margin: 20px;
+}
+
+.Blog a {
+	text-decoration: none;
+	color: black;
+}
+
+.Blog a:hover,
+.Blog a:active,
+.Blog a.active,
+.Blog a.anchor-is-active {
+	color: #fa923f
+}
+--------
+
+text-transform: capitalize;
+to capitalize the first alphabet of the element
+
+---------

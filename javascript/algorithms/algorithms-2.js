@@ -59,15 +59,10 @@ function maxChar(str) {
 // Fizzbuzz: Console log the numbers from 1 to n. But for multiples of three print “fizz” instead of the number and for the multiples of five print “buzz”. For numbers which are multiples of both three and five print “fizzbuzz”.
 function fizzBuzz(n) {
 	for (let i = 1; i <= n; i++) {
-		if (i % 3 === 0 && i % 5 === 0) {
-			console.log('fizzbuzz');
-		} else if (i % 5 === 0) {
-			console.log('buzz');
-		} else if (i % 3 === 0) {
-			console.log('fizz');
-		} else {
-			console.log(i);
-		}
+		if (i % 3 === 0 && i % 5 === 0) console.log('fizzbuzz');
+		else if (i % 5 === 0) console.log('buzz');
+		else if (i % 3 === 0) console.log('fizz');
+		else console.log(i);
 	}
 }
 
@@ -165,6 +160,7 @@ function firstDuplicate(arr) {   //O(n)
 
 
 // maxStockProfit: Given an array of integers (stock prices in the day), return the max profit possible.
+// O(n): At any instant of time, my best profit is the diff between me and the lowest number ever before me.
 function maxStockProfit(pricesArr) {
 	var maxProfit = -1;
 	var buyPrice = 0;
@@ -186,6 +182,25 @@ function maxStockProfit(pricesArr) {
 	}
 
 	return maxProfit;
+}
+
+function maxProfitUntested(arr) {
+	let maxProfit = -Infinity;
+
+	let lowestPoint = arr[0];
+	for (i = 1; i < arr.length; i++) {
+		let curr = a[i];
+
+		if (curr > lowestPoint) {
+			tempProfit = curr - lowestPoint;
+			if (tempProfit > maxProfit) maxProfit = tempProfit;
+		} else {
+			lowestPoint = curr;
+		}
+	}
+
+	return maxProfit;
+
 }
 
 // commonElements: Given two arrays, return true if they have atleast 1 item in common. Brute force is O(n^2)
@@ -224,15 +239,15 @@ function chunk(array, size) {
 	return r;
 }
 function chunk(array, size) {
-	const chunked = [];
+	const chunks = [];
 	let index = 0;
 
 	while (index < array.length) {
-		chunked.push(array.slice(index, index + size));
+		chunks.push(array.slice(index, index + size));
 		index += size;
 	}
 
-	return chunked;
+	return chunks;
 }
 
 // Anagrams: Check to see if two provided strings are anagrams of eachother. One string is an anagram of another if it uses the same characters in the same quantity. Only consider characters, not spaces or punctuation.  Consider capital letters to be the same as lower case.
@@ -262,11 +277,9 @@ function anagrams(stringA, stringB) {  //O(n)
 }
 
 function anagrams(stringA, stringB) {
-
 	function cleanString(str) {
 		return str.replace(/[^\w]/g, '').toLowerCase().split('').sort().join('');
 	}
-
 	return cleanString(stringA) === cleanString(stringB);
 }
 
@@ -408,16 +421,16 @@ function vowels(str) {
 // Spiral Matrix: Write a function that accepts an integer N and returns a NxN spiral matrix.
 //   matrix(2)
 //     [[1, 2],
-//     [3, 4]]
+//      [4, 3]]
 //   matrix(3)
 //     [[1, 2, 3],
-//     [8, 9, 4],
-//     [7, 6, 5]]
+//      [8, 9, 4],
+//      [7, 6, 5]]
 //  matrix(4)
 //     [[1,   2,  3, 4],
-//     [12, 13, 14, 5],
-//     [11, 16, 15, 6],
-//     [10,  9,  8, 7]]
+//      [12, 13, 14, 5],
+//      [11, 16, 15, 6],
+//      [10,  9,  8, 7]]
 function matrix(n) {
 	var m = [];
 	for (i = 0; i < n; i++) {
@@ -465,11 +478,6 @@ function addUpto(n) {
 function addUpto(n) {   //add 1 to 100 and 100 to 1 (so 101+101+101+101 ... 100 times. Then divide that by 2)
 	return n * (n + 1) / 2          //this does only 1 addtion, 1 multiplication, 1 division and 1 assignment in TOTAL. O(1) Constant time
 }
-function logAtMost10(n) {
-	for (var i = 1; i <= Math.min(n, 10); i++) {   // this one is O(1) [constant time] and not O(n)
-		console.log(i);
-	}
-}
 
 // Sieve of Eratosthenes: Return an array of prime numbers up to n.
 function primesToN(n) {
@@ -495,7 +503,7 @@ function primesToN(n) {
 	return resultsArray;
 }
 
-// Write a function SAME that compares two arrays. Should return true if one array has all the square values of the other array. As long every square is there (and in any order), it is true. The frequencies should match.  same([1,2,3], [4,1,9]) is true.
+// Write a function SAME that compares two arrays. Should return true if one array has all the square values of the other array. As long as every square is there (and in any order), it is true. The frequencies should match.  same([1,2,3], [4,1,9]) is true.
 function same(f,s) {     //O(n^2)
 	if (f.length !== s.length) {
 		return;
@@ -533,7 +541,7 @@ function same(f,s) {   //O(n)
 	}
 }
 
-// SumZero: Write a function which accepts a sorted array of ints. Func must fine the first pair whose sum is zero. Return the pair as an array or return undefined.
+// SumZero: Write a function which accepts a sorted array of ints. Func must find the first pair whose sum is zero. Return the pair as an array or return undefined.
 function sumZero(a) {  //O(n^2)
 	for (let i =0; i < a.length; i++) {
 		for (let j = i + 1; j < a.length; j++) {
@@ -591,7 +599,19 @@ function returnUniqueValues(a) { //O(n)
 
 // longestUniqueChars: A func that returns the longest string of unique characters within a string
 function longestUniqueChars(s) {
+	s = s.split('');
+	let count = 0;
+	let maxCount = 0;
+	for(i=0; i<s.length; i++) {
+		if(i===0) {count++; continue;}
 
+		if(s[i] !== s[i-1]) count++
+		else {
+			maxCount = Math.max(count, maxCount);
+			count = 0;
+		}
+	}
+	return maxCount;
 }
 
 // maxSubArraySum: A func that takes an integer array and number n. It returns the maximum sum of n consecutive elements in the array.
@@ -618,8 +638,6 @@ function maxSubArraySum(a, n) { //O(n^2)
 function maxSubArraySum(a, n) {  //O(n)  Sliding Window  //in [1,2,3,>4,5,6,7<,8] the sum at 4 is previousSum-3+7, the sum at 5 is previousSum-4+8
 	if (n > a.length) return;
 
-	let currentMaxValue = -Infinity
-
 	let slidingSum = 0;
 	for (let i = 0; i < n; i++) {
 		slidingSum += a[i];
@@ -634,6 +652,21 @@ function maxSubArraySum(a, n) {  //O(n)  Sliding Window  //in [1,2,3,>4,5,6,7<,8
 	}
 
 	return currentMaxValue;
+}
+
+function maxSumOfNelements2(arr, n) {
+	let currentSum = 0;
+	for (i = 0; i < n - 1; i++) {
+		currentSum += arr[i];
+	}
+	let maxSum = currentSum;
+	let j = 0;
+	for (i = n; i < arr.len; i++) {
+		currentSum = currentSum - arr[j] + arr[i];
+		maxSum = Math.max(currentSum, maxSum);
+		j++;
+	}
+	return maxSum;
 }
 
 // sameFrequency: Given two positive integers, return true if they both have the same frequencies for the different digits
@@ -667,7 +700,20 @@ function averagePair(a, avg) {  //O(n)
 	return false;
 }
 
-// isSubsequence: Func takes two strings and checks whether the chars in string1 form a subsequence of the chars in string2. Example: 'sing' in  'string' true. All the chars in string1 appear somewhere in string2 without their order changing.
+function averagePair2(arr, avg) {
+	let i = 0;
+	let j = arr.length - 1;
+
+	while (i < j) {
+		let vg = (arr[i] + arr[j]) / 2;
+		if (vg > avg) j--;
+		else if (vg < avg) i++;
+		else return [i,j];
+	}
+	return 'not found';
+}
+
+// isSubsequence: Func takes two strings and checks whether the chars in string1 form a subsequence of the chars in string2. Example: 'sing' in 'string' true. All the chars in string1 appear somewhere in string2 without their order changing.
 function isSubsequence(str1, str2) {  //O(n+m)
 	var i = 0;
 	var j = 0;
@@ -680,25 +726,22 @@ function isSubsequence(str1, str2) {  //O(n+m)
 	return false;
 }
 
-// maxSubArraySum: Func takes an array of integers and a number, and returns the maximum sum of any n adjacent elements.   ([700,1,400,300],2) should give 701
-function maxSubArraySum(arr,n) { //O(n)
-	if (n > arr.length) return null;
+// Function takes two strings s1 and s2. Counts how many times s2 is hidden inside s1. Example: 'sing' is there in 'string'
+function countOfSubsequences(s1, s2) {
+	// s1 is the bigger string
+	let count = 0;
+	let i = 0;
+	let j = 0;
 
-	var currentMax = -Infinity;
-	var currentSlidingSum = 0;
-	for (let i=0; i<n; i++) {
-		currentSlidingSum += arr[i];
+	while (i < s1.length) {
+		if (s1[i] === s2[j]) j++;
+		if (j === s2.length) count++;
+		i++;
 	}
-	currentMax = currentSlidingSum;
-
-	for(let i=1; i<=arr.length-n; i++){
-		currentSlidingSum = currentSlidingSum - arr[i-1] + arr[i+n-1];   //sliding window
-		if (currentSlidingSum > currentMax) currentMax = currentSlidingSum;
-	}
-	return currentMax;
+	return count;
 }
 
-// minSubArrayLen: Func takes an array of positive integers and postive integer. Func returns the length of the smallest contiguous subarray whose sum >= number passed to the function.
+// minSubArrayLen: Func takes an array of positive integers and postive integer sum. Func returns the length of the smallest contiguous subarray whose sum >= number passed to the function.
 function minSubArrayLen(nums, sum) {  //O(n)
 	let total = 0;
 	let start = 0;
@@ -706,14 +749,12 @@ function minSubArrayLen(nums, sum) {  //O(n)
 	let minLen = Infinity;
 
 	while (start < nums.length) {
-		// if current window doesn't add up to the given sum then
-		// move the window to right
+		// if current window doesn't add up to the given sum then move the window to right and add the value
 		if (total < sum && end < nums.length) {
 			total += nums[end];
 			end++;
 		}
-		// if current window adds up to at least the sum given then
-		// we can shrink the window
+		// if current window adds up to at least the sum given then, remove the start from the sum and shrink the window
 		else if (total >= sum) {
 			minLen = Math.min(minLen, end - start);
 			total -= nums[start];
@@ -739,7 +780,7 @@ function findLongestSubstring(str) {
 		if (seen[char]) {
 			start = Math.max(start, seen[char]);
 		}
-		// index - beginning of substring + 1 (to include current in count)
+		// At any point, your current length is i - start + 1
 		longest = Math.max(longest, i - start + 1);
 		// store the index of the next char so as to not double count
 		seen[char] = i + 1;
@@ -747,10 +788,23 @@ function findLongestSubstring(str) {
 	return longest;
 }
 
+function findLongestSubstring2(str) {
+	let longest = 0;
+	let seen = {};
+	let start = 0;
 
-
-
-
+	for (let i = 0; i < str.length; i++) {
+		let char = str[i];
+		if (seen[char]) {
+			start = seen[char] + 1;
+		}
+		// At any point, your current length is i - start + 1
+		longest = Math.max(longest, i - start + 1);
+		// store the index of the next char so as to not double count
+		seen[char] = i;
+	}
+	return longest;
+}
 
 
 

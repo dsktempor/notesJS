@@ -1,0 +1,1989 @@
+/*
+Udemy: React - The complete guide (hooks, redux etc)
+ A JS library for building UI interfaces.
+ React apps run on the browser, not on the server.
+
+Resources:
+https://codepen.io/pen/
+
+Table of contents:
+>>>ES6 (let, const, arrow function, class, import/export, spread/rest, destructuring, reference types)
+>>>Basics of React Components
+	JSX, SPA, build-workflow, function based, class based, state, props, reusing components, folder-structure (components, containers, hoc), setState(), useState(), css modules, radium package for css, setting css classes dynamicaly, react dev tools
+>>>Advanced Components
+	Conditionally rendering components, lists of components, keys for list items, updating state immutably, error boundaries, creation lifecycle, update lifecycle (for state changes, for prop changes), useEffect() in function based components, react.memo(), PureComponent, virtual dom and real dom, React.Fragment, Higher Order Components, Higher Order Wrapper Methods (wrapped components), PropTypes package, Refs (references), Context API
+>>>HTTP
+	Axios, Axios Instances, Interceptors for global and instances, Axios defaults, Firebase DB
+>>>Routing
+	React-router-dom, BrowserRouter at the app level, Route, Switch, Redirect, Link, NavLink, <Route> related out-of-the-box props that go to the child component, withRouter, Absolute/Relative paths, Route parameters (/path/:id) - setting and extracting, props.location.history.push()/replace(), Nested Routes!, Lazily loading components for different routes (React.Suspense)
+>>>Redux    (redux,react-redux)
+	Basic Redux PubSub implementation, dispatchAction-reducer-store-subscriber, standardized action types as constants, Provider, createStore(), connect, mapStateToProps, mapDispatchToProps, updating the store immutably in the reducer, combineReducers, applyMiddleware, action creators,redux thunk for async code inside reducer
+>>>Authentication
+
+>>>Testing
+	test driven development, unit tests, jest, enzyme
+
+>>>Webpack
+>>>
+-----------------------------------------------------------------------------------------------------------
+
+components: custom html elements that are building block of a website. On a page you just assemble them all as needed
+You can reuse components across the site. It is a like a custom defined html element, that you can reuse everywhere.
+
+React: https://cdnjs.cloudflare.com/ajax/libs/react/16.10.1/umd/react.production.min.js
+the logic for creating components
+React DOM: https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.10.1/umd/react-dom.production.min.js
+react dom is all about rendering these components to the real dom
+
+React uses a lot of ES6, ES7 features. So you need a pre-processor like babel to ship with your react code to be able to run on
+all ol browsers supporting Es5 and below
+
+Non react way:
+<div class='person'>
+  <h1>Max</h1>
+  <p>You are age 28</p>
+</div>
+<div class='person'>
+  <h1>Manu</h1>
+  <p>You are age 40</p>
+</div>
+
+.person {
+  display: inline-block;
+  margin:10px;
+ border: 1px solid #eee;
+ box-shadow: 0 2px 2px #ccc;
+ width: 200px;
+ padding: 20px
+}
+
+React Way-
+<div id='p1'> </div>
+<div id='p2'> </div>
+
+// react component
+function Person (props){         (has to be capital letter)
+  //return the code you want to render to the dom
+  return (
+    <div className='person'>       (this is JSX, 'class' is called 'className')
+				<h1>{props.name}</h1>           (curly braces in JSX is for dynamic values)
+				<p>You are age {props.age}</p>
+    </div>
+  );
+}
+
+React: Convert functions to new HTML element types. func person() becomes <Person></Person>
+
+//allows you to render a JS function as a component to the real DOM
+ReactDOM.render(<Person name='Max' age='28' />, document.querySelector('#p1'));
+ReactDOM.render(<Person name='Manu' age='40' />, document.querySelector('#p2'));
+//we only wrote the HTML code once and now we can reuse it over and over again
+
+You can also do it this way-
+var app = (
+	<div>
+			<Person name='Max' age='28' />
+			<Person name='Manu' age='40' />
+	</div>
+);
+ReactDOM.render(<App/>, document.querySelector('#app-root-element'));
+JSX elements must have only one root element.
+
+React Alternatives: Angular, Vue, Backbone, Ember, jQuery(but this only for traversing dom)
+
+Single Page Application: Only one HTML page is sent by the server. After that everything is managed with JS React. Components are rendered by react.
+You never have to go back to the server and reload the entire page. The entire page is also managed by a root React component which is exclusively under React's control.
+Typically there is only one ReactDOM.render() call in the whole app, because we only have one root app component which is mounted to the DOM and which
+hosts all other React components
+
+Multi Page Application: Many pages are sent by the serve, one for each route (URL). Maybe some widgets on the page are built with react.
+Here you call ReactDOM.render() for each of the components (per widget)
+
+-------------------------------------------------------------------------------------------------
+ES6 Features of react
+const - used like hell in react
+let
+arrow function - 'this' has lexical scope not dynamic scope in these, if body is just one return statement - then you skip the  { } and the return keywords..
+export & import
+	inside of a javascript file we can import content from another file so that the javascript files themselves know their dependencies.
+	export default const person = "Max";
+	export default someVarName;
+	export var base = 10;
+	export let clean = function() { }
+	A file can only contain one default and an unlimited amount of named exports.
+
+	Named exports have to be imported by their name
+	import p from './person.js'                     (the default one from that file is imported as p)
+	import {base, clean as c} from './person.js'   (named exports, so you have to import them specifically)
+	import * as bundeledObj from  './person.js'    (bundeledObj.default, bundledObj.base, bundledObj.clean)
+class
+	constructor() - default function that is called during instantiation
+	Child class's constructor must call super(), or else the inheritance won't work
+	In ES7 you can just declare properties as myVar = 10; (without a constructor). You can also declare funcs as- myVar = () => {}
+spread and rest
+	let newObj = { ...oldObj, 'test'=true };
+	let newArr = [ ...oldArr, 25, 30];
+destructuring (for array and objects)
+
+Primitive types are copied whereas object types are references (even array/functions are reference types)
+var p = 10;
+var q = p;  //a copy of 10 is set into q
+var t = {a:20};    // t stores the memory address of the location where {a:20} is present
+var k = t;    //k reference the same object t is referencing (memoery address is copied to k)
+k.a=50;
+k = {b:100};   //t is now {a:50}, k is {b:100}
+To really get a copy of the object do k = {..t};  //this is now a copy
+In react, when dealing with objects and arrays, you mostly want to create copies of them and then work with them....!!
+
+Array functions: Most of them return a new array! Sort/Map/Filter/Concat/Slice/Splice/Reduce (they don't mutate the given array)
+-------------------------------------------------------------------------------------------------
+React Workflow Parts-
+Why create a build workflow?
+Optimize our big code (minify it)
+Use next gen JS features (faster code, lesser code, less error prone code) (babel supports JSX and ES6 and above) (our code will now run on many browsers)
+Be more productive - CSS auto-prefixing, js linting
+
+How to have a build workflow?
+Dependancy manager (npm OR yarn)   (we need packages like react, react dom, babel)
+Bundler (combines all our modules from different js files, example: webpack, gulp) (you want the client to make only one request for 1 bundled JS file, not 100 requests for 100 JS files)
+Transpiler (babel)
+Development Server (need one for your local machine)
+One tool built by the react does all of this - Create React App
+
+npm -v
+npm install create-react-app -g
+go to a particular folder and then: create-react-app testproject1 --scripts-version 1.1.5 (it will now install react, react-dom and 'react-scripts' which takes care of build workflow, ES6, dev server etc)
+Now, inside this new directory "testproject1", you can run commands like npm start, run build, run test, run eject etc.
+cd testproject1
+npm start  (use cmd+c to quit, if you don't quit your server is constanly watching for your files)
+
+Folder Structure
+package-json: Your app has 3 dependencies: react, react-dom, react-scripts. ALl the "scripts" can be run with "npm run <script name>".
+node modules: all the sub-dependancies for the above 3. Never edit these
+Public: The root folder that is served by the server. For an SPA, you will have only one .html file here (single-page).  When you do a build, your script files will be injected into it.
+	div id of "root" is where you will mount your react app later on
+Manifest: Define some meta data about your app
+AppTest.js: Helps you create unit tests for your components
+
+Components
+In Index.js, you can even do: ReactDOM.render(<h1> Hello!, no component over here </h1>, document.getElementById('root'));
+instead of ReactDOM.render(<App />, document.getElementById('root'));
+
+Typically you mount one root component (here it is called "app") on to the HTML. And inside that root component's html, you load all the other sub components of the page.
+
+The built-in Component class has a render method in it. It needs to have that because react will call this method to render something to the screen.
+Every component, MUST render html or return some html code that must be rendered
+
+JSX - this is pure JS! but it looks like html (react team build this).
+return(<header className="App-header">
+					<h1>Welcome to React</h1>
+</header>);
+Your react files may have .jsx instead of .js as their extension
+Remember every react component is pure JS! There is no html over there. The build workflow converts that to pure JS!
+return React.createElement('header', {classname:'App-header'}, React.createElement('h1', null, 'Welcome to React'));  //this is why you import 'React' into your components.. to use React.createElement()
+The only reason return has () is because you can write multiple lines of JSX inside it.
+You are doing import React from 'react', just to get access to the React.CreateElement() function from the package....
+
+JSX : It allows you to write HTML ish code in JS files. (it is basically JS under the hood)
+class must be called className
+jsx element must have only one root element! You cannot have siblings at root level. (although with React16, you can have siblings at the root level, but best practice is to have just one root element)
+
+
+Once you create components, just copy paste them in App.js:
+<Person name="Max" multiplier='20'/>
+<Person name='Manu" multiplier='30'> I like football </Person>
+<Person name='Lex' multiplier='10'/>
+
+At its core, a component is a function that returns JSX. For this you need to "import React from 'react'" (you don't need Component from 'react', this is just a function not class)
+Functional based component - (as opposed to class-based)
+const person = (props) => {
+	return (
+		<p>I am {props.name} who is {Math.floor(Math.random() * props.multiplier)} years old</p>
+		<p> Some inner html: {props.children}</p>
+	);
+}
+export default person;
+Usage -
+<Person name="max" multiplier="28" > some random text </Person>    (you can't have an attribute called "children=Max", children is reserved keyword)
+
+For class based components, use this.props (there is no function argument called props over there)
+Any JS exectuble code inside JSX, should be inside {}
+
+Every class based components has a built in state field. If values in there change, react throws out an event, which you can listen to.
+Even if a prop value changes, it will rerender the component.
+
+this.setState({}) It MERGES the object you set here with the component's state object. This will also trigger a rerender of this component/class.
+
+Remember: props value come from outside the component, whereas state value are withing the component. Inside a react class "state" is a reserved word.
+
+Class based component-
+class App extends Component {
+	state = {
+		persons: [
+			{'name': 'Max', 'age':28},
+			{'name': 'Manu', 'age': 10 }
+		],
+		dataFlag: 25
+	}
+
+	switchNameHandler = () => {         (use the name handle for any event based functions. Functions triggered by events and not YOU calling it)
+		this.setState({    //this is what react is looking for to re render the component, call this. (setState is inherited from Component Class)
+			persons: [
+				{ 'name': 'Tax', 'age': 100 },
+				{ 'name': 'Manu', 'age': 10 }
+			]
+		});
+	}
+
+  render() {
+    return (
+      <div className="App">
+		<h1 className="App-intro"> I am react app </h1>
+		<Person name={this.state.persons[0].name} multiplier={this.state.persons[0].age}/>
+		<button onClick={this.switchNameHandler}>Switch Name</button>     (in JSX this is not "onclick=" BUT "onClick=")  (this.funcName)
+		<Person name="Manu" multiplier='30'> I like football </Person>
+		<Person name='Lex' multiplier='10'/>
+		<Person />
+      </div>
+    );
+  }
+}
+
+List of events you can listen to: https://reactjs.org/docs/events.html#supported-events
+
+Functional components- for these import {useState} from 'react'. It allows you to manage state in a functional component.
+useState({}); it returns an array of exactly two elements. One is the current latest state, the other is a function that you have to call giving it an updated state. React will use this to re render.
+const app = (props) => {
+ const [personsState, setPersonsState]  = useState({
+	 persons: [
+		 { 'name': 'Max', 'age': 28 },
+		 { 'name': 'Manu', 'age': 10 }
+	 ],
+	 dataFlag: 25
+ });
+
+ const switchNameHandler = () => {
+	 setPersonsState({    //this is what react is looking for to re render the component.
+		 persons: [
+			 { 'name': 'Tax', 'age': 100 },
+			 { 'name': 'Manu', 'age': 10 }
+		 ]
+	 });
+ }
+ render() {
+    return (
+      <div className="App">
+		<h1 className="App-intro"> I am react app </h1>
+		<Person name={personsState.persons[0].name} multiplier={personsState.persons[0].age}/>
+		<button onClick={switchNameHandler}>Switch Name</button>
+		<Person name="Manu" multiplier='30'> I like football </Person>
+		<Person name='Lex' multiplier='10'/>
+		<Person />
+      </div>
+    );
+  }
+
+};
+
+The difference between this.setState({}) and setPersonsState({}), is that the first one merges with the original state, second one overwrites!!
+this.setState() is provided by the parent 'Component' class of react.
+
+HOOKs: Any useXYZ thing that you import from React. They are used to add functionality to function based comp. Example: useState
+
+Stateful (Smart, container) and stateless (dumb (no internal logic), presentational) comp: Try to have more stateless comp. Easy to manage.
+
+Pass a function reference as a property: You can pass methods as props
+In App comp: <Person name="Manu" multiplier='30' click={this.switchNameHandler}> I like football </Person>
+And inside Person comp: use onClick=props.click
+
+Three ways to attach a handler
+<button onClick={this.switchNameHandler}>Switch Name</button>       Pass just the func reference
+<button onClick={this.switchNameHandler.bind(this,'goo')}>Switch Name</button>       Pass the func reference bound to a particular parameter value
+<button onClick={() => this.switchNameHandler('goo')}>Switch Name with arrw func</button>    On click, call this function whose job is to run the func with the given param
+
+Resources:
+https://github.com/facebook/create-react-app
+https://reactjs.org/docs/introducing-jsx.html
+https://reactjs.org/docs/rendering-elements.html
+https://reactjs.org/docs/components-and-props.html
+https://reactjs.org/docs/events.html
+
+Inline Styles-
+render() {
+	const style = {
+		backgroundColor: 'white';
+		'border': '1px solid blue'
+	}
+
+	return(
+		<button style={sytle}> some button </button>
+	)
+}
+
+----------------------------------------------------------------------------------------------------------------
+Chapter 4: Working with Lists and conditional rendering
+To show/hide a div do -
+{this.state.showPersons? <div> </div> : null}   null means render nothing
+togglePersonsHandler = () => {     //called on button click, since it is an arrow function, "this" is not the clicked element, but it is the Class (lexical scope)
+		const currentState = this.state.showPersons;
+		this.setState({showPersons : !currentState});     (this gets merged with the other properties inside the state)
+}
+
+or, at the top of the render function do -
+let persons = null;
+if (this.state.showPersons) {
+	persons = (<div> all content here </div>);    //you are assigning persons to be some JSX code, use ()
+}
+
+And then in the return(JSX), just put
+<div>
+{persons}
+</div>
+
+Whenever react has to render or re-render it executes the whole render() function, whatever is in it.
+
+Need to output everything in the state?
+<div>
+{this.state.persons.map(p => {
+	return (<Person name={p.name} multiplier={p.age}/>);
+})}
+</div>
+
+
+Need to delete a particular element in the state?
+deletePersonHandler = (personIndex) => {
+	const newPersons = this.state.persons;
+	newPersons.splice(personIndex,1);
+	this.setState({persons: newPersons});
+}
+<div>
+	{this.state.persons.map((p,i) => {
+		return (<Person click={this.deletePersonHandler.bind(this, i)} name={p.name} multiplier={p.age} someUniqueKeyForReact={i}/>);
+	})}     ( or do click={ () => this.deletePersonHandler(i) } )
+</div>
+Normally you don't want to directly delete things from the state (causes unpredictablity), so create a copy of the state and then splice
+const p = [...this.state.persons];
+this.setState(p.splice(personIndex,1));  /now update the state
+
+You would think that React renders() the whole thing again and again, but in reality it detects the diff between old dom and its current virtual dom, and then renders only the diff!
+SO, react can do this, only if every component you ever create has key=<unique ID> value.
+Each child in a LIST must have a unique key set to it (as a property)
+
+Links
+https://reactjs.org/docs/conditional-rendering.html
+https://reactjs.org/docs/lists-and-keys.html
+
+Chapter 5: Styling Comps
+Inside render() -
+const myStyle = {
+			backgroundColor : 'yellow',
+			font: 'inherit',
+			border: '1px solid blue',
+			padding: '8px',
+			cursor: 'pointed'
+};
+Based on some logic/flags, you can set myStyles to any other value
+After that, in return(); -> <div style={myStyle}> </div>
+Or maintain an array of classes like myClases = ['bold', 'red', 'italic']; and update it dynamically inside render(), then do <div style={myClasses.join(" ")}> </div>
+
+Using "npm install --save radium", you can add more css pseudoselectors in JS for inline styles
+You can do:
+import Radium from 'radium'; and the down the line - export default Radium(someComponentName)    (wrap it with Radium)
+const myStyle = {
+	'background-color': 'green',
+	':hover' : {
+		backgroundColor: 'lightgreen'
+	}
+}
+later in JS you can even dynamically change it with -
+style.backgroundColor = 'red';
+style[':hover'].backgroundColor = 'blue';
+
+Using radium for inline-style media queries (the normal seperate css file, you can always add media queries too, radium allows you to do it for inline-styles)
+const style1 = {
+	'@media (min-width: 500px)': {
+		width: '450px'
+	}
+}
+If you use media-queries/keyframes in radium, for your ROOT App component,  the import and JSX do -
+import Radium, {StyleRoot} from 'radium';
+render(){
+	return(
+		<StyleRoot> your whole root APP JSX here </StyleRoot>
+	)
+}
+
+Another package you can explore for inline-styles: npm install --save styled-components  (styled-components.com)
+
+CSS Modules: Normally, when you add a css file to any folder in your project, that style/selector is global, meaning it can apply to ANY component that satisfies the selector condition. With CSS modules, you can scope the CSS to specific components alone.
+You can use CSS as modules by changing the webpack config
+import classes from './App.css'
+<div className=classes.classA> </div>
+<div className=classes.classB> </div>
+here classA and classB are two different rules defined in app.css
+Read: https://github.com/css-modules/css-modules
+https://medium.com/nulogy/how-to-use-css-modules-with-create-react-app-9e44bec2b5c2
+With CSS modules, you can write normal CSS code and make sure, that it only applies to a given component.
+it'll simply automatically generate unique CSS class names for you. And by importing a JS object and assigning classes from there, you use these dynamically generated, unique names. So the imported JS object simply exposes some properties which hold the generated CSS class names as values.
+In Post.css File
+.Post { color: red; }
+In Post Component File
+import classes from './Post.css';
+ const post = () => (
+    <div className={classes.Post}>...</div>
+);
+So your .Post class was automatically transformed to a different class (Post__Post__ah5_1 ) which is unique across the application.
+
+Chapter 6: debugging react apps -
+To purposely throw an error from a comp
+throw new Error ('some message error here');
+
+Create a higher order component called ErrorBoundary
+import React, {Component} from 'react'
+
+class ErrorBoundary extends Component {
+	state = {
+		hasError: false,
+		errorMessage: ''
+	}
+
+	componentDidCatch = (error, info) => {    //automatically called when an error occurs
+		this.setState({hasError: true, errorMessage: error});
+	}
+
+	render() {
+
+		if (this.state.hasError) {
+			 return <h1>{this.state.errorMessage} </h1>
+		} else {
+			return this.props.children;   //render the <Person> as is
+		}
+	}
+}
+
+export default ErrorBoundary;
+
+And in app.js, wrap Person with ErrorBoundary  (it is a higher order component)
+<ErrorBoundary><Person> </Person></ErrorBoundary> Any error thrown from this Person comp will be caught by ErrorBoundary.componentDidCatch, and it will render accordingly.
+Read: https://reactjs.org/docs/error-boundaries.html
+In this way, you can define different error boundaries throughout your app
+
+Chapter &: Diving deeeper into components and react internals
+Stateless/Dumb/Presentational component: A component (class/function) that does not manage any internal state. It just receives everthing it needs. You want 80% of your app to be these.
+Stateful/Smart component: (a.k.a container) A component (class/function) that manages some internal state. You want 20% of your app to be these. Your state must change ONLY in very few comps.
+
+Functional components: function that take props and return some JSX code. (use props.xyz)
+Class components: JS Class that has a render() func that returns some JSX code. (use this.state.xyz and this.props.xyz)
+
+A functional/class based comp can either be statefull or stateless. But functional comp cannot access lifecycle hooks. Functional comps can manage state using useState() (this is only from react 16 or greater)
+If a class based comp receives props, then you can access it in the component using this.props.xyz
+
+Component Lifecycle
+Only available in class based constructors: these are bunch of built in methods available for each component, there are each automatically called by react at different times.
+These are called "Creation Lifecycle hooks". this is the order -
+ 	>>constructor(props)     defualt ES6 feature, i.e constructor() is called when any class is created (call super(props) here too, to call the constructor of the comp you are extending). Example: Set up an initial state. If you don't define a 'constructor', react automaticaly calls super(props). (instantiates a "Component" object from the parent "Component")
+	 In the constuctor don't cause side-effects: storing in local storage, sending http requests, analytics hits etc. (it will cause unecessary render cycles)
+ 	>>getDerivedStateFromProps(props,state)    Rarely used. This is called just before each render(), and you can update this comp's state if needed from the new props that it just received. You have to return a 'state' (either a modified one, or return it as is)
+  >>render()   react goes through the jsx code and updates it's virtual DOM and sees if it needs to update the real dom
+  	  >>Render Child Components       (all the other JSX code comps have to render and their lifecycles have to finish)
+ 	>>componentDidMount()     Very important one. now start making side-effects - AJAX requests etc. If you update state here, it will call render() again. (so don't do that)
+
+	>>componentWillUnmount()  this is called  when the component is no longer being rendered.
+
+If you have to define a constructor-
+constructor(props) {
+	super(props);
+	this.state = { intial state};  (initialize the state here, not setState())
+}
+static getDerivedStateFromProps(props,state) {   (new props and old state)
+	use new props and update the old state;
+	return updated state;
+}
+
+For a comps, when props are changed by the parent, or its own internal state changes , react re-evaluates the component. This is the "Update Lifecycle Hooks"
+	>>>getDerivedStateFromProps(nextProps,currentState)   You have to return a new 'state' (either a modified one, or return it as is)
+	>>>shouldComponentUpdate(nextProps, nextState)   Comapare this.state/props with nextProps/State and decide whether to re-evaluate and re-render the comp (for performance) return boolean
+			>>>render()      react goes through the jsx code and updates it's virtual DOM and sees if it needs to update the real dom (real dom is not changed here, only virtual dom is changed)
+			>>>Update All Child Component Props
+	>>>getSnapshotBeforeUpdate(prevProps, prevState)  Before component actually renders! it just gives you a snapshot of the NEW props and state being used. You can 'return an object'
+	>>>componentDidUpdate(prevProps, prevState, snapshot)     Component has finished rendering now. snapshot=the returned object from getSnapshotBeforeUpdate(). This is where you can cause side-effects, BUT do update the state, it will trigger a re-render.
+Some legacy discouraged ones - componentWillMount, componentWillReceiveProps, componentWillUpdate
+
+An example of the update flow:
+[App.js] getDerivedStateFromProps called {appTitle: "test app"} {persons: Array(4), dataFlag: 25, showPersons: true}
+[App.js] shouldComponentUpdate called {appTitle: "test app"} {persons: Array(4), dataFlag: 25, showPersons: true}
+[App.js] render called
+	[Persons.js] getDerivedStateFromProps called {persons: Array(4), clicked: ƒ, changed: ƒ} null
+	[Persons.js] shouldComponentUpdate called {persons: Array(4), clicked: ƒ, changed: ƒ} null
+	[Persons.js] render called
+		[Person.js] rendering
+	[Persons.js] getSnapshotBeforeUpdate called {persons: Array(4), clicked: ƒ, changed: ƒ} null
+[App.js] getSnapshotBeforeUpdate called {appTitle: "test app"} {persons: Array(4), dataFlag: 25, showPersons: true}
+	[Persons.js] componentDidUpdate called {message: "message from Persons-getSnapshotBeforeUpdate"}
+App.js] componentDidUpdate called undefined
+
+
+Functional Component Lifecycle
+These did not typically have any "lifecyle". Now they do. You need to import the react hook called "useEffect" from react. (second most important hook in react after useState) (import React, {useEffect} from 'react';)
+useEffect basically combines ALL the functionality of class based lifecycle hooks into one react hook. It combines componentDidMount() and componentDidUpdate() into one. Equivalent triggers of those two.
+useEffect (() => {
+		console.log('[Cockpit.js] useEffect called');
+
+}, [props.persons]);  //it accepts a function that it will execute in every render cycle, along with some props value, it will execute the function only when that props value changes OR the whole comp is being re-rendered or the first creation phase.
+YOu can have multiple useEffects() in a functional comp, each listening on different props values...
+If you give it an empty array [], that means it must execute the function whenever any of those dependencies change, since you gave none, it will execute only during creation and not updation.
+
+componentWillUnmount() when you remove a component. (react renders and realises it is not rendering something anymore)
+
+useEffect (() => {
+		console.log('[Cockpit.js] useEffect called');
+		setTimeout(() => {
+			const timer = console.log('[Cockpit.js] some ajax completed')
+		});
+
+		return () => {
+			clearTimeout(timer);
+			console.log('[Cockpit.js] useEffects cleanup work');
+		}
+	}, []);
+This is called only on create and unmount as you have mentioned no update listeners [] in the second argument
+Also, the return() function is executed only on unmount, it executes first followed by the actual function.
+
+
+Optimize with shouldComponentUpdate
+shouldComponentUpdate(nextProps, nextState){
+	console.log('[Persons.js] shouldComponentUpdate called', nextProps, nextState);
+	if (nextProps.persons === this.props.persons) { //if there is no change in state of the persons array do not re render. Remember: this is just a pointer equality!!!! Each time you update state, you make a copy and hence a new pointer to a new location. Maybe the contents of the object is the same, but just created a new copy in the setState() part, in this case - this will return true and your whole comp will re-render
+		return false;
+	}
+	return true;
+}
+Use chrome -> more tools -> Rendering -> Paint Flashing : to see what renders on screen.
+You will see that for certain components a lot of lifecycle hooks are called including render(), but they are re-rendered (flashed) on to the real DOM, ONLY if their content has actually changed...
+
+class Persons extends PureComponent {
+	// comp code
+}
+If you extend a PureComponent, then, that component will be updated ONLY if one of it's props change value. So you don't need to define a 'shouldComponentUpdate()' for these kinds of comps.
+None of the update lifecycle hooks are triggered for a PureComponent if none of its props have changed values
+
+
+For functional comps ->
+export default React.memo(cockpit);
+This basically uses memoization which is a technique where React will memoize, so basically store a snapshot of this component and only if its input changes, it will re-render it
+and otherwise if its inputs do not change and some parent component wants to update this cockpit component, React will give back that stored component
+
+Don't add shouldComponentUpdate to all your components! In react, most use cases, whenever the parent updates, it will want to updates its children. So for all those children, don't simply make it execute shouldComponentUpdate() every single time. Skip the whole function.
+Check: is this component part of a parent component that could change related to something that does not affectme at all, well, then implement shouldComponentUpdate
+Else, if 90% of the time your parent updates, you need to update too, then skip this func.
+
+
+render() - it does not touch the real DOM directly
+Render is more a suggestion of what the HTML should look like in the end. Ofcourse, it is called only after  shouldComponentUpdate() is passed.
+All HTML DOM can be represented via a JS object. React calls this the virtual dom. It basically keeps two copies of the real dom.
+It has an 'old virtual DOM' and a 're-rendered' or a 'future virtual DOM'. (it is faster than the real dom). the re-rendered virtual dom is what is created by the render() method
+React makes a comparison, it compares the old virtual DOM to the new one and it checks if there are any differences. If it can detect differences, it reaches out to the real DOM and updates it and even then, it doesn't re-render the real DOM entirely, it only changes it in the places where differences were detected. So only certain <divs> <spans> we actually be re-rendered in the component. Think of it as GIT - working directory, staging and repository
+Accessing the real DOM is very slow. Hence react maintains two virtual DOMs.
+
+So use shouldComponentUpdate() to prevent creation of new 're-rendered' virtual doms and thus prevent, difference check with old virtual dom, and then difference check with real dom.
+Even if you don't use shouldComponentUpdate() anywhere, eventhough every render() is called and executed and a huge 'future' virtual dom is created again, the real DOM is re-rendered/changed only for those parts that NEED to change.
+
+Generally in the return() of a render(), if you have to have only one top level root element. You can't do return(React.createElement() React.createElement()); That is just not possible in JS.
+Basically in any language you can only return one expression.
+BUT, you can also return adjacent JS elements by returning an array.  return[React.createElement(),React.createElement()];
+return [
+	<div key='a1'> numb1 </div>,   (comma)
+	<p key='a2'> numb2 </p>,    (comma)
+	<a key='a3'> numb3 </a>
+];
+You don't have to enclose these with a single root/parent <div>. Just give each element a unique key!
+
+There is also a hack way to do this.
+return(
+	<Auxillary>
+		put all your adjacent JSX elements here like normal
+	</Auxillary>
+);
+
+Auxillary.js  (don't need to import React)
+const Auxillary = props => props.children;
+export default Auxillary;
+
+Auxillary is just a simple component (empty wrapper) that renders all its children. (props.children refers to all the content in between the opening and closing tag of your component!!)
+React 16.2 has implemented this Auxillary.js and they call it <React.Fragment>  </React.Fragment> , so you can just use that directly to wrap adjacent JSX elements. (or import React, {Component, Fragment} from 'react'; and then just use <Fragment> </Fragment> directly.....)
+
+Higher Order Components
+It bascically wraps another component, it does not contain its own logic. It just add styling/structure to its "children"
+The following HOC just adds a wrapping DIV with some css class set
+
+Approach 1:
+WithClass.js
+import React from 'react';
+const WithClass = props => {
+	return (
+		<div className = {props.classes}>
+			{props.children}
+		</div>
+	);
+}
+export default WithClass;
+
+App.js - inside render()
+<WithClass classes='App'>
+	     some-jsx-code
+</WithClass>
+
+Approach2:
+withClass.js  (not capital W)
+import React from 'react'
+const withClass = (ComponentName, classNames) = {     // a regular function that returns a function based component!!!!
+	return (props) => {     (props here is just a JS object)
+		return (
+			<div className={classNames}>
+				<ComponentName {...props}/>    --> {...props} is vvip (spread the props object into key=value pairs)
+			</div>
+		);
+	}
+}
+export default withClass;
+
+App.js -
+export default withClass(App, 'App')  (you are exporting the functional component, the one that will take some props and return JSX)
+
+Or return a class based comp
+const withClasses = (ComponentName, classNames) => {
+	return class extend Component {
+		render() {
+			return (
+				<div className={classNames}>
+					<ComponentName {...this.props} />
+				</div>
+			);
+		}
+	}
+}
+
+
+this.setState(); -> this does not run sync. It is executed in the next tick. So be careful of what state you access and set inside the ()
+({
+	persons:person;
+	changeCounter: this.state.counter + 1;    Here the RHS value is the value at the tick where this line was executed. Maybe meanhwile some other funcs changed the this.state.counter value... who knows.
+});
+
+In the above, you can't do changeCounter=this.state.changeCounter+1; Because setState() is aync (runs on next tick), this.state is not guaranteed to be the previous state. Example: if in multiple places you are call setState()
+Another syntax of setState()-  Use this IF/WHEN you are updating the state based on old/prev state like the above case.
+this.setState((prevState, currentProps) => {
+	return {
+		persons:person,
+		changeCounter: prevState.changeCounter + 1;  -> this guarantees that it is the prevState value and not the value at the time of this tick where this was executed
+	}
+});
+
+
+Proper Documentation of Components:         do npm install --save prop-types
+Now after each component definition, you can specify what props to expect and what types to expect.
+propTypes is a special property which you add to any Javascript object or any Javascript component object, I should say, that React will watch out for in development mode and give you a warning if you then pass in incorrect props.
+import PropTypes from 'prop-types'
+Person.propTypes = {           //this has to be after the Class definition because Classes are not hoisted! You are adding a new property to the class OR to the function of the functional component
+	name: PropTypes.string,
+	multiplier: PropTypes.number,
+	id: PropTypes.string,
+	click: PropTypes.func,
+	changed: PropTypes.func.isRequired  //you can chain .isRequired to make it a required prop for the comp
+};
+Now for multiplier, if you give a string, in the console, you will see the Warning (not error) -
+Failed prop type: Invalid prop `multiplier` of type `string` supplied to `Person`, expected `number`.
+this is especially helpful in scenarios where you distribute your components as a package to other developers or where you're working in a bigger team because if someone uses your component incorrectly, during development, they will get such a warning and then they can fix their error.
+
+References to Elements
+You add a ref property to an element, store the reference to that particular element inside a class variable.
+There are two ways to do this.
+Approach#1
+Add a property 'ref' to that element and access it via componentDidMount
+<input type='text' onChange={this.props.changed} value={this.props.name}
+	ref={(thisParticluarElement) => {this.inputElementToFocus = thisParticluarElement}}    ///ref is a special keyword, you are a new property to the class (inputElementToFocus)
+/>
+ref: you pass it a function, that receives a reference to the element you placed this prop on,
+
+componentDidMount() {
+	this.inputElementToFocus.focus();   // after rendering each person, the final value of the class variable 'inputElementToFocus' will be the last person rendered's <input> element. So that willl be in focus.
+
+}
+
+inputElementToFocus is actually a new property of the class created inside render(), it has nothing to do with state.
+if you want to focus the first element and not the first element - inside componentDidMount() -
+if (this.props.position === 0) {
+	this.inputElementToFocus.focus();
+}
+When componentDidMount is called for the first element, that focus() is called, for the others, focus() is not called.
+
+Approach#2: Use React.createRef()
+create ref is a method offered on the React object we're importing. React gives you a reference object
+constructor(props) {
+		super(props);
+		this.inputElementToFocusRef = React.createRef();
+}
+componentDidMount() {
+		this.inputElementToFocusRef.current.focus();  //after all are persons are done, the last person's comonentDidMount will be called
+}
+<input type='text' onChange={this.props.changed} value={this.props.name}
+	ref={this.inputElementToFocusRef}
+/>
+this property you're initializing here in the constructor. This holds an access to this ref object React gives me and then I'm assigning this to my ref property and behind the scenes, React will make the connection and input element ref will then actually allow me access to the element on which this ref assignment was placed.
+
+Approach#1 is not possible in functional based comps, approach#2 is possible using some react hooks
+import React, {useEffect, useRef} from 'react';
+const Cockpit = (props) => {
+	const toggleBtnRef = useRef(null);
+
+	useEffect (() => {
+		console.log('[Cockpit.js] useEffect called');     (this runs only after render)
+		toggleBtnRef.current.click();  //automatically clicks the toggle button after it renders in the return(JSX)
+		return () => {
+			console.log('[Cockpit.js] useEffects cleanup work');
+		}
+	}, []);
+
+	return(JSX);   // <button ref={toggleBtnRef}/> is in the JSX
+}
+
+
+Context:
+Context was introduced by React and it helps us handle cases like this, where you need certain data, certain state in multiple components and you don't want to pass that state across multiple layers of components just to get it from component A at the top to component D at the very bottom when the components B, C in between don't really care about it and that's exactly the use case here
+
+React create context actually allows us to initialize our context with a default value because what the context in the end is is a globally available Javascript object (meaning you decide where it is available via imports). Not just object, it can be an array, string, number anything.
+
+Think of it like this. You create a component that defines a global object with all the properties (LHS) and for each of the property you will give a dummy/initial value to say what 'type' of value to expect. (not exactly global, you decide the scope (technically, it can be array/number/string too))
+In CompA: (the provider) You import this global  object (context component), give values (RHS) to different properties.
+Now, In any child/descendant of CompA, you can again import this global object (context comp) and access the RHS values.
+You don't have pass props/values from CompA to it's child, and then pass it on to its grand-child and then on to it great-grand-child etc.
+
+import React from 'react';
+const authContext = React.createContext({    // initialize the context with a default value
+	 theAuthStatus: false,
+	 login: () => {}          (dummy initial value to say that this will be a function)
+});
+export default authContext;
+
+Once created, this can be used as a component and it should wrap all the parts of your application that need access to this context.
+
+import AuthContext from '../some-path/authContext.js';
+<AuthContext.Provider value={{ theAuthStatus: this.state.authStatus, login: this.loginHandler }}>        (provider is a component)
+			//Now cockpit and persons can access the context of the AuthContext wrapper
+			{this.state.showCockpit ? (
+				<Cockpit   appTitle={this.props.appTitle}     showPersons={this.state.showPersons}     persons={this.state.persons}
+				          tglPersons={this.togglePersonsHandler}     loginHandler={this.loginHandler} />
+			) : null }
+			{persons}
+</AuthContext.Provider>
+
+Whenever the states (RHS) in value{{}} change, the AuthContext.Provider part will be re-rendered
+
+AuthContext.consumer does not take JSX code as a child, so as content between the opening and closing tag but instead this takes a function as a child between the opening and closing tag. A function that returns JSX.
+Cockpit.js-
+import AuthContext from '../../context/authContext';
+somewhere inside render() ->
+<AuthContext.Consumer>
+	{(theContext) => { return(
+		<button onClick={theContext.login}> Change Login Status</button>
+	);}}
+</AuthContext.Consumer>
+
+Person.js-
+import AuthContext from '../../context/authContext';
+<AuthContext.Consumer>
+	{(theContext) => {
+		return (
+			theContext.theAuthStatus === true ? <p>Authenticated</p> : <p>Not-Authenticated</p>
+		);
+	}}
+</AuthContext.Consumer>
+
+In CLASS based comps, you can do it another way (from react 16.6)
+import AuthContext from '../../context/authContext';
+static contextType = AuthContext  -> add this exact property name (contextType) to the class
+Static property means that it can be accessed from outside, without the need to instantiate an object based on this class and React will access contextType for you. Now you can access "this.context" (the object) in all hooks including render().
+Doing this, allows React to automatically connect this class-based component to your context component behind the scenes and it gives you a new property in this component, the this context property
+
+In FUNCTIONAL based comps, you can do it with the useContext hook
+import {useContext} from 'react'
+import AuthContext from '../../context/authContext';
+var myContext = useContext(AuthContext)
+return(<button onClick={myContext.login}> Change Login Status</button>)
+
+export default React.Memo(CompName);    //this comp now re-renders only if one if its props/state changes
+
+The context API is all about managing data across components without the need to pass data around with props. Ofcourse you can use redux too.
+
+Folder Structure- Containers, HOC, Components, Context
+
+--------------------------- Chapter 8: A Real App: Burger Builder
+>Setup CSS modules in your project
+>Import a style from fonts.google.com
+embed code: <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" rel="stylesheet">  (http response content-type: text/css;)
+put it the <head> tag
+the http response will be some 300 line css file.
+Do npm install --save prop-types   (import PropTypes from 'prop-types')
+
+Folders unders src - components (burger, layout, UI), containers, assets, hoc
+
+Inside a class, the functions must be arrow functions. Only then, the "this" keyword in this.setState will refer to the class.
+
+Importing images in JS react components.
+It just means we make webpack aware of the fact that we're using this image and webpack will then
+handle this image with a special plug-in or a special module that was added to webpack, to its config,
+will handle the image, will basically copy it over to the destination directory it creates,
+again only in memory during development and we'll even optimize the image.
+
+And burger logo here will in the end just receive the path off the image where webpack will copy it to.
+So this will be dynamically resolved, so here we can simply set source to burger logo and this will again refer to a string in the end to
+the path where webpack stored the optimized and copied image.
+
+import burgerLogo from '../../assets/Images/burger-logo.png'
+<img src={burgerLogo}>    </img>
+
+In a css file. Let your base css be for Mobile devices, then use media queries an mention what the css must be for desktop devices.
+The media query ones take the base ones and then apply the media-query properties on top of them.
+Looks at NavigationItem.css
+
+Notes:
+>>>You can't apply CSS to the React component elements, they don't exist in the DOM! Only html elements exist in the DOM.
+So this does'nt do anything  (trying to give the Burger a padding-top:100px) (you have to put on html elements)
+<Burger className={classes.Burger} ingredients={this.state.ingredients}></Burger>
+Do this instead -
+<div className={classes.Burger}>
+	<Burger ingredients={this.state.ingredients}></Burger>
+</div>
+>>> To place an overlay with backdrop right in the center of the screen
+----backdrop.js
+const backdrop = (props) => {
+	let displayValue = 'hidden';
+	if (props.isVisible === true) {
+		displayValue = 'block';
+	} else if (props.isVisible === false) {
+		displayValue = 'none';
+	}
+
+	return (
+		<div className={classes.Backdrop} style={{ display: displayValue }} onClick={props.backdropClickHandler}></div>
+	);
+}
+----backdrop.css
+.Backdrop {
+	position: fixed;
+	left:0px;
+	top:0px;
+	display:none;
+	width:100vw;
+	height:100vh;
+	background-color: rgba(0, 0, 0, 0.336);
+	z-index: 20;
+}
+----overlay.js
+const overlay = (props) => {
+	let displayValue = 'hidden';
+	if (props.isVisible === true) {
+		displayValue = 'block';
+	} else if (props.isVisible === false) {
+		displayValue = 'none';
+	}
+
+	return(
+		<React.Fragment>
+			<Backdrop isVisible={props.isVisible} backdropClickHandler={props.optionalBackdropClicker}></Backdrop>
+			<div className={classes.Overlay} style={{ display: displayValue }}>
+				{props.children}
+			</div>
+		</React.Fragment>
+
+	);
+}
+----overlay.css
+.Overlay {
+	position: fixed;
+	z-index: 50;
+	display: none;
+	box-sizing: border-box;
+	left: 50%;                         (this puts the overlay's top-left in the center of the screen)
+	top: 50%;
+	padding: 20px 20px;
+	background-color: wheat;
+	box-shadow: 3px 3px black;
+	transform: translate(-50%, -50%);    (this now puts the overlay's center in the center of the screen)
+}
+
+
+---- Chapter 9: Reaching out to the web (http/ajax)
+react is a library which allows you to create the frontend of your application. Basically the html code, the thing the code running in the browser
+
+In a SPA, the client and server dont communciate by exchanging html pages, server won't send back any new html, instead you send and receive JSON.
+Your server is just a RESTful API, just exposing some API endpoints to which you can send requests to get or send data from your standalone react application
+
+FAKE restful backend: jsonplaceholder.typicode.com
+axious: 3rd party library for http requests: https://github.com/axios/axios  (has nothing to do with react.js)
+
+run: npm install axios --save (in your project)
+
+Fake backend: use jsonplaceholder.typicode.com
+
+At a high level, you do a get/post/put/delete call from componentDidMount()/componentDidUpdate(). It returns a promise. In the then()/catch() clause, use the response object and udpate the state of the component, that will trigger a render() and in render, render things depending on the state.
+But this re-render will trigger componentDidUpdate() again and you will have an inifinite loop.. so before make your http request compare your current props and the current state, only if they are not equal, make the http call.
+
+In the CREATION lifecycle -
+constructor()
+componentWillMount()
+render()
+	render all children
+componentDidMount()  -> Do your http requests over here (don't update state here as it re-renders the component)
+
+axios.get() is aysnc, also, put this in componentDidMount()
+componentDidMount(){
+	let getPromise = axios.get('https://jsonplaceholder.typicode.com/posts');
+	getPromise.then(response => {
+		console.log(response);
+		this.setState({ingredients: response.ingredients})
+	})
+}
+render(){
+	return (
+		use this.state.ingredients and return some JSX
+	);
+ }
+In the UPDATE lifecycle
+componentWillReceiveProps(nextProps)
+shouldComponentUpdate(nextProps, nextState)
+componentWillUpdate(nextProps, nextState)
+render()
+	update child component props
+componentDidUpdate()    -> put http request here (you can cause side-effects here)
+
+Axios
+You can intercept every axios request sent ever from your app, by placing an interceptor on your root component.
+
+In Index.js: (not even app.js)
+import axios from 'axios';
+
+var myRequestInterceptor = axios.interceptors.request.use(request => {
+	console.log(request);       (will output an object with adapters,headers,method,timeout,url, etc..)
+	//Edit the request config if you want to,
+	return request;  //you have to return the request... or else the intercepted request will be bloacked
+}, error => {
+	console.log(error);   //any error when 'sending' the request (not response error)
+	return Promise.reject(error);
+});
+
+Same for intercepting response globally
+axios.interceptors.response.use(response => {
+	console.log(response);
+	//Edit the response if you want to
+	return response;
+}, error => {
+	console.log(error);   // it would rarely come here, the request would fail if there is no internet or something..
+	return Promise.reject(error);
+});
+
+axios.interceptors.request.eject(myRequestInterceptor);   //this it to remove an interceptor
+
+You can also set some defaults: (you can put this in index.js)
+axios.defaults.baseURL = 'https://jsonplaceholder.typeicode.com';  (in the rest of the app, you cna just do axios.get('/posts'))  (base url needed)
+axios.defaults.headers.common['Authorization'] = 'Auth token';
+axios.defaults.post['Content-Type'] = 'application/json';
+
+Axios Instances: Create a file called axios.js at the index.js level of the project.
+import axious from 'axious'
+export const instance1 = axios.create({
+	baseURL='https://jsonplaceholder.com';
+})
+instance1.defaults.headers.common['Authorization'] = 'Auth token22222222';
+export const instance2 = axios.create({
+	baseURL='https://jsonplaceholder456.com';
+})
+instance2.defaults.headers.common['Authorization'] = 'Auth token333333';
+These will first follow your global AXIOS defaults, and then this will override any common properties...
+
+Now import these instance in any of your components..
+
+If you create your own axios instances, then these global interceptor won't intercept requests from those instances. (the global interceptors will work only for the global axious object, if you use it..)
+Add an interceptor in the place where you define your instance.
+
+shouldComponentUpdate ( nextProps, nextState ) {
+        return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
+    }
+
+---- Chapter 10,11: Adding HTTP to Burger Builder, ROUTING
+Firebase DB, make sure RULES is this{
+{
+	"rules": {
+		".read": true,
+		".write": true
+	}
+}
+
+My firebase account api endpoint is: https://react-burger-builder-1fa25.firebaseio.com/
+axios.post('https://react-burger-builder-1fa25.firebaseio.com/orders.json' , {some order object})
+	.then(responseObj => console.log(responseObj))
+	.catch(error => console.log(error));
+This will now post an object under the orders node in your firebase DB
+
+google the term "css spinners" to find some great spinners.
+Create a spinner UI component, copy paste the <div></div> and CSS from the css spinners website in your render method
+
+React does'nt have routing out of the box, it is just a component creation library. 3rd party library does it
+Routing: Using JS, showing the user different URls but re-rendering the single page.
+Parsing the path and showing the right component.
+Router: Parse the urlpath -> Read the config => Render/load appropriate JSX/component
+
+Even in your production app: when clicking different URls
+It always returns the index.html file for every route because for the server, there are no different routes, there is only one single file it has to return all the time. It's now about parsing that URL in the client.
+
+npm install --save react-router-dom       (this also automatically installs "react-router" package..)
+In app.js
+import {BrowserRouter} from 'react-router-dom';
+render() {
+    return (
+			<BrowserRouter>   Everything wrapped by this can use routing    --> This is now the BASE ROUTER of the WHOLE application. Any child can use <Route> <Link> <NavLi nk> etc
+				<div className="App">
+					<Blog />    --> This is the root component of the app....
+				</div>
+			</BrowserRouter>
+
+    );
+}
+
+In Blog.js
+import {Route} from 'react-router-dom';
+
+<Route path='/' exact render={() => <h1>Home></h1>} />     path means 'start with xyz', so you have to specify 'exact'
+<Route path='/' render={() => <h1>Home2></h1>} />
+<Route path='/new-post' exact render={() => <h1>Home3></h1>} />
+
+Basically if the "path" criteria is matched, then just render the component/JSX. If manu <Route> paths match, they will render one below the other..
+In the above, for the path  "/", you will get Home and Home2. For the path "/new-post", you will get Home2 and Home3
+
+<Route path='/' exact component={Posts} />   this is to route to a component
+ The <Route> components takes props: path, render, component, exact=true/false
+
+If you use anchors it will refresh (you will lose ALL state), instead use <Link>
+<Link to='/xyz'>HOMEPAGE</Link>
+<Link to={{pathname: '/new-post', hash: '#submit', search: '?xid=150'}}>PDP</Link>
+
+When you render a component with Route, the component gets some out of the box, extra props sent to it, by the Route Component.
+props.history: {length: 39, action: "PUSH", location: {…}, createHref: ƒ, push: ƒ, …}
+props.location: {pathname: "/new-post", hash: "#submit", search: "?quick-submit=true", key: "j1bvqk"}
+props.match: {path: "/new-post", url: "/new-post", isExact: true, params: {…}}
+props.match.url is the URL that loaded this current component (useful for relative pathing from this component)
+props.staticContext: undefined
+All of these are URL related, that you can use inside your component.
+These props are not passed on to the children. Only components directly loaded with <Router /> have access to these..
+You can just pass it via <ChildComp {...this.props}> </ChildComps>
+OR
+In that child component definition, do -
+import {withRouter} from 'react-router-dom';  and wrap the child component as
+export default withRouter(ChildComponent);
+Now whenever this child component is rendered by some parent who was rendered via <Route> , this child component has access to all the URL PROPS that the parent component has. They are automatically passed to the child.
+
+In <Link> "to" is always the absolute path.
+If you want to move to a relative path based on the current path, do <Link to={this.props.match.url + '/some-new-path'}
+Now this is based out of the current url (relative path)
+
+If you want css to apply to your anchors (Link), use NavLink and not Link. Once you use NavLink, any css aplied to that anchor will work.
+.Blog a.active {     //NavLink automatically adds a class called 'active' to that anchor if it's "path" currently matches
+	color: #fa923f
+}
+You can also give your own class name and then use it
+<li><NavLink to='/' exact activeClassName='anchor-is-active'>Home</NavLink></li>
+.Blog a.anchor-is-active {
+	color: #fa923f
+}
+Another way is to add the activeStyle:{css object} . So when the link is "active" that whole style will apply. A NavLink is active, if the current URL matches the "path" prop
+<li><NavLink to='/' exact activeStyle={{text-decoration:underline}}>Home</NavLink></li>
+All of this only possible with <NavLink>
+
+Dynamic route path -
+<Route path='/posts/:id' component={FullPost} />
+Here the ':' in the path prop tells Route that it will be some dynamic value after posts/, store that value as the name "id" for now.
+In the FullPost component, you will now have the <Route> props like history,location,match etc
+use props.match.params."id" -> this will be the "id" dynamic value that is there in the URL. Read this id value inside componentDidMount of FullPost to render the appropriate FullPost.
+The posts.js comp looks like this ->
+this.state.posts.map(post =>
+	<Link to={'/posts/ + post.id} key={post.id}>
+		<Post title={post.title} author={post.author}><Post>
+	</Link>
+);
+So now if you click any "Post", the URL will update to '/posts/5', and now the <FullPost> component will render.
+Here you are just using values from the "path". You can also access query params and #, in your component using props.location.search or props.location.hash
+
+<Switch> the first route that matches a given path will be loaded and thereafter, it will just stop analyzing the routes, it won't render any other route. MAKE SURE the ORDER of your <Route> inside the <Switch> is correct..
+
+If you don't use <Link>
+You can programatically push on to the location stack. OnClick of a particular component, add a clickHandler() which does this -
+this.props.history.push({
+	pathname: '/' + id
+});
+
+You can update the URL from anywhere in the app. Everytime you click a <Link> or <NavLink> in you app, the whole thing will re-render, every child of <BrowserComponent>.
+Nested Routes:
+ChildComponent was rendered because parent had a <Route path='' exact> for it.
+	This ChildComponent can now have it's own <Route> inside it. But remember, the parent had an "exact" clause on it, so if this child now routes to some new path to render some grandChildComponent, at the parent level, the "exact" part fails, so ChildComponent won't even render now in the first place for this new path. (both child and grandChild will not render becuase of the 'exact' clause). SO you can't use 'exact', if your childComp is going to have it's own routes in it.
+For good nested routes, in the child component -
+<Route path={this.props.match.url + ':/id'}  exact component={someGrandChildComponent} />
+This is a relative path to the current child.
+Note: When you have nested routes, it probably won't reMOUNT your childComp, if you are rerendering some new grandChildComp. So keep an eye out for both - componentDidMount AND componentDidUpdate for the childComponent. Just know this: If you are already on a component, and you link to some new URL which is basically the same component, then this one will just update it wound probably re-mount.
+
+Redirect- i.e immediately change the current URL  (does not need any clicks)
+Inside a <Switch>:
+<Redirect from='/' to='/posts' />     (if it matches the from prop, then it will redirect)
+Outside a switch:  (i.e a conditional redirect)
+Example:
+if (this.state.checkoutForm.submitted === true) {
+	<Redirect to='/thankyou' />
+}
+
+OR just use this.props.history.push('/posts');
+When you press the back button, you will indeed go back to the previous page.
+BUT, for redirect, what it does is it actually replaces the current element on the location stack. So pressing back now, will take you to your previous-previous page (this.props.history.replace('/posts') does the samething that REDIRECT does)
+
+Guarding Routes: You can conditonally have Route too
+<Switch>
+	{this.state.loggedIn ? <Route path='/checkout' component={Checkout}> : null}
+	<Route path='/' component={Homepage}>
+</Switch>
+Here, the checkout Route is not even checked if the state is not logged in
+
+this.props.history.replace('/posts');  this is similar to <Redirect />
+
+A catch-all route (like 404 page) (just leave out the path prop)
+<Route render={() => <h1> 404 Unknown Route </h1>} />
+
+Bundle.js
+Everytime the user hits your website, he downloads the entire app (all you components as bundle.js)
+Do Code-Splitting/Loading Different Routes Lazily
+
+Whenever you are importing with import, you inform webpack, the build tool which gets used behind the scenes about this dependency and it will include it in the global bundle, this is its job.
+Now for a lazy loading, you want the opposite, we don't want to include it in the bundle, we want to load it when needed.
+Still webpack needs to be able to dynamically prepare some extra bundle for this potentially loaded code.
+
+Once you implment it, whenever you route to that component, a new chunk.js will be seen loaded in the network tab.
+
+The code
+import React, {Component} from 'react';
+const asyncComponent = (importComponent) => {
+	return class extends Component {
+		state = {
+			component: null
+		}
+
+		componentDidMount(){
+			importComponent()
+				.then(cmp => {
+					this.setState({component: cmp.default});
+				});
+		}
+
+		render () {
+			const C = this.state.component;
+
+			return C ? <C {...this.props} /> : null;
+		}
+	};
+}
+export default asyncComponent;
+
+Parent.js
+import asyncComponent from '../../hoc/asyncComponent';
+
+const AsyncNewPost = asyncComponent(() => {
+	return import('./NewPost/NewPost');          --->this is where you the IMPORT
+});
+<Route path='/new-post' exact component={AsyncNewPost} />
+
+Now, only when you go to the url /new-post, AysyncNewPost will run
+
+OR- use React.lazy() (new function added in react 16.6 and above)
+instead of import Posts from '../../Posts/Posts'
+do
+import {Suspense} from 'react'
+
+const Posts = React.lazy(() => {
+	import('../../Posts/Posts')
+});
+
+<Route path='/posts' render={() => <Suspense fallback={<div>Loading..</div>}> <Posts/> </Suspense} />
+So even here, you will have one bundle.js and many chunk.js
+
+Routing conclusion: Configure your server to always return index.html (which loads your app), regardless of what URL was requested by the client.
+In your react app, make sure you manage all routes, also keep a catch all route for 404s.
+You can also configure a base path for your app
+Class App -
+	<BrowserRouter basename='/karthiks/app'>
+		<Main />
+	</BrowserRouter>
+Now only paths under /karthiks/app will be covered by your app.
+
+import { Route, Link, withRouter, NavLink, Switch, Redirect} from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+-------------------------------------------------------------------------------------------------------------
+Chapter 12: Adding routing to burger
+Note: Inside a class component
+
+<NavLink> use exact for the activeClassName class to work
+<NavLink to={props.link} exact={props.exact} activeClassName={classes.active}>
+		{props.children}
+</NavLink>
+
+Your JSX is basically just JS, here pushing JSX into an array-
+let ingredients = [];
+for (let ing in props.ingredients) {
+		ingredients.push(<div className={classes.Ingredient}>{ing} ({props.ingredients[ing]})</div>);
+}
+then later inside render(), just use {ingredients} to render the array of JSX
+
+Manually pushing a new path in the url-
+this.props.history.push({
+	pathname: '/checkout',
+	search: '?' + someCustomQueryString
+})
+
+checkoutCancelledHandler() {
+	this.props.history.goBack();      YOu cant use THIS over here
+}
+checkoutCancelledHandler = () => {
+		this.props.history.goBack();    Here you can use THIS because it is an arrow function
+}
+
+Manually render a component inside a router: so that you can give the component, it's props. ALSO you can pass it history information
+<Route
+	path={this.props.match.path + '/contact-data'}
+	render={(props) => (<ContactData ingredients={this.state.ingredients} price={this.state.price} {...props} />)}
+/>
+Do this, instead of component={ContactData}
+the (props)=>  part has the history props being sent into the ContactData component too..
+Since you are not using component={}, the history props are not automatically sent to ContactData, eventhough it is rendered by <Router>
+
+Any <button> inside <form>
+When you click the button, browsers by default reload the page. To prevent this, add a onClick function to the button
+formButtonClickHandler(event) {
+	event.preventDefault();
+	--now-do-something-with-the-form-data---
+}
+
+For a class based component that does not do have any AJAX stuff. Maintain a state, inside componentWillMount() do all your pre-prcessing stuff (reading the URL query params, setting up things etc), and setState(), then your render() will be called with everything that it needs.
+
+For a class based component that fetches stuff via AJAX on load. Maintain a state, inside componentDidMount() call AJAX and inside the successfull AJAX - setState(), setState() event in the error AJAX. Then your render() just looks at state and works.
+-----------------------------------------------------------------------------------------------------------------
+Chapter 13: Forms and form validation
+https://validatejs.org/
+https://react.rocks/tag/Validation
+https://www.npmjs.com/package/react-validation
+https://github.com/christianalfoni/formsy-react
+
+You can create your own <Input> component
+Look at Components/UI/Input.js
+AND Containers/Checkout/ContactData/ContactData.js
+
+inputElement = <input className={inputClasses.join(' ')}  {...props.elementConfig} value={props.value} onChange={props.changed} />;
+So it can be <input> or <textarea> or <select> etc.
+
+Form Validation: onChange={props.inputChangedFunc}
+In InputChangedFunc you check event.target.value and accordingly update the state of this element with valid=true/false, the valid property goes as a prop to the element where you add/remove classes.
+
+
+-----------------------------------------------------------------------------------------------------------------
+Chapter 14: Redux
+a standalone third party library.
+often used in react projects though to make state management, the management of application state easier
+
+What is state used for?
+-Data : you need to know what to render, is the user authenticated?
+-Flags : is the modal open, is the button clickable, is something loading
+state influences what you see on the screen.
+
+Redux: At a high level, a global state that all components can access.
+You can just set global vars, just because, in the end, all your files go into one bundle.js (or multiple, if you use lazy laoding)
+React's reactivity system doesn't react to changes in some global variable you defined and it's good that it doesn't, that makes it so efficient.
+Components re-render only when their state or their props change... not random global vars.
+
+Redux has a certain flow/way of managing data.
+If a component wants to update state, it can't just update the state. It dispatches an "action", which is just an information packet possibly with a payload. This action reaches the reducer function, this one updates the actual redux store based on the action info packet. The store then updates all components that have subscribed to changes in the redux store, it sends them the updated redux store. (in the form of props)
+Redux = dispatcher, reducer, store, subscriber
+
+Reducer has to execute synchronous code only, no asynchronous code, no side effects, no HTTP requests. The reducer spits out a new state. (it updates the old state immutably)
+
+npm install --save redux  (this is plain old redux)
+
+Every store MUST have a reducer. A store can have only ONE reducer. Only the reducer can update the store.
+
+Reducer: It receives the old state and an object. Depending on the properties of this object, it creates a new state and returns it. This object can even have some new data embedded in it, which is the data that you want to reflect in the new state...
+In react, this object MUST have the property called "type". The value is usually an all uppercase value. You use this "type" property to manipulate the state. In React, your object would like {type: 'ADD_COUNTER', payload: {some-new-data-here} }
+In your reduce you MUST ALWAYS return a new state, DO NOT mutate the existing state and return it... return a whole new object.
+
+Basic REDUX package functionalities (without any react code):
+const redux = require('redux');
+
+const initialState = { counter: 0 }
+
+// Reducer
+const rootReducer =  (state = initialState, action) => {
+	let newState = state;    //by default let it be the old state
+	if (action.type === 'INC_COUNTER') {
+		newState = {	...state,  counter: state.counter+1  };
+	} else if (action.type === 'ADD_COUNTER') {
+		newState = {	...state,  counter: state.counter+action.value  };
+	}
+	return newState;
+};
+
+// Store
+const store = redux.createStore(rootReducer);   //THE MAIN LINE
+console.log(store.getState());
+
+//Subscription
+store.subscribe(() => {     //this function is called anytime an action is dispatched (it gets the latest new state from the store)
+	console.log('[Subscription]', store.getState());
+});
+
+// Dispatching Action
+store.dispatch({type: 'INC_COUNTER'});
+store.dispatch({type: 'ADD_COUNTER', value: 10});
+console.log(store.getState());
+
+
+My REDUX implementation, it is just a PUBSUB architecture under the hood, that's it.
+let redux = {
+	createStore
+}
+
+function createStore(reducerFunc, initialState) {
+	let reduxStore = {
+		globalState: initialState,
+		getState,
+		dispatch,
+		subscribe
+	}
+
+	let arrayOfSubscriberFunctions = [];
+
+	function getState() {
+		return reduxStore.globalState;
+	}
+
+	function dispatch(dispatchObj) {
+		let newState = reducerFunc(reduxStore.globalState, dispatchObj);
+		reduxStore.globalState = newState;
+		for (f of arrayOfSubscriberFunctions) {
+			f();
+		}
+	}
+
+	function subscribe(subscriberFunction) {
+		arrayOfSubscriberFunctions.push(subscriberFunction);
+	}
+
+	return reduxStore;
+}
+
+------------------------
+npm install --save react-redux
+
+In general: if something fails, update your 'react' and 'react-dom' package. They have to be updated to work with 'redux' and 'react-redux'
+npm update react react-dom
+
+'redux' package is the package that gives you the basic pubsub redux functionality. So it gives you createStore(). (this has the pubsub implemented inside it)
+'react-redux' package connects your redux store to the react application.
+
+Connecting Redux and React:
+keep you redux reducer function in src/store/reducer.js
+Keep you redux store in app.js
+
+Index.js -
+import {Provider} from 'react-redux';
+//Provider is a helper component which allows us to kind of inject/access our global redux store into the different react components.
+import {createStore} from 'redux';
+import reducer from './store/reducer'
+const store = createStore(reducer);
+ReactDOM.render( <Provider store={store}>  <App />   </Provider>, document.getElementById('root'));
+// You wrap your whole app with the provider component.
+
+NEXT, A few selected CONTAINER components can now access this state and pass it on to other DUMB components that they embed in them.
+In some container component -
+import {connect} from 'react-redux';       //a function which returns a higher order component.
+your whole component definition goes here
+in the end of the component file-
+const mapStateToProps = (reduxStoresState) => {
+	return {
+		propName1: slice-of-redux-store,
+		propName2: slice-of-redux-store,
+		propName3: slice-of-redux-store,
+		counter: stateStoreInRedux.counter
+	};
+}
+//your component now has NEW props which are slices of the redux store. You are specifying, which slice of the redux store is this component interested in.
+const mapDispatchToProps = (theReduxStoreDispatchFunction) => {
+	return {
+		propName1: someFunc1,
+		propName2: someFunc2,   (this one might call theReduxStoreDispatchFunction()) (call it with an object{type} obiviously)
+	}
+}
+//your component now has NEW props which are functions that will call the redux dispatch function. You are specifying the actions that this component will likely dispatch.
+export default connect(mapStateToProps, mapDispatchToProps)(MyOriginalComponent)
+// you are "connecting" this component to the store (and also subscribing! as you now have some props listening to slices of the state)
+
+You can dispatch many actions, but in the reducer even if you don not handle such actions, react/redux will not throw any warning/error.
+
+High Level: In your component, hookup some NEW props to be slices of the redux store. Also, hookup some NEW props to be functions that will call the redux store dispatch function if you want to update the store from this component. Trigger these prop functions from different places in your component. (i.e these will in turn call the dispatch)
+When the redux store eventually updates after the reducer does its job, this component will get an updated prop (for the slice of new state), which will trigger the updateComponent lifecycle of this component.
+
+Obviously, when your app is running, only the components that are currently in some create/update lifecycle will be dispatching actions... and updating the redux store.
+
+Always Update the store IMMUTABLY
+In the reducer, when you return, you are returning a whole new state object, unlike this.setState({someobject}) which merges the object with the current state....! In your reducer you return { ...state, counter: state.counter-1} i.e distribute the old state properties and then overwrite the counter value.
+Or you can do:   (instead of using spread operator)
+newState = Object.assign({}, oldState);    //this takes the oldState and makes a shallow copy
+newState.xyz = 10;                         //update the xyz property alone in the state
+
+Whichever 'value' in the store you are updating, make sure that the 'value' is a NEW reference.
+So if you are updating an array, make sure you send a NEW array (a new reference) as the value, don't edit the existing reference. Therefore use funcs like concat,filter etc that return a NEW array instead of funcs like push,pop,unshift,shift,splice that edit the existing array.
+
+
+Copying deep object:
+http://redux.js.org/docs/recipes/reducers/ImmutableUpdatePatterns.html
+Unfortunately, the process of correctly applying immutable updates to deeply nested state can easily become verbose and hard to read.
+Here's what an example of updating state.first.second[someId].fourth
+return {
+    ...state,
+    first : {
+        ...state.first,
+        second : {
+            ...state.first.second,
+            [action.someId] : {
+                ...state.first.second[action.someId],
+                fourth : action.someValue
+            }
+        }
+    }
+ }
+Keep your state flattened, and compose reducers as much as possible
+
+Organise and standardize all your redux store dispatch actions, add this file /store/actions.js
+	export const INCREMENT = 'INCREMENT';
+	--add-many-more--
+Now import mutiple actions in your component.js and the reducer.js file. And use these constants in the "action" of the dispatch and the switch case of your reducer.
+	import * as actionTypes from '/store/actions';
+Now use actionTypes.INCREMENT
+If you have a typo in your action name now, the app will now throw an error instead of silently failing due to an unrecognized action name (coz of the typo).
+
+Multiple reducers: 'redux' package gives you a utility to create mutiple reducers, it then combines them all to be one reducer. Under the hood, redux store is updated by ONE and only ONE giant reducer. Different reducers touch different parts of the state
+
+import { combineReducers } from 'redux';
+this is a function which takes a javascript object mapping our reducers to different slices of our state as input and merges everything into one state and one reducer for us.
+
+Index.js-
+import { combineReducers } from 'redux';
+const rootReducer = combineReducers({
+	ctr: counterReducer,
+	res: resultReducer
+});
+const store = createStore(rootReducer);
+
+Since you now have two reducers touching two different parts of the state, your state is also cut into two parts - ctr, storedResults
+const mapStateToProps = state => {
+    return {
+		ctr: state.ctr.counter,
+		storedResults: state.res.results
+    };
+};
+
+Burger Builder updates -
+Put <Provider> outside <BrowserRouter>, i.e <Provider store]{store}><BrowserRouter><App /></BrowserRouter></Provider>
+
+Updating ingredient quantity in the store, reducer code -
+const reducer = (state = initialState, action) => {
+	switch(action.type) {
+		case actionType.ADD_INGREDIENT: {
+			return {
+				...state, (so this will make {ingredients: {<reference to old object>}, totalPrice: 20}, now overwrite ingredients after this)
+				ingredients: {
+					..state.ingredients,    (so this will make {salad:5, meat:4, bacon:0, cheese: 1}, now overwrite one of these properties with a new value)
+					[action.ingredientThatHasToChange]: state.ingredients[action.ingredientThatHasToChange] + 1
+				}
+			};
+		}
+	}
+}
+
+If your Component is already wrapped in the default, you can add component() to it, no probs
+export default  connect(mapStateToProps,mapActionsToProps)( withErrorHandler(BurgerBuilder, axios) );
+
+Chapter 16. Advanced Redux
+Middleware: A layer between the component dispatching the action AND action reaching the reducer. Middleware is commonly used in express.js
+
+In Index.js->
+import { createStore, combineReducers, applyMiddleware} from 'redux';
+const logger = (store) => {
+	return (next) => {    -> middle ware package gives you the 'next' function, it actually forwards the action to the reducer!!
+		return (action) => {
+			// Your middleware code here, you have access to store, next and action.
+			console.log('[Middleware] dispatching ', action);
+			const result = next(action);  // send the action to the reducer! and store the final new state
+			console.log('[Middleware] next state', store.getState());
+			return result;
+		}
+	}
+};
+const store = createStore(rootReducer, applyMiddleware(logger));  // you can actually send a list of middlewares - applyMiddleware(logger1,logger2,lgger3)
+NOW, with this setup, EVERY action dispatched to the store, will hit this middleware first, this one will then use "next" and send the action to the reduer, and after the reducer is done, it has access to the new state too.
+
+Download redux devtools chrome extension. It is just a middleware. It intercepts every dispatched action, and then spits out the new state (after reducer did its job). So you get 1)ABC action has just been dispatched towards the store  2)ABC action has just gone through the reducer, here is the new state
+To use redux devtools: Follow the instruction on https://github.com/zalmoxisus/redux-devtools-extension
+
+i.e - import {compose} from redux
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger)));
+
+Aysnchronous code in reducer.
+Sometimes, in your reducer, you don't want to just update the local redux store, you also want to ping the server and update it.
+Note: Your reducer code has to be synchronous, you MUST return the new state immediately via sync code (to update the actual local store)
+
+Action Creator: A function that returns an action object. (i.e the dispatch object for the dispatch function)
+In Actions.js ->
+export const INCREMENT = 'INCREMENT'
+export const increment = () => {
+	return {type: INCREMENT}
+}
+export const deleteValue = (id) => {
+	return {type: DELETEVALUE, idToDelete: id}
+}
+You can use these even if you don't have an async code at all.
+
+Async reducer code, use redux-thunk package
+A library that adds a middleware, where the action creators don't return the action object, but they return a FUNCTION that will eventually dispatch the action. You can run async code in reducer with this.
+
+npm install --save redux-thunk
+
+Index.js->
+import thunk from 'redux-thunk';
+const store = createStore(reducer, composeEnhancer(applyMiddleware(logger,thunk));
+So it is a middleware sitting between the component dispatching the action and the reducer receiving the action.
+
+In the component-
+<button onClick={() => this.props.onStoreResult(this.props.rdxStorePropCounter)}>Store Result</button>   (send the current value of the redux store counter)
+in the component's mapDispatchToProps: {
+	onStoreResult: (currentCounterValue) => dispatch(actionCreators.storeResult(currentCounterValue))
+}
+
+Action.js
+export const storeResult = (valSentFromTheComponent) => {
+	return function (dispatch, getState) {    -> the thunk middleware gives you dispatch and getState
+				// you can have async code in here
+				setTimeout(() => {
+					dispatch( saveResultSync(valSentFromTheComponent) );
+				}, 2000);
+	}
+}
+export const saveResultSync = (res) => {
+		// if you want you can modify "res" here to do res*2 or something, or else modify it in the reducer, just before you are updating the new state. (better to modify it in reducer and not here, reducer is where you want to modify/set state)
+		return {
+			type: STORE_RESULT,
+			result: res
+		}
+}
+
+When the button is clicked, the current redux store counter value is the one that must be stored. dispatch() is called, but it is called not with an object, but with a function. This first dispatch never reaches the reducer. The middeware intercepts this dispatched action, figures out that it is actually a function and not an object, it then executes the function by sending it the dispatch and getState properties. This func eventually calls the actual DISPATCH(object) that will immediately go the reducer...
+So the component dispatches an action with a func (not an object), this one is blocked by thunk-middleware, and middleware dispatches the action at a later time (async)
+
+Explore all of redux at - redux.js.org (standalone redux, worth reading)
+Middleware: http://redux.js.org/docs/advanced/Middleware.html
+redux-thunk package: https://github.com/gaearon/redux-thunk
+Async Actions: https://redux.js.org/advanced/asyncactions
+
+Utility Functions:
+A function for the reducer, to create the new state easily
+const updateObject = (oldObject, updatedPropertiesAndValuesObject) => {
+	return {
+		...oldObject,
+		...updatedPropertiesAndValuesObject  (this one overrides the previos old fields)
+	}
+}
+Now in the reducer, where you have to return a new state -
+newState = updateObject(oldState, { x = 'the new value now'});
+return newState;
+
+Burger Builder- Advanced Redux
+On load of the burgerBuilder, if you need to fetch the ingredients from the server. In componentDidMount(), use axious, fetch the data, then dispatch an action to update the store with the data. When the store get updated, this burgerBuilder is notified in terms of changed props and it rerenders..
+OR ELSE do the async part in the reducer using thunks
+So in Actions.js ->
+export const initializeIngredients = (valsFromComponent) => {
+	return (dispatch) => {
+		// async code goes here, dispatch the synchronous action here in the middlware once your server responds with data.
+		axios.get('https/firebase/getIngredient.json')
+			.then(resp => dispatch(setIngredients(resp.data.ingredients)))
+			.catch(dispatch some error!);
+	};
+}
+export const setIngredients = (ings) => {
+	return {
+		type: actionTypes.SET_INGREDIENTS,
+		ingsToStoreinTheStore: ings
+	}
+}
+In the reducer.js ->
+Handle the action of SET_INGREDIENTS, return a new state with the new ingredients
+In you Componentjs ->
+Hook up new props for the redux store ingredients using mapStateToProps.
+Hoop up a new dispatch prop fuction (rdxPropInitializeIngredientsFunc hooked to initializeIngredients) using mapDispatchActionsToProps.
+In componentDidMount(), do this.props.rdxPropInitializeIngredientsFunc()
+
+----Chapter 18 - Authentication
+if you have a multi-page application where you render different pages for different requests from your server, you handle authentication in the traditional way of having a session on the server and returning different pages after checking the validity of the user or the authentication status on the server.
+
+React app sends username/pswd to server, Server responds with JWT Token (JSON web token), client stores the JWT in local storage (not redux store as it will be lost with page refresh).
+From now on, the client sends the JWT to the server everytime it wants to access a protected resource. Server validates the token sent and then responds.
+
+What you need? A sign-up view, A sign in component/view, guards for different routes, mechanism to store the JWT and send it for every request
+
+Sign-up/Login form submit must be like this
+<form onSumbit={this.someFunction}>
+	<input />
+	<input />
+	<button>Sign In<button>
+</form>
+
+someFunc(event) {
+	event.preventDefault();    -> this prevents the usual form submit page refresh
+	this.props.rdxDispactchSignUpAction(email,password)
+}
+
+Google: 'Firebase rest api auth'
+https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
+
+Sign up a user  -
+const authData = {
+	email: emailFromUser,
+	password: pswdFromUser,
+	returnSecureToken: true
+}
+axios.post('https://googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=[API-kEY]', authData)
+ .then(resp => {
+	 dispatch(authSuccessActionCreator(resp.data))
+ })
+ .catch(err => dispatch(authFailActionCreator(err)));
+The API responds with -
+expiresIn:3600,
+idToken & refreshToken
+Meaning that the user is automatically signed-in too after the sign-up flow.
+
+Sign in a user: (post method)
+URL is 'https://googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=[API-kEY]'
+
+*/
+
+Misc React -
+Environment variables.
+In an project, go to Config -> env.js NODE_ENV is a an environment variable.
+Anywhere in your react app, you can access this by process.env.NODE_ENV
+Index.js -
+composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
+This way, in your production app, you can't see dispatched actions and the redux store using the extension.
+
+Lazy Loading of Components (chunks)
+
+--------------------------------------------------------------
+Testing React Apps  (automated testing)
+Build App -> Test Manually on Browser -> Automatic Test -> Ship App to Server
+
+Unit test: It test a tiny fraction of the application. Everybody who writes code, writes unit tests for that part of the code. Later on, every build that is done, runs through all these different unit tests and they all have to pass.
+
+Test Driven Development: You first right all the test cases. They will all fail in the begginning. Then you write code to make each of the pass, one by one.
+
+Testing tools
+>test runner: tool that runs the test code. It also provides a validation library for us to do comparisons and throw logs/errors. The test runner uses NodeJS and some browser pacakges that emulate execution on a browser. (it runs it in a browser like environment). Example: JEST (it comes with create-react-app)
+>testing utilites : something simulates a react app (mounting, unmounting components, dom etc). Example: React Test Utils, Enzyme (by AirBnB)
+
+npm install --save Enzyme
+npm install --save react-test-renderer  (enzyme needs this dependency)
+npm install --save enzyme-adapter-react-16
+
+If you are testing a functional component XYZ.js, in the same folder create XYZ.test.js (JEST will automaticall pick up this unit test file)
+
+shallow allows you to render a particular component, it does not render child components, just puts placeholders
+
+import React from 'react';
+import NavigationItems from './NavigationItems';
+import NavigationItem from './NavigationItem';
+import {configure, shallow} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+configure({adapter: new Adapter()});
+
+describe('<NavigationItems /> ... Testing this component...', () => {
+	// My actual testing function
+
+	//test 1
+	it('should render only two navigation items if not authenticated', () => {
+		// testing logic for this unit test
+		const wrapper = shallow(<NavigationItems />);
+		// shallow takes JSX. Now wrapper has the rendered JSX.
+		expect(wrapper.find(NavigationItem)).toHaveLength(2);
+	});
+
+	//test 2
+	it('should render only three navigation items if authenticated', () => {
+		// testing logic for this unit test
+		const wrapper = shallow(<NavigationItems isAuthenticated=true/>);
+		// shallow takes JSX. Now wrapper has the rendered JSX.
+		expect(wrapper.find(NavigationItem)).toHaveLength(3);
+	});
+
+});
+
+Now run this test! Go to package.json, in scripts, you will see start/build/test scripts, do -
+npm test   (like npm start)
+You will get results in the terminal
+
+JEST docs: https://jestjs.io/docs/en/getting-started
+
+Testing Class Based container components
+Same as functional components, give the function some props/state
+desciber('testing <BurgerBuilder>', () => {
+	let wrapper;
+	beforeEach(() => {
+		wrapper = shallow(<BurgerBuilder />);
+	});
+
+	it('should render BuildControls when receiving ingredients', () => {
+		wrapper.setProps({ings: {salad:0 }});   //hardcode and send it some state
+		expect(wrapper.find(BuildControls)).toHaveLength(1);
+	});
+});
+
+You can even test your reducer functions. In general components/reducers are just functions.
+
+Don't test complete scenarios! Just do functional testing, or testing of individual parts. You will go mad if you try complex scenarios.
+
+Deployment:
+>Double check the basepath in <BrowserRouter basename='/basepath!!'> </BrowserRouter>
+>Build the code and Optimize the code: npm run build
+>Your server must always serve the index.html (even for 404 pages)
+>Upload the build artifacts to the static server (aws/s3/github pages/firebase)
+Once you create a build, your project will have a "Builds" folder,
+css, js (all the different chunk.js files), media, index.html.
+Just deploy the whole build folder to your server
+
+Just like github is hooked up to your local repo. You hook up your server (s3/firebase) to your local. And then run commands like "firebase deploy" to push code your local "build" folder to the server.
+
+---------------------------------------------------------------------------
+Webpack                       (webpack.js.org)
+Use create-react-app if your whole app is SPA. Use webpack and create-react-app for hybrid apps
+
+Bundler: Analyses connections (like import/exports) between different files, and then concats all your files. So all JS files go into one bundle.js, all CSS files go into one bundle.css and so on. It optimizes your JPG,PNGs etc.
+
+Webpack Config file
+>needs the name of the root file (it will then see what dependencies this one has, and what dependencies it's dependencies have and so on). It builds a dependency DAG. Example: App.js. note: you can give it multiple roots too..
+>needs the name of the single output file that it will put everything into. Example: dist/bundle.js
+>Loaders: You have to specify these. These are applied on a per file basis. Example: babel, css-loader etc. These are file type dependant transformation.
+>Plugins: This applies on the final concated file (just before it creates that file). Example: uglify.js. These are global transformations.
+
+WebPack Config that you must support for a React project (create-react-app does all of these and more): ES6, JSX, CSS Autoprefixing, Import images, Optimize the Code (shrink it)
+
+Steps
+>in your project folder, at root: npm init
+A package.json file will be added at the root level. The "scripts" part is what you will use for your build scripts
+>npm install --save-dev webpack webpack-dev-server webpack-cli
+Install these two. save-dev means these dependencies are required only for dev builds and during the build. The actuall app while running does not use these deps.
+Once installed, you will see a new thing in package.json, "devDependencies" {}, you will see these two inside it.
+You will also see the "node modules" folder where all the packages are installed.
+When you now send this project to anyone, they just run "npm install", it sees  the required dependencies inside package.json and installs them all into the "node modules" folder.
+>Basic folder structure of your react app: Components, Container, hoc, Assets, index.html, index.js (root where you will mount react app), index.css, app.js. Fill in these files with your code. Install all deps: npm install --save react react-router etc.. (these will all be added to package.json)
+>In package.json, "scripts" {}, add
+"start" : "webpack-dev-server"
+it executes that packages when you do npm start, the package spins up a dev server and also bundles our files. You still have to define the webpack config for it to work.
+>Loaders
+npm install --save-dev @babel/core @babel/preset-env @babel/preset-react @babel/preset-state-2 babel-loader @babel/plugin-proposal-class-properties
+npm install -save-dev style-loader css-loader post-css-loader autoprefixer
+npm install --save-dev url-loader file-loader
+npm install --save-dev html-webpack-plugin
+>Create a file at root, .babelrc
+{
+	"presets": [
+		 ..... ALL the task that babel should do ......
+		[],    (a rule for each loader specify a config for it)
+		[],    (a rule for each loader specify a config for it)
+		[]     (a rule for each loader specify a config for it)
+	]
+}
+>In the root of project, create a file "webpack.config.js" (this file follows nodeJS syntax)
+const path = require('path');
+module.exports = {
+	mode : 'development',     (tells webpack to apply it's dev algos of bundling)
+	entry: './src/index.js',   (the root JS file)
+	output: {
+		path: path.resolve(__dirname, 'dist'),
+		filename: 'bundle.js',
+		publicPath: ''
+	},
+	devtool: 'cheap-module-eval-source-map',   (in the browse dev tools, don't show bundled file, but show the source folder structure, easy for debugging)
+	module: {
+		rules: [
+			{ test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}
+			This means apply babel-loader on any file ending with .js (except the node_modules folder)
+
+			{test: /\.css$/, exclude: /node_modules/}, use: [an array of loaders here]}
+			Apply these loader to all css files
+
+			{test: /\.[png|jpg|gif]$/, loader: 'url-loader?limit=8000'}
+			Apply these loader to all image files
+		]
+	}
+};
+>Now run npm start, your app should start to work
+>In the root of project, create a file "webpack.config.prod.js"
+This is the build process for production. Set mode: "production", and devtool: "none". Webpack will automatically apply some optimizations.
+>Add a script in package.json, "build:prod": "webpack --config webpack.config.prod.js"
+>Now do: npm run prod:build.
+If you see the /dist folder, you will see index.html loading bundle.js. Just deploy your whole dist folder on the server.
+
+So basically, add how many ever loaders you want, update your webpack config files and configure each loader, update "scripts" in package.json
+https://webpack.js.org/concepts/
+https://babeljs.io/
+
+-------------------------------------------------------------------------------
+NextJS
+Useful package for server side rendered react pages. It is like next gen React.  When the user hits a URL, the html is built on the server and served to the page. (useful for SEO ranking and search engine crawlers). Crawlers can't crawl AJAX based pages, they just see the page source original html.
+On the server, NextJS mounts the app, renders the html and then the server serves the page to the client.
+
+NextJS enforces a certain folder structure. You just put all your main routes under a "pages" folder. Your other folders can be component,containers,hoc etc. Under pages is where you can have your main routes.
+NextJS builds on top of the 'react' package. So one of it's dependencies is react and react-dom.
+npm install --save next
+When you use nextJS, you don't use react router, every folder is it's own route, that is served automatically. It will render the html on the server, it will split the code into chunks automatically for each route etc. Each folder can have a index.js.
+
+import Link from 'next/link';
+In nextJS apps, you use Link and not the router Navlink etc to reroute to different URLs
+import Router from 'next/Router';
+<button onClick={() => Router.push('/auth')}>Go to Auth URL </button>
+
+For CSS in nextJS: you use the package "styled-jsx"
+
+static async getInitialProps() { } is a lifecyle event that you can use in Class based React Components in nextJS.
+
+Note: You deploy the whole project (not just the builds folder) on a server that has nodeJS. (AWS elastic / heroku).
+
+A lot of out of the box functionality, see the github page documentation.
+https://github.com/zeit/next.js/
+---------------------------------------------------------------------------
+
+React Hooks
+New feature introduced in react16.8.
+Built in JS functions that can only be used inside functional react components or inside other react hooks. They are named as useXYZ() (this is the rule)
+You can't call these functions inside your own custom functions... they have to be called at the root scope of a functional component. You can't even use it inside if{}, for{} loop blocks etc.
+
+>They let you create a state in functional components
+>They also let you mimic lifecyle methods in functional components
+You can use the same hook in multiple different func comps. (re-usable functionality)
+
+UseState() ---
+In the functional component-
+import react, {useState} from 'react';
+const ingName = (props) => {
+	let [mostUpdatedStateObj, funcToUpdateCurrentState] = useState(<some initial state obj>);
+	// The first time it runs, it takes an initial state (object/string/number/anything).
+	// It always returns an array, first elem is the latest state, second arg is a func to update the current state. It manages the state behind the scenes
+
+	return(JSX);
+
+	You can call funcToUpdateCurrentState(<some new state object>) from anywhere you want inside your functional component. You can also use the latest state wherever you want to.
+}
+Remember, unlike this.setState(<new state>) in class based components that merges the state, in functional components, useState()[1](<new state>) will completely overwrite the old state with the new one you gave.
+
+mostUpdatedStateObj -> This one is not exactly the most updated state. In some react apps where a lot of things are going on, it might be behind by 3-4 cycles.
+SO, in funcToUpdateCurrentState(<some new state based on old state>), you can't 100% reliable use the old state to create a new state. Thus, this function has a second syntax that takes a function as the argument -
+funcToUpdateCurrentState((reactGivesMeRealUpdatedState) => {
+	<now use the realUpdatedState to return a new state>
+});
+This real updated state is 100% the most updated state. (don't use 'mostUpdatedStateObj')
+Example:
+<input
+	type='number'
+	value={mostUpdatedStateObj.amount}
+	onchange={(event) => {
+		const newTitle = event.target.value;   //(don't want below to close over 'event' obj, so create new var, react specific caveat)
+		funcToUpdateCurrentState(realUpdateState => {
+			amount: event.target.value,
+			title: realUpdateState.title
+		});
+	}}
+/>
+
+Note: In class based comps, state MUST be an object. An there only can be one state. In func based comps, state need not be an object (can be string/number etc), also you can have mutliple states! So now i can split {value:, title: } into "value" and "title", two diff states.
+const [oldTitle, setNewTitle] = useState('initial-title-value');
+const [oldAmount, setNewAmount] = useState('initial-amount-value');
+
+<input
+	type='number'
+	value={oldAmount}
+	onchange={(event) => {
+		setNewAmount(event.target.value);  (i don't care about updating title)
+	}}
+/>
+Manage your state independently! You have access to all 4 constants in your whole functional component.
+
+When you have to concat a new value to the old array state.
+SetNewState(  [ ...oldStateArray, {new-object-to-concat} ]  );
+
+Post some data to firebase -
+fetch('https://my-project-name.firebase.com/ingredients.json', {
+	method: 'POST',
+	body: JSON.stringify(myIngredientObject),
+	headers: {
+		'Content-Type': 'application/json'
+	}
+}).then(resp => {do-something});
+
+UseEffect() ----     (helps you manage side effects)
+The function you pass to it is executed after every component render cycle. The second optional argument you pass to it is an array of dependancies, only when ANY of these dependancy values change, the first arg function is executed.
+import React, {useEffect} from 'react';
+
+const ingredients = (props) => {
+	const [latestIngs, setUserIngs] = useState([]);
+
+	useEffect(() => {
+		fetch('https://my-project-name.firebase.com/ingredients.json').then(resp => resp.json()).then(r => {
+		setUserIngs(r);     (like this.setState(r) inside componentDidMount)
+		});
+	 }
+	,[]); -> give it empty array, this now acts like a componentDidMount, it runs only the first time the comp executed.
+
+	return(JSX);
+}
+
+If you don't give it the second arg [], then it will act like componentDidUpdate. So it will render -> executeUseEffect-fetch-data-setState -> trigger another render -> executeUseEffect-fetch-data-setState -> trigger another render -> infinite loop
+
+Just like useState(), you can have multiple useEffect() calls in the same component. So just have one -
+useEffect(() => console.log("Component just rendered again"));
+You can keep track of how many times you comp is rendering/re-rendering
+OR
+useEffect(() => console.log("Component just rendered again"), [userIngs]);
+Now it will execute only when userIngs change
+
+The function inside useEffect can also return a value, this value can ONLY BE A function, and this function will execute only just BEFORE the next time the useEffect function is about to execute!!
+UseEffect(() => {
+	const timer = setTimeout(() => {AJAX work}, 5000);
+	return () => {clearTimeout(timer)};
+}, [dependency1, dependency2]
+);
+The first time comp renders, the useEffect func executes.
+The next time comp re-renders, IF dependencies have changed, first the return func executes (so do any cleanup work of the first useEffect func here), then the useEffect func executes the second time.
+
+UseReducer() --------
+
+
+
+
+-----------------------------------------------
+Conclusion
+react.rocks.com
+Google "made with react" to see what sites use react right now
+Look at gatsbyJS (it is like nextJS, you can build site without routers)
+React Native for native mobile apps
+Damn good - Material UI , it gives you a bunch of pre-built components that follow google's material design
+React bootstrap - another component library
+Preact.js - a lightweight equivalent of react
+

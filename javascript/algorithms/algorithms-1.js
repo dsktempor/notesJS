@@ -100,8 +100,8 @@ Mutilple Pointers: creating pointer or values that correspond to an index, and t
 Sliding Window: Create a window which can either be an array or number from one position to another. Depending on a condition, the window expands/closes.
 Divide & Conquer: Divide a data set into smaller chunks and then repeating a process with a subset of data. (binary search in a sorted array)
 
-Recursion: Taking one problem, and solving it over and over on a smaller peice or changing peice untill you reach some end point.
-JSON.parse, JSON.strigify, document.getElementByID are often implemented as recursive functions by browsers.
+Recursion: Taking one problem, and solving it over and over on a smaller peice or changing peice until you reach some end point.
+JSON.parse, JSON.stringify, document.getElementByID are often implemented as recursive functions by browsers.
 Call Stack: browser maintains a stack (FILO) of functions that have been called. When a function returns a value, it is removed from the top of the stack.
 Recursion in linux terminal: ls -R   (recursively open all sub-directories and list all files!!)
 Anything that can be written with recursion, can be written with iterations.
@@ -256,7 +256,7 @@ function mergeSort(arr) {     // the point of this function is to just split an 
 
 // Quick Sort O(nlogn) (best,avg). LogN decompositions each needing n comparisons
 // Worst case is O(n^2) i.e for an already sorted array. You create n different right arrays (n levels/compositions) (no left arrays as it already sorted), for each of the right arrays you do n comparisons, so n*n.
-// Basically everytime you cal pivotThisArray(), if your pivotValue is already the min value in that array. Its a waste of pivoting on it.
+// Basically everytime you call pivotThisArray(), if your pivotValue is already the min value in that array. Its a waste of pivoting on it.
 // Just like merge sort, exploits the fact that arrays of size 0 or 1 are already sorted.
 // It selects one element called the Pivot, and moves all smaller numbers to its left and all larger numbers to it's right. Then quick sort is done on the two left and right arrays again.
 // You then recursively split the array on these pivot points...
@@ -291,11 +291,12 @@ function quickSort(arr, left = 0, right = arr.length - 1) {   //the default para
 // Radix Sort. This only works with integers. this is not a comparison sort, it is just based on numbers. k is logn for avg arrays.
 // O(nk) for best,avg,worst.  k is the num of digits of the longets number. Space complexity is o(n+k)
 // In each PASS of the array (iteration of k), you group items depending on their nth last digit. Then you just pop() everything to get back your array for the next PASS.
-function getDigit(num, i) {
+function getDigit(num, i) {     //get ith digit from right
 	return Math.floor(Math.abs(num) / Math.pow(10, i)) % 10;         // 456784/1000 = 456.784, this %10 is 6
 }
 function digitCount(num) {
 	if (num === 0) return 1;
+	//log10 of 99 is 1.9999, log10 of 999 is 2.99, log10 of 9999 is 3.999, so use log10 to get number of digits in a num
 	return Math.floor(Math.log10(Math.abs(num))) + 1;
 }
 function mostDigits(arr) {
@@ -405,6 +406,7 @@ function stringSearch(s1, s2) {  //search for s2 inside s1. O(n^2)
 	return mainCounter;
 }
 
+// RECURSION BASICS
 // Recursion: Count down from n
 function countDown(n) {
 	if (n === 0) {
@@ -428,7 +430,27 @@ function factorial(n) {    // O(n)
 	if (n <= 1) return 1;    //0! is 1, 1! is 1
 	return n * factorial(n - 1);
 }
-// Recursion: Given an array of numbers, collect all odd numbers into an array and return the array.   This is the helper-method-recusrion PATTERN.
+// Recursion: Write a function 'power' that takes a base and an exponent and returns the value of base^exponent. i.e mimic Math.pow()
+function power(b, e) {
+	if (e === 0) {
+		return 1;     // special case
+	}
+	return b * power(b, --e);   // if you put e-- it will be infinite loop!!
+}
+//Recursion: productOfArray, takes an array of integers and returns the product of them all
+function productOfArray(a) {
+	if (a.length === 1) return a[0];
+
+	return a[0] * productOfArray(a.slice(1));
+}
+// Recursion: someRecursive, takes an array and a callback. Function returns true if ANY element in the array when called with the callback returns true, i.e cb(anyArrayElement) === true, then return true
+function someRecursive(a, cb) {
+	if (a.length === 0) {
+		return false;
+	}
+	return Boolean(cb(a[0]) || someRecursive(a.slice(1), cb));   //actually Boolean() is not required, i just put it for readability
+}
+// Recursion: Given an array of numbers, collect all odd numbers into an array and return the array. This is the helper-method-recursion PATTERN.
 function collectOdds(a) {
 	var finalResult = [];
 
@@ -454,29 +476,6 @@ function CollectOddsNoHelper(a) {
 
 	return newArr;
 }
-// Recursion: Write a function 'power' that takes a base and an exponent and returns the value of base^exponent. i.e mimic Math.pow()
-function power(b, e) {
-	if (e === 0) {
-		return 1;     // special case
-	}
-	return b * power(b, --e);   // if you put e-- it will be inifite loop!!
-}
-// Recursion: factorial - takes n and returns n!
-function factorial(n) {
-
-	return n * factorial(n - 1);
-}
-//Recursion: productOfArray, takes an array of integers and returns the product of them all
-function productOfArray(a) {
-	if (a.length === 1) return a[0];
-
-	return a[0] * productOfArray(a.slice(1));
-}
-//Recursion: recursiveRange, takes a number and adds up all number from 0 to n
-function recursiveRange(n) {
-	if (n === 0) return 0;
-	return n + recursiveRange(n - 1);
-}
 // Recursion: fibonacci, takes n and returns the nth number in the fibonacci sequence
 function fib(n) {
 	if (n <= 2) return 1;
@@ -498,13 +497,6 @@ function isPalindrome(s) {
 		return isPalindrome(s.slice(1, -1));
 	}
 	return false;
-}
-// Recursion: someRecursive, takes an array and a callback. Function returns true if ANY element in the array when called with the callback returns true, i.e cb(anyArrayElement) === true, then return true
-function someRecursive(a, cb) {
-	if (a.length === 0) {
-		return false;
-	}
-	return Boolean(cb(a[0]) || someRecursive(a.slice(1), cb));   //actually Boolean() is not required, i just put it for readability
 }
 // Recursion: flatten, accepts an array of arrays (can be any number of levels deep) and returns a new array with all values in the top level (1 flattened array). Example: [[[[3]],6]] should give [3,6]
 function flatten(a) {
@@ -611,14 +603,11 @@ function fib(n) {   // O(n)  (bottom-up approach)
 
   return result[n];
 }
-
-function fibViaRecurssion(n) {  // (top-down approach) O(2^n) !!! fib(45) on chrome takes 10 seconds. fib(100) crashes chrome. (i.e without memoization)
-	if (n < 2) {       // memoized fibo is O(n)
-		return n;
-	}
-
-	return fib(n - 1) + fib(n - 2);  //you call fib here and not fibViaRecurssion.  fib(n-2) subtree does not run untill the whole fin(n-1) sub tree finishes
+function fibSlowRecurssion(n) {
+	if (n < 2) return n;
+	return fibSlowRecurssion(n-1) + fibSlowRecurssion(n-2);
 }
+
 function memoize(fn) {          //MEMOIZE a given function..!
 	const cache = {};
 	return function (...args) {
@@ -632,8 +621,16 @@ function memoize(fn) {          //MEMOIZE a given function..!
 		return result;
 	};
 }
-const fib = memoize(slowFib);
+const fib = memoize(fibSlowRecurssion);
+function fibFastRecurssion(n) {  // (top-down approach) O(2^n) !!! fib(45) on chrome takes 10 seconds. fib(100) crashes chrome. (i.e without memoization)
+	if (n < 2) {       // memoized fibo is O(n)
+		return n;
+	}
 
+	return fib(n - 1) + fib(n - 2);  //you call fib here and not fibViaRecurssion.  fib(n-2) subtree does not run until the whole fin(n-1) sub tree finishes
+}
+
+//another different implementation
 function fibMemo(index, cache) {
 	cache = cache || [];
 	if (cache[index]) return cache[index];
@@ -652,5 +649,5 @@ function fibMemo(index, cache) {
 // The name is very misleading, this is not AI generated programs! It is just a more optimal way to solve an already solved problem.
 // DP can be used on a problem if it has these characteristics -
 // 1)Overlapping subproblems: the problem can be broken down into subproblems which are solved and reused several times. Fibonacci has it, but merge sort has subproblems that don't overlap!! Each subproblem in merge sort is a different array ,that you are trying to merge.
-// 2)Optimal substructure: The optimal solution of a bigger problem can be constructed from optimal solutions of its subproblems. Like, the bset solution for Fib(10) can be calcualted from the best solution for fib(5).
+// 2)Optimal substructure: The optimal solution of a bigger problem can be constructed from optimal solutions of its subproblems. Like, the bset solution for Fib(10) can be calculated from the best solution for fib(5).
 // So in SPL You use past knowledge to make solving a future problem easier. Like memoize of fibonacci.
