@@ -3,66 +3,73 @@ Specificity: https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
 Margin Collapsing: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
 CSS browser support: https://caniuse.com/
 
+Must Read in detail:
+>Flexbox: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout
+>Grid:
 
 Cascading Style Sheets
 1996: CSS1
 1998: CSS2
 CSS3 is still in development
 
+HTML = core content, CSS is just visual-effects (fluff/optional)
 
 Three ways to Add css to a webpage:
 >Inline in the html    <section style="<CSS HERE>">     (not recommended, not reusable/scalable)
 >In the <head> tag, add a <style> CSS rules here </style>
->In the <head> tag, add a <link rel='stylesheet' href='my.css'>     (advantages: caching)
-
+>In the <head> tag, add a <link rel='stylesheet' href='my.css'>    (or 'folder/my.css')
+	advantages: caching. Downloaded once for page1 of the site and then the cached version is used for the rest of the pages of the site. Instead of download the full <style></style> code for each page of the site.
 
 CSS is case insensitive. So in html, don't use camel case for attribute names and attribute values, always use hyphened words.
 Comments are only with /* */ .You can't use //
 
-CSS Rule =  Selector/Combinator + Property Names + Property Values
+CSS "Rule" =  Selector/Combinator + Property Names + Property Values
+	Regardless of what css property you use, check it's mobile and desktop browser support.
 
 Selectors -
-elements-         h1: {}
-class-            .blog-post: {}    (the html "class" attribute)
-universal-        *: {}     (every element on the page or under that element) (like div p *)
 id-               #blog-post: {}    (the html "id" attribute)
-attributes-      [attr-name]: {}    (elements with this attribute)
+class-            .blog-post: {}    (the html "class" attribute) (note: an html element can have multiple classes)
+attributes-      [attr-name]: {}    (elements with this attribute) Example: <button disabled>Hello</button>
 attributeValues- [type='email']: {}   (element with the attribute type=email)
-attributeValues- [type~='email']: {}   (element where attribute 'type' contains the word 'email') (it should be surrounded by spaces on both sides, like type='text email phone')
-attributeValues- [type|='email']: {}   (element where attribute 'type' equals OR starts with the word 'email-')
 attributeValues- [type^='email']: {}   (element where attribute 'type' starts with the word 'email')
 attributeValues- [type$='email']: {}   (element where attribute 'type' ends with the word 'email')
 attributeValues- [type*='email']: {}   (element where attribute 'type' contains the string 'email' anywhere in it)
+attributeValues- [type~='email']: {}   (element where attribute 'type' contains the word 'email') (it should be surrounded by spaces on both sides, like type='text email phone')
+attributeValues- [type|='email']: {}   (element where attribute 'type' equals OR starts with the word 'email-')
 attributeValues- [type$='email' i]: {}   (element where attribute 'type' ends with the word 'email', be case insensitive)
-selector:not(some-other-selector)    Everything except that
-
+selector:not(some-other-selector)    Everything except that  (a:not(.active) - selects any anchor tag that does not have the class=active. :not(a) selects ANY tag that is not an anchor tag)
+elements-         h1: {}
+universal-        *: {}     (every element on the page or under that element) (like div p *)
 
 Combinators -
-Adjacent Sibling  +     h2 + p + a  (all a that directly follow a (sibling) p, that inturn directly follow a (sibling) h2)  (by follow we mean adjacent, but immediately afterwards)
-General Sibling   ~     h2 ~ p      (all p that are a sibling of a h2, it must be somewhere after the h2, does'nt have to be right after it)
-Direct Child      >			div > p			(any p that is a direct child (not grandchild) of a div)
-Descendant        <space>           (any descendant)
+1)Adjacent Sibling  +     h2 + p + a  (all a that directly follow a (sibling) p, that inturn directly follow a (sibling) h2)  (by follow we mean adjacent and immediately afterwards)
+2)General Sibling   ~     h2 ~ p      (all p that are a sibling of a h2, it must be somewhere AFTER the h2, doesn't have to be right after it)
+3)Direct Child      >			div > p			(any p that is a direct child (not grandchild) of a div)
+4)Descendant        <space>           (any descendant)
 
-Cascading: For any html element, and any css property for that element, multiple cascading values are applied in order of priority.
-Priority in CSS is called Specificity. The priority is applied only if there are conflicting values for any particular css property value, no conflict means, that value is directly applied (even if it is really low in the priority)
+Cascading: For any given html element, and any css property for that element, multiple cascading rules/values are applied to that element. Only the conflicting property values are resolved using a "priority".
+This priority in CSS is called Specificity.
+The priority is applied only if there are conflicting values for any particular css property value, no conflict means, that value is directly applied (even if it is really low in the priority)
+Specificity is all about resolving conflicts that arise when multiple CSS rules target the same html element.
 First: Inline style
 Second: CSS files on the page,
-	>within each file, for the same kind of selector: bottom one gets more priority than the top one. (the bottom one overwites the top one)
-	>Within each page, for the same kind of selector: bottom file get more priority than the top file.
-Inspect any element in chrome and look at the CSS, read from top to bottom to understand the priority of each rule. Top ones are higher priority.
+	>within each file, for exactly the same selector: bottom one gets more priority than the top one. (the bottom one overwites the top one)
+	>Within each page, for exactly the same selector: bottom file get more priority than the top file.
+Inspect any element in chrome and look at the CSS, read from top to bottom to understand the priority of each rule. Top ones are higher priority and will be overwriting ones that are below (when there is a conflict).
 
-Some selectors have more priority than other selectors, regardless of where the selector is placed. Meaning, the more specifically you select that element and give it a property=value, this higher chances are that value will be applied. Also: Selectors with combinators have higher specificity than those with lower number of combinators.
+Some selectors have more priority than other selectors, regardless of where the selector is placed. Meaning, the more specifically you select that element and give it a property=value, this higher chances are that value will be applied. Also: Selectors with more combinators have higher specificity than those with lower number of combinators.
 Specificity of CSS- (in order of priority)
 	> inline styles
 	> #id selectors
-	> .class, :pseudo-class and [attribute] selectors
-	> html tag and ::pseudo-element selectors>
+	> .class, :pseudo-class and [attribute] selectors (all of these are equal, the latter one in the file wins)
+	> html <tag> and ::pseudo-element selectors
 	> * universal selectors
 	> user agent default stylesheet
-	> automatically inherited
+	> automatically inherited from ancestor
+Basically, the rule with more information wins over a vague one.
 
-Inheritance: For certain properties, all children of that element, automatically also get that property.
-If you manually set the value to "inherit" then it's Specificity is determined by the selector that was used (this is not automatically inherited)
+Inheritance: For certain CSS properties, all descendants  of that element, automatically also get that property.
+If you manually set the value to "inherit" then it's Specificity is determined by the selector that was used (this is not automatically inherited). i.e Now that you have raised the specificity, there is a chance that this element will get the inerited value (inherited values are always least priority)
 
 body will not beat h1 (regardless of where body is)
 body * will beat h1   (because it is more specific)
@@ -82,32 +89,28 @@ first - it inherited green from div#a
 Then - div made it blue
 BUT finally - div#a1 is most specific, so it will be yellow.
 
-Special Values -
-Colors: <color>
-Strings: red, yellow, orange
-Hex Codes: #000000 to #FFFFFF
-RGB: rbg(0-255, 0-255, 0-255)
-RGBA: rbga(0-255, 0-255, 0-255, 0-1)    The last one is alphaChannel or opacity (in decimals), 0 is transparent and 1 is opaque
-hsl: hsl(0-360, 0%-100%, 0%-100%)
+4 basic value types:
+1)pre-defined keywords: auto, block, fixed, absolute, border-box
+2)colors: red, green, #57ac43, #ccc
+3)length/number/size: 20px, 20rem, 20%, 1, 0.5
+4)functions: url(), calc(100% - 50px), scale()
+
+Special Values -  Colors: <color>
+>Strings: red, yellow, orange
+>Hex Codes: #000000 to #FFFFFF
+>RGB: rbg(0-255, 0-255, 0-255)
+>RGBA: rbga(0-255, 0-255, 0-255, 0-1)  The last one is alphaChannel or opacity (in decimals), 0 is transparent and 1 is opaque
+>hsl: hsl(0-360, 0%-100%, 0%-100%)
 	hue:0-360            where 0 is red, 120 is green and 240 is blue   (this is the base color)
 	saturation:0-100%    how shaded (grey) should it be.  100% is true color
 	lightness:0-100%     0% is black and 100% is white.   50% is true color
-hsla: hsl(0-360, 0%-100%, 0%-100%, 0-1)
+>hsla: hsl(0-360, 0%-100%, 0%-100%, 0-1)
+--------------------------------------------------------------
 
-linear-gradient(direction/angle, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")  (linear gradients are treated as images)
-Directions -
-to left | to right | to top | to bottom | to left top | to right top | so on..
-Angle - 0 to 180
-Lookup the details
-
-radial-gradient(circle/ellipse <radius> at <top/bottom/left/right>, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")
-Default shape is ellipse.
-(circle 100px at 20% 50%, grey, transparent);
-Lookup the details
-
-Box Model: Every html element is a box.
+Box Model: Every html element is interpreted as a box by CSS.
 HTML Element = content + padding + border.
 Outside the HTML element, you also have margin. (distance from it's sibling)
+If a parent puts a padding, that means after the margin of the child, the parent padding starts...
 
 Your browser also loads a default stylesheet where the <body> has a margin on 8px! Watch out. set body {margin: 0px} to work around this.
 The parent element will also take on the margin of the child element.
@@ -115,23 +118,23 @@ The parent element will also take on the margin of the child element.
 Margin Collapsing: Two adjacent block elements: Their margins are merged into one. the bigger margin wins. This is why you often see margins of elements overlapping each other. The is how CSS works, it tries to avoid extra distances between adjacent elements. To work around this use: margin-top or margin-bottom
 >adjacent siblings: bigger one wins
 >parent with children that have margins: if the first or last child or both have margins. They will respectively overlap (collapse) with the top and bottom margins of the parent. Again, the bigger one wins in each case.
->If an item has no content, padding, border. Then it's own top and bottom margin will collapse (overlap), again, the bigger one wins.
+>If an item has no content, padding, border. Then it's own top and bottom margin will collapse into one (overlap), again, the bigger one wins.
 
 Shorthand properties: Single property that combines multiple properties.
-font, background, padding, margin,border etc.
+font, background, padding, margin, border etc.
 The values have to be given in a specific order though, it depends on the syntax of the property.
 
-Block Level Elements div/section/h1:  have default width as 100%. If you change this value to 50%, it occupy 50% of it's parent's width. If you set 110%, it will occupy 1.10 times the width it's parent is occupying. Maybe the parent itself is at some 70% width. If the parent is a block html element, it's default width is 100% anyways..
+Block Level Elements div/section/h1: have default width as 100% (set by user-agent stylesheet). If you change this value to 50%, it occupy 50% of it's parent's width. If you set 110%, it will occupy 1.10 times the width it's parent is occupying. Maybe the parent itself is at some 70% width. If the parent is a block html element, it's default width is 100% anyways..
 Height: Every parent tries to be only as big as they need to be. THEN -> Any child that say height=100% will only take up 100% of it's parents height. So the parent first determines its own height allocated to it, it then places all its children inside it, then this particular child's height will match it's parent's original height.
 So if parent has height=100px, then any child with height=100% will now occupy 100px.
 
 Width & Height
-By default in the CSS box model, the width and height you assign to an element is applied only to the element's content box.
-Also, if box-sizing=content-box, that means any height and width you set applies to the content of that element (the H and W don't include the padding,border,margin)
-box-sizing=border-box. Now, any H and W includes the content,padding and the border.
+By default, an element takes up a height of only how much it's children needs. But, if you explicity give it a height of 500px, it will be 500px. If you give it 100%, it will be as high as it's parent's height. If you give H and W a % value, that means it is relative to it's parent. If you give px then it is an absolute value.
+
+By default in the CSS box model, the width and height you assign to an element is applied only to the element's CONTENT part of the box (the H and W don't include the padding,border,margin). This is what happen for the default: box-sizing=content-box. All block & inline elements use this by default.
+But set box-sizing=border-box. now, any H and W includes the content,padding and the border.
 It is good to enforce all elements in your page to have box-sizing=border-box
-You can do body { box-sizing=border-box }, that way all children of body will inherit this value. BUT, there is a probem, the useragent applies a style sheet saying all block elements must have {display: block}, this has more Specificity that inheritance and hence overrides it. There use * { box-sizing=border-box }, this applies to all elements and has more specifity than the user-agent stylesheet.
-If you give H and W a % value, that means it is relative to it's parent. If you give px then it is an absolute value.
+You can do: body { box-sizing=border-box }, that way all children of body will inherit this value. BUT, there is a problem, the useragent applies a stylesheet saying all block elements must have {display: block}, this has more Specificity and overrides the ineheritance. Thus use * { box-sizing=border-box }, * beats inheritance.
 
 Block Level HTML tags:
 <div>  <p>   <h1>-<h6>   <section>  <form>  <pre>
@@ -151,29 +154,33 @@ Inline HTML tags:
 <code>  <abbr>  <acronym>  <q>  <var>
 <bdo> <big> <cite> <dfn> <kbd> <object> <output> <samp> <time>
 
-Setting margin-top and margin-bottom properties on inline elements does'nt make sense. Additionally, setting a width  or height  on an inline element also has no effect. The width and height is auto to take as much space as required by the content.
+Setting margin-top and margin-bottom properties on inline elements doesn't have any effect.
+Setting a width or height on an inline element also has no effect. The width and height is auto to take as much space as required by the content.
 You can convert block to inline and inline to block tags by using {display: block/inline/inline-block}
-Compared to display: inline, the major difference is that display: inline-block allows to set a width and height on the element.
+Compared to display:inline, the major difference is that display:inline-block allows to set a width and height on the element.
 
-Note: If an element is an inline element, setting "width" will not have any effect on the element.
+Display property: This affects the behaviour of the box i.e inline vs block vs inline-block. 'none' removes the element, meaning the next element takes it's place. But visibility:hidden only hides it, it will be an empty space on the page.
 
-Display:none removes the element, meaning the next element takes it's place. But visibility:hidden only hides it, it will be an empty space on the page.
-
-width: calc(100% - 50px);     calc() is a CSS func
-{display:inline-block} this also includes the whitespace in your html code (weird css bug)
+If two siblings have {display:inline-block}, then the whitespace in your html code also renders on screen (weird css bug)
 <a> have default {text-decoration:underline} that you can remove if you want to.
 
-Pseudo Classes: Defines the style for a special state of the chosen element.  :class-name
-Pseudo Element: Defines the style of a specific part of an element    ::element-name
+1)Pseudo Class: Defines the style for a special state of the chosen element.  :class-name  (a:hover) (div:last-of-type:hover)
+2)Pseudo Element: Defines the style of a specific part of an element    ::element-name  (p::first-letter)
+	::after and ::before, you can add content to the html (from the CSS!).
+	p::after { content: 'some new extra text here' }
 Remember: #ID selectors have higher specificity than pseudo-classes and classes...
 
-::after and ::before, you can add content to the html (from the CSS!)
-
 You can combine selectors that have the same css properties
-div, p ,a {         (these three selectors are completely  independant of each other, they just have the same CSS applied)
+div, p ,a {         (these three selectors are completely independant of each other, they just have the same CSS applied)
 	prop1: value1;
 	prop2: value2;
 }
+
+<div class='class1 class2'> </div>
+.class2{ color:red}
+.class1{ color:pink}
+The final color will be pink and not red. Because in the css file, pink comes after red, eventhough in the html element class2 was declared after class1 (the order in the html element does not matter). The order in the css file matters.
+div.class1.class2   - this selects those divs that have both class1 and class2
 
 To have a PLP like grid of 3 elements side by side:
 <div id='container'>
@@ -204,35 +211,29 @@ div.p {
 }
 Since, you gave 30%, now each box has some space for a margin too. (box-sizing is set to default 'content-box')
 
-CSS Classes: If an html element has more than one class on it. Than the css properties of both those classes will apply. For conflicts, the class that was defined LATER in the css file will win!
-When you add the same class to different html elements, you can give them all the same CSS. You can use different IDs for each too, and do the same. But html IDs are also used for scroll-up-to-XYZ when the url has url?xid=10#XYZ  (so IDs have dual functionality, be careful using them)
-a.class1.class2   - select those anchors that have both class1 and class2
+CSS Classes: If an html element has more than one class on it. Then the css properties of both those classes will apply. For conflicts, the class that was defined LATER in the css file will win!
+When you add the same class to different html elements, you can give them all the same CSS. You can use different IDs for each too, and do the same. But html IDs are also used for scroll-up-to-XYZ when the url has url?q1=10#XYZ  (so IDs have dual functionality, be careful using them). Also in your html you can have <a href='#XYZ'></a> Clicking this link will scroll the page to that html id element.
 
 !important
 { color: red !important; } regardless of priority and specificity, color will ALWAYS be red.
 Never use this feature. It is not recommended.
 If two conflicting properties have !important specified, then normal specificity rules will apply to determine the priority between the two !importants ....
 
-:not()
-a:not(.active) - selects any anchor tag that does not have the class=active
-
-Regardless of what css property you use, check it's mobile and desktop browser support.
-
-How to make a header with links? i.e convert a <ul> <li> <li> .. </ul> into a header
+How to make a header with links? i.e convert a <nav> <ul>  <li></li>  <li></li> .. </ul> </nav> into a header
 .main-nav {           (the parent nav html tag)
     display: inline-block;
-    text-align: right;
+    text-align: right;    (this moves the links to the right of the container)
     width: calc(100% - 74px);
     vertical-align: middle;
 }
-.main-nav__items {     (the ul html tag)
-    margin: 0;
+.main-nav__items {     (the ul/ol html tag)
+    margin: 0;             (removes default margin and padding set for lists by user-agent)
     padding: 0;
     list-style: none;     (the list-style must be set for the ul/ol tag)
 }
 .main-nav__item {         (each li tag)
     display: inline-block;
-    margin: 0 16px;
+    margin: 0 16px;          (spacing between the header items)
 }
 .main-nav__item a {       (each anchor tag in the header)
     text-decoration: none;
@@ -250,7 +251,6 @@ For a box (0,0) lies at the top left. So offsetX means how much to the right?, o
 Example:
 box-shadow: 10px 20px;     10 to the right and 20 downwards
 box-shadow: 10px -20px;    10 to the right and 20 upwards
-
 
 To remove default setting of a ul/ol list of items-
 article.plan-container ul {
@@ -270,23 +270,23 @@ Basic button CSS
 	border-radius: 10px;
 	cursor: pointer;
 }
-Also add CSS for :hover and :active of the button (same CSS for both should do)
+Also add CSS for :hover and :active (i.e. on click) of the button (same CSS for both should do)
 button:focus {
 	outline: none;
 }
 
-To view the box/outline of any element, in chrome, select the element in the HTML part and then in the CSS part, force the state="focus" in the dev tools. It will highlight the box of the element.
-Outline: It is the non-existant but thin line between the border and the margin.
+Generally for <button> on state=focus, the user-agent adds CSS (button:focus) to add an outline to them.. you want to override this.
+To view the box/outline of any input element (like a button element), in chrome, select the element in the HTML part and then in the CSS part, force the state="focus" in the dev tools. It will highlight the box of the element.
+Outline: It is the non-existant but thin line between the border and the margin. (like if border-box had a line)
 Outlines never take up space (unlike a border), as they are drawn outside of an element's content (box).
-Use the property "outline" to set width/style/color and also set offset.
-Generally for <button> on focus, the user-agent adds CSS to add an outline to them.. you want to override this.
+Use the property "outline" to set width/style/color and also set offset. Or just do outline:none
 
 How to convert an element to a perfect circle? The element could have an img/a inside it...
-{
+div {
 	width: 100px;
 	height: 100px;
 	border: 2px solid red;
-	border-radius: 50%      (this creates a perfect circle)
+	border-radius: 50%       (this creates a perfect circle)
 	margin: auto             (circle is centered inside the box)
 }
 
@@ -294,64 +294,65 @@ Folder Structure:
 shared.css  -  This will have all the header/footer/button generalised css for the whole website. Any universal selectors, body selectors etc.
 page1.css - just the css for the content of this page
 page2.css - just the css for the content of this page... and so on.
-On any page, first load the shared.css file, THEN load any other CSS file that will override/ set new values...
+On any page, first load the shared.css file, THEN load any other CSS file that will override/set new values on top of the existing shared.css values...
 
-Float: Overwrite the positioning of an element, by taking it out of the document flow and place it anywhere on the page. Meaning that right/left part of the container is blocked for this element. The rest of the container follows the usual dom flow. The subsequent elements will TAKE this one's place..
+Float: Overwrite the positioning of an element, by taking it out of the document flow and place it anywhere on the page. Meaning: the right/left part of the container of this element is blocked for this element. The rest of the container follows the usual dom flow. The subsequent elements will TAKE this one's place..
 The float CSS property places an element on the left or right side of its container, allowing text and inline elements to wrap around it. The element is removed from the normal flow of the page, though still remaining a part of the flow. It is shifted to the left, or right, until it touches the edge of its containing box, or another floated element.
 The only advantage of "float" is making text wrap around an image....
+Float is rarely used nowadays.
 
 {clear: both}      (hacky fix for elements after a floated tag)
 When this applied to any element, if clears the float to the right and to the left. Meaning this WILL NOT wrap, and anything inside this or after this element, will appear after the floated element.
 So just a create an empty div after the floated div, and apply this CSS to that div.
 
-Document Flow: The default positioning behaviour of html elements. This can be changed by "position". Elements can remain in the document flow or be excluded from it.
+-------------------------------------------------------------
+Document Flow: The default positioning behaviour of html elements in the DOM (document). Elements can remain in the document flow or be excluded from it by using the 'position' property.
 Positioning context: Defines the anchor point for your position change.
->the viewport for fixed
->another element for absolute
->the element itself for relative
->the viewport and another element for sticky
+>fixed: the viewport
+>absolute: ancestor element (or the <html> element)
+>relative: the element itself
+>sticky: the viewport and ancestor element
 
 Positioning: How to change the position of elements
-The positon property of each html tag, by default has a value of "static", meaning, follow the document flow.. (normal way). But you can change the position of a html element with any of these values.
-top/bottom/left/right : how much distance FROM the top/bottom/left/right should the top/bottom/left/right of the element (box+margin) be moved.
+The positon property of each html tag, by default has a value of "static", meaning, follow the document flow.. (normal way). But you can change the position of a html element with any of these css properties:
+top/bottom/left/right: how much distance FROM the top/bottom/left/right should the top/bottom/left/right of the element (box+margin) be moved.
 There are five kinds of position values:
->static
+1)static
 	the default value. Here if you set top/bottom/left/right, they have no effect.
 
->fixed & absolute
-	For both of these-
+2)3)fixed & absolute
+	For both of these- 2 things happen
 	>The element is removed from the normal document flow, and no space is created for the element in the page layout.
-	>So other elements will takes it's place AS IF it never existed.
-	>The element now becomes like an "inline-block" element, meaning it takes as less width as it needs, but you can also change it's width.
+	So other elements will immediately take it's place AS IF it never existed. And this one will appear on top of others.
+	>The element now becomes like an "inline-block" element (block/inline change to inline-block), meaning it takes as less width as it needs, but you can also change it's width.
+	SO: the moment you put it for an element, even without putting top/bottom/left/right, the element is immediately removed from the dom flow, it becomes inline-block and it is just randomly floating on top of its siblings/nearby elements... until you give it a position.
 
-	>fixed:  Where should this box+itsMargin be relative to the viewport? (You might want to set box-sizing=border-box, when you set width to 100% etc.)
-	>absolute:  Distance from it's parent container
-	If none of it's ancestors have a 'position' property than it's position is relative to the <html> tag. Or else it's position is relative to the nearest parent who has the "position" property defined (not = static, but ideally that value is 'relative' and no top/etc value specified for it).
+	>fixed: Where should this margin-box (box+margin) be relative to the viewport? (You might want to set box-sizing=border-box, when you set width to 100% etc.)
+	>absolute: Where should this margin-box (box+margin) be relative to it's ancestor
+	If none of it's ancestors have a 'position' property, then it's position is relative to the <html> tag. Or else it's position is relative to the nearest parent who has the "position" property defined (not=static, but normally that value is 'relative' and no top/etc value specified for it).
+	So absolute, just means some absolute movement w.r.t to you parent container's final position. (the parent will have position=relative). Adding the position property with a value different from static to a parent element will change the child's positioning context if the child has a position value of absolute.
 
->relative & sticky
-	For both of these-
+4)5)relative & sticky
+	For both of these
 	>The element is NOT removed from the normal document flow.
-	>The element is positioned according to the normal flow of the document, thus, the space given for the element in the page layout is the same as if position were static.
+	The element is positioned according to the normal flow of the document, thus, the space given for the element in the page layout is the same as if position were static.
+	SO: the moment you put it for an element, even without putting top/bottom/left/right, nothing moves or breaks. You just have to give some value now.
 
 	>relative: distance from it's normal position
-	Then the offset is applied relative to itself based on the values of top, right, bottom, and left. The offset does not affect the position of any other elements, this one just appears in front of the others.
-	>sticky: distance from viewport, but remain inside the parent container content (pretty new feature)
-	The offset is the distance of the element's BOX  (not box+margin) from the viewport. It is stuck to the viewport until the parent's CONTENT scrolls out of the viewport.
+	Then the offset is applied relative to itself based on the values of top, right, bottom, and left. The offset does not affect the position of any other elements, this one just appears in front of (on top of) the others.
+	>sticky: distance from viewport, but remain inside the parent container content (pretty new feature). A hybrid of fixed and relative.
+	The offset is the distance of the element's border-box  (not margin-box) from the viewport. When scrolling, if this element comes near the viewport border, it will stay this top/right/bottom/distance away from it while still being inside the parent container. If the parent container starts to move out of the viewport, this element will also move out of the viewport along with it.
 
-For both fixed and absolute, the moment you put it for an element, even without putting top/bottom/left/right, the element is immediately removed from the dom flow, it becomes inline-block and it is just randomly floating on top of its siblings/nearby elements.. until you give it a position.
-So absolute, just means some absolute movement w.r.t to you parent container's final position. (the parent will have position=relative). Adding the position  property with a value different from static  to a parent element will change the child's positioning context if the child has a position value of absolute.
-
-For relative and sticky, the moment you put it for an element, even without putting top/bottom/left/right, nothing moves or breaks. You just have to give some value now.
-
-Stacking Context: z axis postioning. "0" is normal.
+Stacking Context: z axis postioning. "0" is normal. Stacking context is an important concept worth reading about.
 By default, every html tag has a z-index of "auto". (which means zero).
 Things in the front have a higher z-index than thing that go in the back.
 z-index has no effect on html tags that don't have "postion" set , or whose position is set to "static",
 If two elements, both have position=fixed, and z-index=same. The one that came later in the html will appear on top of the one that came earlier in the html.
 
-z-index value is used only for all siblings within the same parent. If a cousin has a z-index of 5 and you have a z-index of 1000. the cousin my still appear on top of you, because your parent's z-index is lower than your cousin parent's z-index.
-Note: this is only when both parent's have position defined (preferably = relative). when position is defined and set to fiixed, you are creating a new stacking context for that element and all it's children. If position is defined and set to relative/absolute, a new stacking context is created ONLY IF you immediately specify a z-index for that element.
-
+z-index value is used only for all siblings within the same parent. If a cousin has a z-index of 5 and you have a z-index of 1000. the cousin might still appear on top of you, because your parent's z-index is lower than your cousin parent's z-index.
+Note: this is only when both parent's have position defined (preferably = relative).
+When position=fixed, it automatically creates a new stacking context for that element and all it's children.
+When position=relative/absolute, a new stacking context is created ONLY IF you immediately specify a z-index for that element (or else it will just be 0).
 
 Want a fixed navigation bar?
 nav#main {
@@ -364,13 +365,13 @@ nav#main {
 If you dont' mention top=0, left=0 for "fixed", then the element will just be placed in some left part of it's container, probably overlapping one of it's former siblings.
 
 Overflow: Since you are moving elements out of the parents with "relative". On the parent, you can set overflow:hidden, meaning if the child moves relatively outside the parent, then hide it.
-caveat: when you apply overflow:hidden on the <body> tag, it removes it from the body tag and put is on the <html> tag. To make it work, you have to manually add overflow:hidden to both <body> and <html>
-Overflow has nothing to do with children that are positioned "fixed" or "absolute", because these are removed from DOM in the first place.
-Overflow also applies to ANY element, whose text is much larger than the provided "width".
+>Caveat is when you apply overflow:hidden on the <body> tag, it removes it from the body tag and puts it on the <html> tag. To make it work, you have to manually add overflow:hidden to both <body> and <html>
+>Overflow has nothing to do with children that are positioned "fixed" or "absolute", because these are removed from DOM in the first place. (and such elements have no connection with their parent or any ancestor)
+>Overflow also applies to ANY element, whose text is much larger than the provided "width".
 
 Move something to the bottom left of it's parent?
 parent {
-	position: relative;      //if you don't add this to the parent, it just does it relative to the <html> element (i.e for absolute)
+	position: relative;    //if you don't add this to the parent, it just does it relative to the <html> element (i.e for absolute)
 }
 child {
 	position: absolute;
@@ -380,115 +381,150 @@ child {
 
 -------------------------------------------------------------------------------------------------
 BACKGROUND
-If you specify both background-image and background-color, whichever was declared first, that one will appear on the top.
-Spaces not covered by a background image are filled with the background-color property, and the background color will be visible behind background images that have transparency/translucency.
+background
+	background-color, background-image, background-origin, background-position, background-repeat, background-clip, background-attachment, background-size
+
+If you just use the shorthand "background" property, it will set default values for all 7 background properties. Be careful.
+
+If you specify both background-image and background-color, whichever was declared first, that one will appear on the top, i.e image/color will appear behind the image/color (in the empty spaces or if there if the top one is transparent)
 
 background-size: 50% 50%
 This will create 4 images within the square.. You are using 50% height and 50% width of the parent. SO there will be a final of 4 images of equal size..
 background-size: auto 100%
 Whatever happens, occupy 100% of the height, but maintain the aspect ratio of the image (auto for width does this)
-"cover" is a very good option for "background-size". It ensures that there is no whitespace.
+"cover" is a very good option for "background-size". It ensures that there is no whitespace in the container.
 "contain" ensure that the image is never cropped. In this case you will get whitespace. (but make sure you keep no-repeat for this one..)
 
 background-position: left 10% bottom 20%  (crop 10% of the left and 20% of the bottom!)
 
-Sometimes you want to put a linear-gradient() on top of your background-image, just to add some glow/effects. Just declare it before the url(xyz.png) in the "background-image" property.
+It is harder to style <img> tags than to to style <div> that have a background image! So always try to add the images via css background.
+>Default behaviour: If you put an <img> no matter what the parent tag's height is, the image will load in full size. To set the image size, set the height/width directly on the <img> tag, putting height/width on the container won't work.
+>Use only px for <img> height/width, and not %. If you say 100% height, it is not 100% height of container, but 100% (full size) of the image itself. SO % won't work if the parent is an inline element, % works if the parent is an inline-block element.
 
-Remember: if you just use the shorthand "background" property, it will set default values for all 7 background properties. Be careful.
+Gradients count as images. In background, you can declare multiple images (seperated by comma), but you are allowed only one solid color. Example: have a light transparent linear-gradient on top of your background image just to add some glow/effects. Declare it before the url(xyz.png).
 
-It is harder to style <img> tags than to to style <div> that have a background image! So always try to add the images via css..
-Default behaviour: If you put an <img> no matter what the parent tag's height is, the image will load in full size. To set the image size, set the height/width directly on the <img> tag. Also use only px not % (% won't work if the parent is an inline element, % works if the parent is an inline-block element.)
+linear-gradient(direction/angle, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")
+Directions -
+to left | to right | to top | to bottom | to left top | to right top | so on..
+Angle - 0 to 180
 
-The filter CSS property has a lot of functionality. It is like a photo-editor within css.
-blur, brightness, contrast, drop-shadow, grayscale, hue, invert, opacity, saturation, sepia etc.
+	Default is 'to bottom': linear-gradient(to bottom,red,blue) will give red on top fading to blue at bottom. same as (l-g(red,blue))
+	linear-gradient(to left bottom,red,blue) will give red on top-right fading to blue at left-bottom.
+	For degrees, think of clock, 0 is 12, 90 is 3, 180 is 6. If you give 0, the coloring will go from 6->0 (bottom to top), if you give 180, coloring will go 0->6 (top to bottom)
+	linear-gradient(180deg,red,blue) will give red on top fading to blue at bottom.
+	linear-gradient(30deg,red,blue) will give red at 7 o'clock fading to blue at 1 o'clock.
+	linear-gradient(red 70%, blue 80%, green 90%) Red must be there 70% of the way, blue should start at 80% of the way.
+	linear-gradient(red 70%, blue 20%, green 90%) blue should start at the 20% itself, but the red will overlap it. So at the 70% mark, blue would have already been pure blue (it will be sharp change/transtion from pure red to pure blue)
+
+radial-gradient(circle/ellipse <radius> at <top/bottom/left/right>, <color1> [optional percent], <color2>, <how-many-ever-colors> or even "transparent")
+Default shape is ellipse.
+(circle 100px at 20% 50%, grey, transparent);
+
+	radial-gradient(circle at top, red, blue, green) red circle in the middle top, radially going to blue & then green
+	radial-gradient(circle at top left, red, blue, green) red circle at top-left, radially going to blue & then green
+	radial-gradient(circle at 20% 50%, red, blue, green) red circle at 20% from left edge 50% from top edge, radially going to blue & then green
+	radial-gradient(circle 20px at left, red, blue, green) red circle of 20px diameter at left edge, radially going to blue & then green
+
+The filter CSS property has a lot of functionality. It is like an instagram photo-editor for each html element.
+blur(), brightness(), contrast(), drop-shadow(), grayscale(), hue-rotate(), invert(), opacity(), saturation(), sepia() etc.
 IE does not support filter.
 
 SVG: Scalable Vector Graphics: A XML based markup language to create two dimensional images. i.e it is a text based graphical language.
-In your html you add a huge <svg> tag to it.
+In your html you add a huge <svg> tag to it. This will translate to a cartoon like image on the page.
 With CSS you can change some of the markups.
 
 -------------------------------------------------------------------------------------------------
 SIZES AND UNITS
-If you hardcode font-size in "px", then, even if the browser changes font-size in settings, this font will not change it's size.
 px - pixels     (cm,mm are rarely used)
 % - percentage
 em -  a font size
 rem - root em (font size)
 vh - viewport height
 vw - viewport width
+
 Which properties use these?
 font-size
 padding, border, margin, width, height
 top, bottom, left, right
 
 How is size calculated?
-Absolute Lengths : These mostly ignore any user/browser settings. Like hardcoding "px" values.
-px, cm, mm
-Viewport Lengths : adjust to the current viewport
-vh, vw, vmin, vmax
-Font-Relative Lengths : adjust to the default font size
-rem, em
-Percentages : some percentage of something else
-"auto" - for margin
+>Absolute Lengths : These mostly ignore any user/browser settings. Like hardcoding "px" values. [px, cm, mm]
+>Viewport Lengths : adjust to the current viewport [vh, vw, vmin, vmax]
+>Font-size-Relative Lengths : adjust to the default font size i.e font-size based [rem, em]
+>Percentages : some percentage of something else
+>"auto" - for margin
 
-Percentages: For a specific element, it depends on the element's "position" value...
+Percentage Unit: For a specific element, it depends on the element's "position" property
 >if position=fixed, width=80% means 80% of the viewport (not the parent element)
->if position=absolute, width=80% means 80% of some ancestor's content+padding (not box). i.e closest ancestor who has position=relative/absolute/fixed/sticky  (not static)
->if position=static/relative, width=80% means 80% of some ancestor's content (not padding,box), i.e the closest ancestor which is a block level element (full width)
+>if position=absolute, width=80% means 80% of some ancestor's content+padding value (padding-box). i.e closest ancestor who has position=relative/absolute/fixed/sticky  (not static)
+>if position=static/relative, width=80% means 80% of some ancestor's content (content-box), i.e the closest ancestor which is a BLOCK level element.
 Note: So it is not always immediate parent, it is closest ancestor that satisfies the condition.
 
-Using the chrome dev-tools, use the pointer and hover over any element it will give you width-px X height-px, these are dimensions of the BOX, you can look at the box and see if content+padding+borders adds up to this value that you see on hover.
+The above works for width, but for height:
+>if position=absolute, height=80% means 80% of some ancestor's content+padding value (padding-box). i.e closest ancestor who has position=relative/absolute/fixed/sticky  (not static). If such a container does not exist, it will use the viewport.
+>if position=static/relative, height=80% means 80% of some ancestor's content (content-box), i.e the closest ancestor which is a BLOCK level element AND has position=static/relative. If such an element does not exist, then either make it exist of ensure every ancestor of it has some height specfied to it right from <html> -> <body> -> all the way to this child element.
 
-height=100% works only if the (immediate, i think) ancestor has height=100% hardcoded to it... (TBD)
+Using the chrome dev-tools, use the pointer and hover over any element it will give you width-px X height-px, these are dimensions of the border-box, you can look at the box and see if content+padding+borders adds up to this value that you see on hover.
+
+If font-size is in px:
+>if user changes default browser font-size from medium to large, the fonts on your website won't get bigger because you have hardcoded the size in px. (use rem/em for it to change)
+>if user change the size of the window/view-port, the visible font-size of the page does not change
+>if user zoom-in/out, the font sizes changes (use rem/em to avoid this)
+
+body {font-size=75%}    This means 75% of the browser default  (people can change the browser defaults in settings)
+Don't try to use "px" for font-size. You don't want to hardcode and fix the size for the user. It must be changeable by the user.
 
 Make the background fade when overlays appear on the website?
-.backdrop {           (child of the body tag)
+.backdrop {           (child of the <body> element)
 	position: fixed;
 	display: none/visible;  (based on JS code)
 	top: 0;
 	left: 0;
 	z-index: 100;
 	width: 100%;
-	height: 100%      (make sure even <body> has height=100%)
+	height: 100%      (make sure even <body> has height=100%) (or use 100vh and 100vw)
 	background: grey/transparent
 }
 
-Use width=30% along with max-width=300px, min-width=50px For your PLP grid elements. This makes sure your images/elements don't get too small or too big.
+Combination of px and %:
+.image-container {
+	width: 65%;
+	max-width: 600px;
+}
+For your PLP grid elements, use width=30% along with max-width=300px, min-width=50px. This makes sure your images/elements don't get too small or too big.
 
-font-size=75%    This means 75% of the browser default  (people can change the browser defaults in settings)
-Don't try to use "px" for font-size. You don't want to hardcode and fix the size for the user. It must be changeable by the user.
-
-<h1> to <h6>, the user-agent will add a font-size stylesheet for these elements: h1 is 2em, h2 is 1.5 em, so on. So this style sheet will overwrite you inheritance values. <p> have 1em
+<h1> to <h6>, the user-agent will add a font-size stylesheet for these elements: h1 is 2em, h2 is 1.5 em, so on (<p> have 1em). So this stylesheet will overwrite your inheritance values. Infact: if the inheritance value is 20px, an h2 would be 1.5*20px.
 To see the font-size of any element, click the element and see the "Computed" tab next to the "styles" tab, it will show you the final applied values for all CSS properties for the chose element.
 With em, things will multiply, if one says 1.2 em, and child has 1.5em, then child will have 1.2*1.5em. So use em scarsely.
 
-Rem is safer, there is only reference, the root (i.e the default browser setting font size sets the default size for the root element, i.e <html> element). You can use rem for non font-size CSS properties too, but it's value is always relative to the root <html> element font size.
 The default font-size of a browser = 1rem = 16px.
-So convert all length units from px to rem wherever it makes sense. Things like border, box shadow, border-radius these can remain hardcoded in px, you don't want these to increase too much..
+>Rem is safer, there is only reference, the root (i.e the default browser setting font size sets the default size for the root element, i.e <html> element). You can use rem for non font-size CSS properties too, but it's value is always relative to the root <html> element font size.
+>convert all length units from px to rem wherever it makes sense.
+Things like border, box shadow, border-radius these can remain hardcoded in px, because you don't want zoom-in/out or browser-settings changes to affect these distances.
 
 vw and vh: What percent of the viewPort height and width is this length value.
-100vw means 100% the width of viewport, 80vh means 80% the height of the view port..
+	100vw means 100% the width of viewport, 80vh means 80% the height of the view port height..
 vmin: what percent of the viewport height OR width (whichever is currently the smaller value)
-80vmin means 80% of the vh OR vw , depending on which one is the smaller one
+	80vmin means 80% of the vh OR vw , depending on which one is the smaller one
 vmax: what percent of the viewport height OR width (whichever is currently the larger value)
 Internet Explorer does not support vmax
 Using vw or vh on windows, does not include the scrollbars of the viewport.
-	Add overflow-x: hidden;  to the <body> selector  to hide the horizontal scrollbar (or overflow-y: hidden  to hide the vertical scrollbar)
+	Add overflow-x: hidden;  to the <body> selector  to hide the horizontal scrollbar (or overflow-y: hidden to hide the vertical scrollbar)
 	Alternatively you could also use the ::-webkit-scrollbar pseudo element. Simply add the following code to the shared.css file:
 	body: :-webkit-scrollbar {
 			width: 0
 	}
 
-Which length unit to choose? (recommended units to use)
-font-size (for the root element) : some % or nothing
+Which length unit to choose? ('recommended' units to use)
+font-size (for the root element): some % or nothing
 font-size (any element in general):  rem   (and then em for children only)
 padding, margin:  rem
 border: px
 width, height: vh/vw OR % (i.e % of containing block)
-max-width, mix-height: px OR vh/vw or %
+max-width, min-height: px OR vh/vw or %
 top, bottom, left, right: %
 
-To center elements: margin:auto !!!   It will put equal margin on both sides left-right and up-down.
+To center elements: margin:auto !!! It will put equal margin on both sides left-right and up-down.
 Or else set (margin-left:auto & margin-right:auto) OR (margin-top:auto & margin-bottom:auto)
 This works only for block level elements with an explicitly assigned width.
 
@@ -501,7 +537,7 @@ b.style.display = 'block';   (you are now setting an inline style value, obvious
 In this way, you can set ANY inline CSS style property
 
 c.addEventListener('click', function(){
-	   change-some-element-css
+	   change-some-element-css-here
 });
 Example: Clicking some button, should change the display of the backdrop from "none" to "block".. It should also change the display of some overlay/modal from "none" to "block".
 then, clicking some button on the modal/overlay OR clicking the backdrop should change the display of BOTH the modal and the overlay back to "none".
@@ -531,7 +567,7 @@ b.className = 'some-new-class-name';  // overwrites the class of this element
 b.classList.add('some-class-name');   // appends this class to that element
 Other things you can do: b.classList.contains(), .remove(), .toggle(), .toString()
 
-Note: All two worded CSS property names, are camelCase words in JS !!
+Note: All two worded CSS property names, are camelCase words in JS !! CSS is case insensitive, but JS is sensitive.
 border-radius        -> b.style.borderRadius
 padding-top          -> b.style.paddingTop
 border-color         -> b.style.borderColor
@@ -705,6 +741,7 @@ Serif is a little tick that appears on each edge of the alphabet.... there are m
 San-Serif - this removes the serifs for each alphabet.. there are many sans serif font families
 
 In your browser settings, you can select a font-size and then a default font-family for each Generic Family. If the browser did not find any of the font-families specified in the CSS, it will use a default one that you selected in your settings.
+Browser Settings -> Fonts -> For each font type a family is chosen by default. Example: Standard (times), Serif (times), Sans Serif (Helvetica), Fixed Width i.e mono-space (courier). You can change these in your browser.
 
 For any element on the page: this is what is used to display its text
 >Font Family if it is specified
@@ -1133,3 +1170,13 @@ text-transform: capitalize;
 to capitalize the first alphabet of the element
 
 ---------
+MDN notes
+
+A block element can have margin and other spacing values applied to it. In contrast, images are inline elements. It is not possible to apply margin or spacing values to inline elements. So to apply margins to the image, we must give the image block-level behavior using display: block;.
+
+margin:auto is a special value that divides the available horizontal space evenly between left and right (or top/bottom)
+
+
+If you restrict a box with a width or a height, CSS trusts you to know what you are doing. CSS assumes that you are managing the potential for overflow.
+
+The standard color system available in modern computers is 24 bit, which allows the display of about 16.7 million distinct colors via a combination of different red, green and blue channels with 256 different values per channel (256 x 256 x 256 = 16,777,216.)

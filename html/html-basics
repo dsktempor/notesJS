@@ -36,9 +36,9 @@ Hypertext Markup Language
 
 <table>
 <caption>
+<thead>
 <tbody>
-<thead> <th>
-<tr> <td>
+<th> <tr> <td>
 <tfoot>
 
 <dl>  <dd>  <dt>

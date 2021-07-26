@@ -1,4 +1,4 @@
-// Init LC problems
+// Easy LC problems
 
 //const { result, keys } = require("underscore");
 
@@ -11,22 +11,11 @@ Given nums = [2, 7, 11, 15], target = 9, Because nums[0] + nums[1] = 2 + 7 = 9,r
 // speed:96%
 var twoSum = function (nums, target) {
 	let cm = {};
-
 	for(i=0;i<=nums.length;i++){
 		let n = nums[i];
-
-		// first check if the complement exists
-		if (cm[target - n] !== undefined) {
-			return [cm[target - n], i]
-		}
-
-		// second store the value (this can't be above the complement check)
-		if(cm[n] === undefined) {
-			cm[n] = i;
-		}
-
+		if (cm[target - n] !== undefined) return [cm[target - n], i];
+		if (cm[n] === undefined) cm[n] = i;
 	}
-
 }
 
 //LC#0007 Diff:Easy
@@ -132,6 +121,7 @@ Input: "IX"       Output: 9
 Input: "LVIII"    Output: 58      Explanation: L = 50, V= 5, III = 3.
 Input: "MCMXCIV"  Output: 1994    Explanation: M = 1000, CM = 900, XC = 90 and IV = 4.
 */
+//basically you have these chars - I,IV,IX ,V, X,XL,XC, C,CD,CM, D, M
 //speed:86%
 var romanToInt = function (s) {
 	let sum=0;
@@ -162,6 +152,22 @@ var romanToInt = function (s) {
 	}
 	return sum;
 };
+//speed:20%, less code
+var romanToInt = function (s) {
+	let hm = { 'I':1, 'IV':4, 'IX':9, 'V':5, 'X':10, 'XL':40, 'XC':90, 'L':50, 'C':100, 'CD':400, 'CM':900, 'D':500, 'M':1000};
+	let sum = 0;
+	for (i = 0; i < s.length; i++) {
+		let curr = s[i];
+		let next = s[i + 1];
+		if(hm[curr + next]){
+			sum += hm[curr+next];
+			++i;
+		} else {
+			sum += hm[curr];
+		}
+	}
+	return sum;
+}
 //speed:97% - convert the string to array with s.split(''), use a switch case on 'c', instead of if-else-if
 
 //LC#0014 Diff:Easy
@@ -221,7 +227,7 @@ var isValid = function (s) {
 				break;
 		}
 	}
-	return stack.length===0;
+	return stack.length===0;  //important line (there should not be any pending open brackets)
 }
 
 //LC#0021 Diff:Easy Merge Two Sorted Lists
@@ -232,7 +238,7 @@ function ListNode(val, next) {
 	this.val = (val===undefined ? 0 : val)
 	this.next = (next===undefined ? null : next)
 }
-//A list list just has a root pointer alone. Return the root node of the new linked list.
+//A linked list just has a root pointer alone. Return the root node of the new linked list.
 // l1 and l2 are just pointers to the root notes of the lists...
 */
 //speed:85%
@@ -296,7 +302,7 @@ var removeElement = function (nums, val) {
 			nums[writingPoint] = nums[i];
 			writingPoint++;
 		} else {
-			continue; //if nums[i] is val, write over it at a later time
+			continue; //if nums[i] is val, write over it at a later time (i.e do not move the writing point)
 		}
 	}
 	return writingPoint;
@@ -343,13 +349,12 @@ const strStr = (haystack, needle) => {
 			if (j === needle.length - 1) 	return i - j;
 			j++;
 		} else {
-			i = i - j;
+			i = i - j;  //failed, move i back to that of the string..
 			j = 0;
 		}
 	}
 	return -1;
 };
-
 
 //LC#0035 Diff:Easy Search Insert Position
 /*
@@ -369,7 +374,7 @@ var searchInsert = function (nums, target) {
 	let beg = 0;
 	let end = nums.length-1;
 	let mid;
-	while (beg <= end) {         //This has to be <= and not <  !!!!!
+	while (beg <= end) {         //This has to be <= and not <          !!!!!
 		mid = Math.floor((beg+end)/2);
 		if(target === nums[mid]) return mid;
 
@@ -501,6 +506,25 @@ var plusOne = function (digits) {
 	}
 	return digits;
 };
+//worse way that works for any x that is 1 to 9
+var plusOne = function (digits, x) {
+	let len = digits.length;
+	let arr = digits.slice();
+
+	arr[len - 1] = digits[len - 1] + x;
+
+	if (arr[len - 1] >= 10) {   //only if there is carry the first time, then do the for loop
+		arr[len - 1] = arr[len - 1] % 10;
+		let c = 1;
+		for (i = len - 2; i >= 0; i--) {
+			arr[i] = digits[i] + c;
+			if (arr[i] >= 10) { arr[i] = arr[i] % 10, c = 1 }
+			else { c = 0 }
+		}
+		if (c > 0) arr = [c].concat(arr);
+	}
+	return arr;
+}
 
 
 //LC#0067 Diff:Easy Add Binary
@@ -522,12 +546,12 @@ var addBinary = function (a, b) {
 	let c = 0;
 
 	while (aEnd >= 0 || bEnd >= 0) {
-		let aa = a[aEnd] || 0;     //since one string is longer than the other, a[i]/b[i] might be undefined, so treat it as a zero, Example: "10101" + "11"
+		let aa = a[aEnd] || 0;     //since one string is longer than the other, a[i] OR b[i] might be undefined, so treat it as a zero, Example: "10101" + "11"
 		let bb = b[bEnd] || 0;
 		let sum = Number(aa) + Number(bb) + c;
 		if (sum === 2) { sum = 0; c = 1 }
 		else if (sum === 3) { sum = 1; c = 1 }
-		else c = 0;
+		else c = 0;   //means the sum is 0 or 1
 		ret = sum + ret;
 		aEnd--; bEnd--;
 	}
@@ -550,7 +574,7 @@ const mySqrt = function (x) {  //o(sqrt(n)s)
 	while (result * result <= x) result++;
 	return result - 1;
 };
-//speed:90%
+//speed:90% binary search
 var mySqrt = function (x) {
 	let lo = 0, hi = x;
 	while (lo < hi) {
@@ -558,12 +582,10 @@ var mySqrt = function (x) {
 		if (mid * mid === x) {
 			return mid;
 		}
-		if (x < mid * mid) {
-			hi = mid - 1;
-		} else {
-			lo = mid + 1;
-		}
+		if (x < mid * mid) hi = mid - 1;
+		else lo = mid + 1;
 	}
+	// If the number is not a perfect square, the binary search will come down to two numbers0 lo=8,hi=9,so mid=8, at the end of this iteration lo=9,hi=9 and it breaks out of the while loop (hi and lo are equal)
 	return x < hi * hi ? hi - 1 : hi;
 };
 
@@ -576,7 +598,7 @@ Note: Given n will be a positive integer.
 Input: 2   Output: 2   Explanation: There are two ways to climb to the top: 1 step + 1 step , 2 steps
 Input: 3   Output: 3   Explanation: There are three ways to climb to the top. 1 step + 1 step + 1 step, 1 step + 2 steps, 2 steps + 1 step
 */
-//total ways to get to n is total way to n-1  PLUS total way to n-2    (becuase the final step will either be from n-1 OR from n-2)
+//total ways to get to n is total way to n-1  PLUS total way to n-2    (becuase the final step will either be from n-1 OR from n-2, and that last step is part of the same WAY)
 //speed:40% leetcode
 var climbStairs = function (n) {
 	//base cases
@@ -604,7 +626,7 @@ function ListNode(val, next) {
 	this.next = (next===undefined ? null : next)
  }
 */
-//speed:55%
+//speed:55% my not so great solution
 var deleteDuplicates = function (head) {
 	if(!head) return head;
 
@@ -625,7 +647,7 @@ var deleteDuplicates = function (head) {
 	return head;
 };
 
-//solution by leetcode
+//leetcode: clean solution
 var deleteDuplicates = function (head) {
 	let cur = head;
 	while (cur !== null) {
@@ -698,16 +720,16 @@ Input:     1         1
 Output: false
 Definition for a binary tree node.
 function TreeNode(val, left, right) {
-this.val = (val===undefined ? 0 : val)
-this.left = (left===undefined ? null : left)
-this.right = (right===undefined ? null : right)
+	this.val = (val===undefined ? 0 : val)
+	this.left = (left===undefined ? null : left)
+	this.right = (right===undefined ? null : right)
 }
 You are given the two root nodes.
 */
-//speed:6%
+//speed:6% (run dfs or bfs and store the tree into array, then compare arrays)
 var isSameTree = function (p, q) {
 	if(!p && !q) return true;   //two empty trees are equal
-	if((!p && q) || (p && !q)) return false;  //one of the trees is empty
+	if((!p && q) || (p && !q)) return false;  //one of the trees is empty (or if(!p || !q))
 
 	let arr1 = [];
 	let arr2 = [];
@@ -840,9 +862,9 @@ var maxDepth = function (root) {
 			nodes.push('X');
 		}
 	}
-	return count+1;     //this is count+1 as the nodes ends up with [X], you need to count the previos layer that just finished
+	return count+1;     //this is count+1 as the nodes=[X] now, you need to count the previous layer that just finished
 };
-//speed:50%   leetcode solution
+//speed:50%   leetcode solution brilliant DP
 var maxDepth = function (n) {
 	if (n === undefined || n === null) {
 		return 0;
@@ -899,16 +921,14 @@ var levelOrderBottom = function (root) {
 	if (!root) return [];
 	let arr = [];
 
-	open(root, arr);
+	dfs(root, arr);
 
-	function open(n, arr, count = 1) {
-		if (arr.length < count) {
-			arr.unshift([n.val]);
-		}
+	function dfs(n, arr, count = 1) {
+		if (arr.length < count) arr.unshift([n.val]);  //if you are 4 levels down, you might have to start a new layer ...[n.val]
 		else arr[arr.length - count].push(n.val);
 
-		if (n.left) open(n.left, arr, count + 1);
-		if (n.right) open(n.right, arr, count + 1);
+		if (n.left) dfs(n.left, arr, count + 1);  //pass the child's layer number to the child
+		if (n.right) dfs(n.right, arr, count + 1);
 	}
 
 	return arr;
@@ -1094,16 +1114,6 @@ var hasPathSum = function (root, sum) {
 	let arrayOfSums = getLengthTillLeaf(root);
 	return arrayofSums.indexOf(sum) > -1;
 };
-//basic dfs traversal algo -
-let array = [];
-function dfs(n) {
-	array.push(n);
-	if (n.left !== null) dfs(n.left);
-	if (n.right !== null) dfs(n.right);
-}
-dfs(root);
-// return the array;
-
 //speed:96% ktk solution
 var hasPathSum = function (root, sum) {
 	if(!root) return false;   //special case
@@ -1123,7 +1133,6 @@ var hasPathSum = function (root, sum) {
 	dfs(root, 0);
 
 	return flag;
-
 }
 //speed:95% leetcode similar solution
 var hasPathSum = function (root, sum) {
@@ -1168,7 +1177,7 @@ var generate = function (numRows) {
 	}
 	return pt;
 };
-//speed: 99% leetcode solution  (think of it like a 2d matrix)
+//speed: 99% leetcode solution  (think of it like a 2d matrix, but not a square matrix)
 var generate = function (numRows) {
 	var pascal = [];
 	for (var i = 0; i < numRows; i++) {
@@ -1218,7 +1227,7 @@ var getRow = function (rowIndex) {
 	var row = [1];
 
 	for (var i = 1; i <= rowIndex; i++) {
-		for (var j = i; j > 0; j--) {
+		for (var j = i; j > 0; j--) {  //j should not be zero, the zeroth index will always be 1 (don't need to touch it again)
 			if (j === i)
 				row[j] = 1;  //the last element of each row is 1, so right this one first.
 			else
@@ -1266,7 +1275,7 @@ var maxProfit = function (prices) {
 	return maxProfit;
 };
 
-//LC#00122 Diff:Easy Best Time to Buy and Sell Stock II
+//LC#0122 Diff:Easy Best Time to Buy and Sell Stock II
 /*
 Say you have an array prices for which the ith element is the price of a given stock on day i.
 Design an algorithm to find the maximum profit. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).
@@ -1281,7 +1290,7 @@ Input: [1,2,3,4,5]        Output: 4
 Input: [7,6,4,3,1]  Output: 0
       Explanation: In this case, no transaction is done, i.e. max profit = 0.
 */
-//basically add all the numbers when they are on an increasing trend.
+//basically add all the diffs of numbers when they are on an increasing trend.
 //speed:64%
 var maxProfit = function (prices) {
 	let runningSum = 0;
@@ -1337,17 +1346,14 @@ Input: [4,1,2,1,2]   Output: 4
 */
 //speed:70%
 var singleNumber = function (nums) {
-	//use hashmap
 	let hm = {};
-	for (i = 0; i < nums.length; i++) {
-		let n = nums[i];
-		hm[n] = !hm[n] ? 1 : ++hm[n];   //this can't be hm[n]++, it won't work!!!!
+	for(x of nums) {
+		hm[x] = hm[x] + 1 || 1;
 	}
 	for (k of Object.keys(hm)) {
 		if (hm[k] !== 2) return k;
 	}
 	return false;
-
 };
 //speed:60%  zero extra space
 var singleNumber = function (nums) {
@@ -1355,12 +1361,12 @@ var singleNumber = function (nums) {
 	// a ^ b ^ c ^ a ^ b = c
 	let a = 0;
 	for (i = 0; i < nums.length; i++) {
-		a = a | nums[i];
+		a = a | nums[i];   //or use ^
 	}
 	return a;
 }
 
-//LC#00141 Diff:Easy
+//LC#0141 Diff:Easy
 /*
 Given a linked list, determine if it has a cycle in it.
 The LL is zero indexed. To represent a cycle in the given linked list, we use an integer pos which represents the position in the linked list where tail connects to. If pos is -1, then there is no cycle in the linked list.
@@ -1400,13 +1406,13 @@ var hasCycle = function (head) {
 	return false;
 }
 
-//LC#00155 Diff:Easy Min Stack
+//LC#0155 Diff:Easy Min Stack
 /*
 Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
 push(x) -- Push element x onto stack.
 pop() -- Removes the element on top of the stack.
 top() -- Get the top element.
-getMin() -- Retrieve the minimum element in the stack.
+getMin() -- Retrieve the minimum element in the stack. (not popping it, just reading it)
 
 Your MinStack object will be instantiated and called as such:
 var obj = new MinStack()
@@ -1418,15 +1424,15 @@ var param_4 = obj.getMin()
 //speed:30%
 var MinStack = function () {
 	this.arr = [];
-	this.min = Infinity;
+	this.push = function() {
+		this.arr.push(x);
+		this.min = Math.min(this.min, x);
+	}
 };
-MinStack.prototype.push = function (x) {
-	this.arr.push(x);
-	this.min = Math.min(this.min, x);
-};
+MinStack.prototype.min = Infinity;
 MinStack.prototype.pop = function () {
 	this.arr.pop();
-	this.min = Math.min(...this.arr);
+	this.min = Math.min(...this.arr);  //this is O(n), too slow
 };
 MinStack.prototype.top = function () {
 	return this.arr.length === 0 ? null : this.arr[this.arr.length - 1];
@@ -1477,7 +1483,7 @@ MinStack.prototype.getMin = function () {  return this.minStack[this.minStack.le
 /*
 Write a program to find the node at which the intersection of two singly linked lists begins.
 So the beggining of the two linked lists are different, but at some node, they both meet and from that node onwards the list is the same. (common list of nodes)
-Input: intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3      Output: Reference of the node with value = 8
+Input: intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3      Output: Reference to the node with value = 8
 Input Explanation: The intersected node's value is 8 (note that this must not be 0 if the two lists intersect). From the head of A, it reads as [4,1,8,4,5]. From the head of B, it reads as [5,0,1,8,4,5]. There are 2 nodes before the intersected node in A; There are 3 nodes before the intersected node in B.
 
 Input: intersectVal = 2, listA = [0,9,1,2,4], listB = [3,2,4], skipA = 3, skipB = 1
@@ -1537,13 +1543,13 @@ var getIntersectionNode = function (headA, headB) {
 
 	return null;
 };
-//speed: 50%  crazy leetcode solution. Traverse to the end of both lists, when you reach the end of one, switch to the start of the other list. Both your pointers will no magically meet at the intersection point.
+//speed: 50%  crazy leetcode solution. Traverse to the end of both lists, when you reach the end of one, switch to the start of the other list. Both your pointers will now magically meet at the intersection point.
 var getIntersectionNode = function (headA, headB) {
 	if (!headA || !headB) return null;
 	var curA = headA;
 	var curB = headB;
 	while (curA != curB) {
-		if(!curA && !curB) return null;
+		if(!curA && !curB) return null;  //this is when the both the lists dont' intersect at all, curA goes through list A and list B. (curB too)
 		curA = curA == null ? headB : curA.next;
 		curB = curB == null ? headA : curB.next;
 	}
@@ -1565,7 +1571,7 @@ const getIntersectionNode = (headA, headB) => {
 	return null;
 };
 
-//LC#00167 Diff:Easy Two Sum II - Input array is sorted
+//LC#0167 Diff:Easy Two Sum II - Input array is sorted
 /*
 Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
 The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2.
@@ -1585,7 +1591,7 @@ const twoSum = (numbers, target) => {
 	return [p1 + 1, p2 + 1]
 }
 
-//LC#00168 Diff:Easy Excel Sheet Column Title
+//LC#0168 Diff:Easy Excel Sheet Column Title
 /*
 Given a positive integer, return its corresponding column title as appear in an Excel sheet. For example:
 1 -> A
@@ -1645,11 +1651,11 @@ var majorityElement = function(nums) {
     const i = Math.floor(nums.length/2);
     return nums[i];
 };
-//speed:98%   leetcode solution: Boyer-Moore Voting Algorithm
+//speed:98%   leetcode solution: Boyer-Moore Voting Algorithm (will give you the candidate if he has more than 50% votes)
 var majorityElement = function(nums) {
 	let count = 0, candidate = 0
 	for (let num of nums) {
-		if (count == 0) candidate = num;
+		if (count == 0) candidate = num;  //your count will come back to zero ONLY IF the candidate is not the majority...
 
 		if(candidate===num) ++count;
 		else --count;
@@ -1770,7 +1776,6 @@ Table: Address  (AddressId is the primary key column for this table.)
 | City        | varchar |
 | State       | varchar |
 +-------------+---------+
-
 Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people: FirstName, LastName, City, State
 */
 //speed:58%
@@ -1952,7 +1957,7 @@ var rotate = (nums, k) => {
         start++
     }
 };
-//another solution: reverse the numbers thrice,
+//another solution: reverse the numbers exactly thrice,
 /*
 Let n = 7n=7 and k = 3k=3.
 Original List                   : 1 2 3 4 5 6 7
@@ -2137,7 +2142,7 @@ var rob = function(nums) {
 			maxAtOneBefore = maxAtCurrent;
 	}
 
-	return maxAtOneBefore;
+	return maxAtOneBefore;  //which is the last maxAtCurrent (the last house)
 };
 
 //LC#0202 Diff:Easy Happy Number
@@ -2220,7 +2225,6 @@ while(curr && curr.next) {
 return head;
 };
 
-
 //LC#0204 Diff:Easy Count Primes
 /*
 Count the number of prime numbers less than a non-negative number, n.
@@ -2241,6 +2245,7 @@ var countPrimes = function(n) {
 	}
 	return hash.filter(x=>x).length;
 };
+
 //LC#0205 Diff:Easy Isomorphic Strings
 /*
 Given two strings s and t, determine if they are isomorphic. Return true or false.
@@ -2526,7 +2531,7 @@ function invertTree(root) {
 function invertTree(root) {
 	const stack = [root];
 	while (stack.length) {
-		const n = stack.pop();
+		const n = stack.pop();  // this is POP !!  (stack)
 		if (n != null) {
 			[n.left, n.right] = [n.right, n.left];
 			stack.push(n.left, n.right);
@@ -2538,7 +2543,7 @@ function invertTree(root) {
 function invertTree(root) {
 	const queue = [root];
 	while (queue.length) {
-		const n = queue.shift();
+		const n = queue.shift();  // this is SHIFT !!   (queue)
 		if (n != null) {
 			[n.left, n.right] = [n.right, n.left];
 			queue.push(n.left, n.right);
@@ -2786,7 +2791,7 @@ var isAnagram = function (s, t) {
 var isAnagram = function (s, t) {
 	return s.split('').sort().join('') === t.split('').sort().join('');
 }
-//leetcode solution
+//leetcode solution, use a single map
 function isAnagram(s, t) {
 	const map = {};
 	s.split('').map(c => map[c] = map[c] ? map[c] + 1 : 1);
@@ -2839,7 +2844,7 @@ var binaryTreePaths = function (root) {
 	return arrOfPaths;
 
 };
-// speed
+// leetcode solution using string.. (which is better, you don't have to create and send a copy of the array to the child)
 var binaryTreePaths = function (root) {
 	if (!root) return []
 
@@ -3003,13 +3008,13 @@ var moveZeroes = function (nums) {
 	 while(reader<nums.length && nums[reader]===0) ++reader;
 
 	 if(reader<nums.length) nums[writingPoint] = nums[reader];
-	 else nums[writingPoint] = 0;    //at some point reader will be way past nums.length, just ingore it
+	 else nums[writingPoint] = 0;    //at some point reader will be way past nums.length, just ignore it
 
 	 ++writingPoint;
 	 ++reader;
  }
 };
-//leetcode solution, same as mine, but such clean code!:(
+//leetcode solution, same as mine, but very clean code
 var moveZeroes = function (nums) {
 	var pos = 0;
 	for (var i = 0; i < nums.length; i++) {
@@ -3051,7 +3056,7 @@ var wordPattern = function (pattern, str) {
 //leetcode solution:  map and set
 const wordPattern = (pattern, str) => {
 	let map = new Map(), set = new Set()
-	str = str.split` `
+	str = str.split(' ');
 	if (str.length !== pattern.length) return false
 	for (let i = 0; i < pattern.length; i++) {
 		let letter = pattern[i], word = str[i]
@@ -3219,17 +3224,17 @@ Input: 5  Output: false
 Could you solve it without loops/recursion?
 */
 //speed:53% memory:100%
-var isPowerOfFour = function (num) {
-	while (num > 1) {
-		num = num / 4;
+var isPowerOfFour = function (n) {
+	while (n > 1) {
+		n = n / 4;
 	}
-	return num === 1;
+	return n === 1;
 };
 //leetcode solution: just like the power of 3 question, there has to be an even number of zeroes... so (00)*
-var isPowerOfFour = function (num) {
-	return /^1(00)*$/.test(num.toString(2));
+var isPowerOfFour = function (n) {
+	return /^1(00)*$/.test(n.toString(2));
 	//or
-	return /^10*$/.test(num.toString(4));
+	return /^10*$/.test(n.toString(4));
 };
 
 //LC#0344 Diff:Easy Reverse String
@@ -3455,8 +3460,8 @@ var canConstruct = function (ransomNote, magazine) {
 //LC#0387 Diff:Easy  First Unique Character in a String
 /*
 Given a string, find the first non-repeating character in it and return it's index. If it doesn't exist, return -1.
-s = "leetcode"      return 0.
-s = "loveleetcode"  return 2.
+s = "leetcode"      return 0.  (l does not repeat in the entire string)
+s = "loveleetcode"  return 2.  (l,o repeat in the string, v is the first char that does'nt repeat in the entire string)
 s = ""    return -1
 s = "cc"  return -1
 */
@@ -3481,13 +3486,13 @@ Input: s = "abcd"   t = "abcde"   Output:e
 */
 //speed:16
 var findTheDifference = function (s, t) {
-	let hm = {};
+	let hm = {}; //only one map is needed
 	for(i=0;i<t.length;i++) {
 		//if you find it in s add 1, if you find it in t remove 1
 		hm[s[i]] = hm[s[i]]!== undefined ? hm[s[i]] + 1 : 1;  //you can't just do = hm[s[i]] + 1 || 1
 		hm[t[i]] = hm[t[i]]!==undefined ? hm[t[i]] - 1 : -1;  //you can't do hm[[t[i]] - 1 || -1  because when lhs becomes zero, it sets it to -1
 	}
-	//by now hm should have only one char that has hm[c]===-1
+	//by now hm should have only one char that has hm[c]===-1, all others should be zero
 	return Object.keys(hm).filter(x => hm[x]===-1)[0];
 };
 var findTheDifference = function (s, t) {
@@ -3658,8 +3663,6 @@ var toHex = function (n) {
 	}
 	return ret;
 };
-//leetcode solution
-
 
 //LC#0409 Diff:Easy Longest Palindrome
 /*
@@ -3775,6 +3778,7 @@ var addStrings = function (num1, num2) {
 		ret = s + ret;
 		--j;
 	}
+	//there might be still be carry left
 	if(c===1) ret = c + ret;
 	return ret;
 };
@@ -3837,7 +3841,7 @@ var pathSum = function (root, sum) {
 
 	let totalCount = 0;
 	function dfs(n, sumsTillN) {
-		for(i=0;i<sumsTillN.length;i++) sumsTillN[i] += n.val;
+		for(i=0;i<sumsTillN.length;i++) sumsTillN[i] += n.val;  //you need to add n.val to every array element....
 		sumsTillN.push(n.val);
 
 		for(x of sumsTillN) if(x===sum) ++totalCount;  //in your whole new set of sums till this node, each matching some must be counted.
@@ -3911,7 +3915,7 @@ var arrangeCoins = function (n) {
 //LC#0443 Diff:Easy String Compression
 /*
 Given an array of characters, compress it in-place. The length after compression must always be smaller than or equal to the original array.
-Every element of the array should be a character (not int) of length 1. So if something counts to "10" or "12", you have to put "1","0" or "1","2" and not "10"/"12"
+Every element of the array should be a character (not int) of length 1. So if something counts to "10" or "12", you have to put "1","0" or "1","2" and not "10" or "12"
 After you are done modifying the input array in-place, return the new length of the array.
 Follow up: Could you solve it using only O(1) extra space?
 Input: ["a","a","b","b","c","c","c"]
@@ -4042,7 +4046,7 @@ var findContentChildren = function (g, s) {
  g = g.sort((a,b)=>a-b);
  s = s.sort((a,b)=>a-b);
  let i=0,j=0,count=0;
- while(i<s.length && j<g.length){         //sometimes g array can be very small, so check j<g.lengtth
+ while(i<s.length && j<g.length){         //sometimes g array can be very small, so check j<g.length
 	while(i<s.length && s[i]<g[j]) ++i;    //find the first child you can feed in the g array
 
 	if(i<s.length){      //double check that i is valid
@@ -4220,23 +4224,23 @@ var findRadius = function (houses, heaters) {
 	heaters.sort((a, b) => a - b);
 	// the answer is MAX of min distance between each house and it's heater
 	return Math.max(...houses.map(h => findMinDistance(h, heaters)));
-};
 
-const findMinDistance = (house, heaters) => {
-	let left = 0;
-	let right = heaters.length - 1;
-	while (left <= right) {
-		const mid = left + ((right - left) >> 1);
-		if (heaters[mid] <= house && house <= heaters[mid + 1]) {
-			return Math.min(house - heaters[mid], heaters[mid + 1] - house);
-		} else if (heaters[mid] <= house) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
+	const findMinDistance = (house, heaters) => {
+		let left = 0;
+		let right = heaters.length - 1;
+		while (left <= right) {
+			const mid = left + ((right - left) >> 1);
+			if (heaters[mid] <= house && house <= heaters[mid + 1]) {
+				return Math.min(house - heaters[mid], heaters[mid + 1] - house);
+			} else if (heaters[mid] <= house) {
+				left = mid + 1;
+			} else {
+				right = mid - 1;
+			}
 		}
-	}
-	if (left === 0) return heaters[0] - house;
-	if (left === heaters.length) return house - heaters[heaters.length - 1];
+		if (left === 0) return heaters[0] - house;
+		if (left === heaters.length) return house - heaters[heaters.length - 1];
+	};
 };
 
 //LC#0476 Diff:Easy Number Complement
@@ -4265,7 +4269,7 @@ var findComplement = function (num) {
 };
 var findComplement = function (num) {
 	let d = 2;
-	while (d <= num) d*=2;
+	while (d <= num) d*=2;    //[0,1], [5,2], [3,4]
 	return d - num - 1;
 };
 
@@ -4356,16 +4360,9 @@ var constructRectangle = function (area) {
 	}
 };
 
-//LC#0496 Diff:Easy Next Greater Element I
+//LC#0496 Diff:Easy
 /*
-
-*/
-//speed:
-
-
-//LC#0 Diff:Easy
-/*
-You are given two arrays (without duplicates) nums1 and nums2 where nums1’s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2.
+You are given two arrays (without duplicates) nums1 and nums2 where nums1’s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2. (i.e next greater number's index should be greater than current number's index)
 The Next Greater Number of a number x in nums1 is the first greater number to its right in nums2. If it does not exist, output -1 for this number.
 Input: nums1 = [4,1,2], nums2 = [1,3,4,2].   Output: [-1,3,-1]
 	Explanation:
@@ -4517,8 +4514,7 @@ var findMode = function(root) {
 		if(count > _max) {
 			ans = [n.val];  //restart a new ans array if you find a new max
 			_max = count;
-		} else if(count === _max)
-			ans.push(n.val);  //if it equals max, then just push this to the existing ans array
+		} else if(count === _max)   ans.push(n.val);  //if it equals max, then just push this to the existing ans array
 		prev = n.val;  //make sure you understand this important line
 
 		if(n.right) preorder(n.right)
@@ -4679,9 +4675,11 @@ function fib(n){
   let memo = {};
 
   let rec = (num) => {
-    if (memo[num]) return memo[num];
+		if (memo[num]) return memo[num];
+
     if (num == 0) return 0;
-    if (num == 1 || num == 2) return 1;
+		if (num == 1 || num == 2) return 1;
+
     let res = rec(num-1) + rec(num-2);
     memo[num] = res;
     return res;
@@ -4722,12 +4720,11 @@ var detectCapitalUse = function(word) {
 var detectCapitalUse = function(word) {
 	const isCapital = l => l>='A' && l<='Z';
 
-	const length = word.length;
 	let indx = 0;
 	let state = 0;
 
 	for(;;) {   //same as while(true)
-		if (indx === length) return true;
+		if (indx === word.length) return true;
 		switch(state) {
 			case 0:
 					state = isCapital(word[indx++])? 1 : 2;
@@ -4849,7 +4846,7 @@ var findPairs = function(nums, k) {
 	return count;
 }
 
-//LC#0 Diff:Easy Convert BST to Greater Tree
+//LC#0538 Diff:Easy Convert BST to Greater Tree
 /*
 Given a Binary Search Tree (BST), convert it to a Greater Tree such that every key of the original BST is changed to the original key plus sum of all keys greater than the original key in BST.
 Example:
@@ -4870,7 +4867,7 @@ function TreeNode(val, left, right) {
 	this.right = (right===undefined ? null : right)
 }
 */
-//Since it is a BST, You just need to read the tree backwards.
+//Since it is a BST, You just need to read the tree backwards and in order.
 //speed:50%
 var convertBST = function (root) {
 	if(!root) return root;
@@ -4963,7 +4960,7 @@ var diameterOfBinaryTree = function (root) {
 
 //LC#0551 Diff:Easy Student Attendance Record I
 /*
-You are given a string representing an attendance record for a student. The record only contains the following three characters:
+You are given a string representing of an attendance record for a student. The record only contains the following three characters:
 'A' : Absent.     'L' : Late.       'P' : Present.
 A student could be rewarded if his attendance record doesn't contain more than one 'A' (absent) AND there are no more than two continuous 'L' (late).
 You need to return whether the student could be rewarded according to his attendance record. Return boolean.
@@ -5346,7 +5343,7 @@ var isSubtree = function (s, t) {
 
 //LC#0575 Diff:Easy Distribute Candies
 /*
-Given an integer array with even length, where different numbers in this array represent different kinds of candies. Each number means one candy of the corresponding kind. You need to distribute these candies equally in number to a brother and sister. Return the maximum number of kinds of candies the sister could get. Return a number.
+Given an integer array with even length, where different numbers in this array represent different kinds of candies. Each number means one candy of the corresponding kind. You need to distribute these candies equally in number to a brother and sister. Return the maximum number of "kinds" of candies the sister could get. Return a number.
 Example 1:
 Input: [1,1,2,2,3,3]    Output: 3
 Explanation:
@@ -5427,7 +5424,7 @@ var findUnsortedSubarray = function (nums) {
 
 //LC#0589 Diff:Easy N-ary Tree Preorder Traversal
 /*
-Given an n-ary tree, return the preorder traversal of its nodes' values. Return an array of numbers.
+Given an n-ary tree, return the preorder traversal of its nodes' values. Return an array of numbers. i.e visit the node, then visit each child in detail before going to the next child.
 Nary-Tree input serialization is represented in their level order traversal, each group of children is separated by the null value/
 Input: root = [1,null,3,2,4,null,5,6]     Output: [1,3,5,6,2,4]
 		   1
@@ -5620,7 +5617,7 @@ having count(distinct student)>=5    (count(*) is not enough)
 
 //LC#0598 Diff:Easy Range Addition II
 /*
-Given an m * n matrix M initialized with all 0's and several update operations.
+Given an m * n matrix M initialized with all 0's and given an array of several update operations.
 Operations are represented by a 2D array, and each operation is represented by an array with two positive integers - a and b, which means M[i][j] should be added by one for all 0 <= i < a and 0 <= j < b.
 You need to count and return the number of maximum integers in the matrix after performing all the operations.
 
@@ -5693,8 +5690,8 @@ var findRestaurant = function (list1, list2) {
 		if(hm[largerList[j]]!==undefined){   //if it exists in hm and index is zero or greater (i.e the smaller list)
 			if(hm[largerList[j]] + j <= min) {   //sum of index in two arrays, <= because there could be many results
 				min = hm[largerList[j]] + j;
-				if (resultantMap[min]) resultantMap[min].push(largerList[j])
-				else resultantMap[min] = [largerList[j]];
+				if (resultantMap[min]) resultantMap[min].push(largerList[j]);    //each value is an array
+				else resultantMap[min] = [largerList[j]];  //initialize the array
 			}
 		}
 	}
@@ -5818,6 +5815,20 @@ var tree2str = function (t) {
 	if (!t.right) return `${t.val}(${tree2str(t.left)})`;
 	return `${t.val}(${tree2str(t.left)})(${tree2str(t.right)})`;
 };
+//speed:89% another one of mine
+var tree2str = function (t) {
+	function dfs(n) {
+		if (!n) return '';
+		if (!n.left && !n.right) return n.val.toString();
+
+		let s = '';
+		s += n.val;
+		s += '(' + dfs(n.left) + ')';
+		if (n.right) s += '(' + dfs(n.right) + ')';
+		return s;
+	}
+	return dfs(t);
+}
 
 //LC#0617 Diff:Easy Merge Two Binary Trees
 /*
@@ -5874,7 +5885,7 @@ var mergeTrees = function (t1, t2) {
 
 //LC#0620 Diff:Easy SQL Not Boring Movies
 /*
-X city opened a new cinema, many people would like to go to this cinema. The cinema also gives out a poster indicating the movies’ ratings and descriptions.
+X city opened a new cinema, many people would like to go to this cinema. The cinema also gives out a poster indicating the movie’s ratings and descriptions.
 Please write a SQL query to output movies with an odd numbered ID and a description that is not 'boring'. Order the result by rating descending.
 For example, table "cinema":
 +---------+-----------+--------------+-----------+
@@ -6186,7 +6197,7 @@ function TreeNode(val, left, right) {
 	this.right = (right===undefined ? null : right)
 }
 */
-//speed:25%   you do traverese through ALL the nodes every single time because of flag and recursive.
+//speed:25%   you do traverse through ALL the nodes every single time because of flag and recursive.
 var findTarget = function(root, target) {
 	if(!root) return false;
 	let flag = false;
@@ -6216,7 +6227,7 @@ var findTarget = function(root, target) {
 		hm[n.val] = true;
 
 		if(n.right) arr.push(n.right);
-		if(n.left) arr.push(n.left);
+		if(n.left) arr.push(n.left);  //so left will be popped first...
 	}
 	return flag;
 }
@@ -6252,7 +6263,7 @@ var judgeCircle = function(moves) {
 
 //LC#0661 Diff:Easy Image Smoother
 /*
-Given a 2D integer matrix M representing the gray scale of an image, you need to design a smoother to make the gray scale of each cell becomes the average gray scale (rounding down) of all the 8 surrounding cells and itself. If a cell has less than 8 surrounding cells, then use as many as you can.
+Given a 2D integer matrix M representing the gray scale of an image, you need to design a smoother to make the gray scale of each cell becomes the average gray scale (rounding down) of all the 8 surrounding cells and itself (count the cell itself too). If a cell has less than 8 surrounding cells, then use as many as you can.
 Return a 2D matrix.
 Input:
 [[1,1,1],
@@ -6342,7 +6353,7 @@ var checkPossibility = function(nums) {
   let count = 0;
   for (let i = 1; i < nums.length; i++) {
     if (nums[i] < nums[i-1]) {
-      if (i-2 >= 0 && nums[i] < nums[i - 2]) {   //i don't understand this line
+      if (i-2 >= 0 && nums[i] < nums[i - 2]) {   //example:[4,2,3] i is at 3
         nums[i] = nums[i - 1];
       }
       count++;
@@ -6463,10 +6474,10 @@ var findSecondMinimumValue = function(root) {
 
 //LC#0674 Diff:Easy Longest Continuous Increasing Subsequence
 /*
-Given an unsorted array of integers, find the length of longest continuous increasing subsequence (subarray).
-Input: [1,3,5,4,7]    Output: 3       Explanation: The longest continuous increasing subsequence is [1,3,5] Even though [1,3,5,7] is also an increasing subsequence, it's not a continuous one where 5 and 7 are separated by 4.
+Given an unsorted array of integers, find the length of longest increasing subarray.
+Input: [1,3,5,4,7]    Output: 3       Explanation: The longest increasing subarray is [1,3,5]
 
-Input: [2,2,2,2,2]  Output: 1  Explanation: The longest continuous increasing subsequence is [2], its length is 1.
+Input: [2,2,2,2,2]  Output: 1  Explanation: The longest increasing subarray is [2], its length is 1.
 Note: Length of the array will not exceed 10,000.
 Basically, length of longest increasing subArray (not subsequence), the boundaries are where a[i]>a[i+1]
 */
@@ -6486,7 +6497,7 @@ var findLengthOfLCIS = function(nums) {
 
 //LC#0 Diff:Easy Valid Palindrome II
 /*
-Given a non-empty string s, you MUST delete at most one character. Judge whether you can make it a palindrome.
+Given a non-empty string s, you CAN delete at most one character. Judge whether you can make it a palindrome.
 Input: "aba"     Output: True
 Input: "abca"    Output: True  Explanation: You could delete the character 'c'.
 Input: "lcupuufxoohdfpgjdmysgvhmvffcnqxjjxqncffvmhvgsymdjgpfdhooxfuupucul" Output:true
@@ -6509,7 +6520,7 @@ var validPalindrome = function(s) {
 
 	function isPalindrome(a) {	return a===a.split('').reverse().join('');  }
 };
-//letcode recursive solution
+//leetcode recursive solution
 var validPalindrome = function(s, corrections = 1) {
   let lo = 0;
   let hi = s.length - 1;
@@ -6560,7 +6571,7 @@ Every integer represented in the list will be between -30000 and 30000.
 //speed:40%
 var calPoints = function(ops) {
 	let sum = 0, thisRoundScore;
-	let scores = [];
+	let scores = [];  //valid scores
 	for(x of ops) {   //you can also use a switch statement along with default
 		if(x==='C') {
 			thisRoundScore = scores.length<0 ? 0 : -1*scores.pop();  //remove that score permanently from scores
@@ -6572,7 +6583,7 @@ var calPoints = function(ops) {
 			scores.push(thisRoundScore);
 		} else {
 			thisRoundScore = +x;  //convert to number!
-			scores.push(thisRoundScore);  //conver to number!
+			scores.push(thisRoundScore);  //convert to number!
 		}
 		sum = sum + thisRoundScore;
 	}
@@ -6718,7 +6729,7 @@ var hasAlternatingBits = function (n) {
 	while(n>0){
 		d = n%2;
 		if(prevDigit===undefined) prevDigit = d;    //this is the first d
-		else if(d ^ prevDigit === 0) return false;   //this d and the previos d are both 0,0 or 1,1,
+		else if(d ^ prevDigit === 0) return false;   //this d and the previous d are both 0,0 or 1,1,
 		prevDigit = d;
 		//b = d + b;
 		n = Math.floor(n/2);

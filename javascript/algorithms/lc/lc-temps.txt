@@ -1,0 +1,74 @@
+#1528 ended at 14655
+
+comeback to list----
+0038 - leetcode solution
+0053 - dp
+0168 - excel columns
+0189 - rotate array
+0299 - cows bulls
+0371 - math trick
+0401 - led watch
+0447 - boomerang points
+0459 - substring
+0572 - subtree check
+0665 - non-decreasing array check
+0696 - count binary substrings
+
+
+
+
+Basic Array: Read pointer and writer pointer: 0026, 0027
+Basic Binary Search: 0035, 0069, 0367, 0374, 0704
+Peak & Valley Algorithm: 0122
+Linked List Hare and Tortoise: 0141
+Boyer-Moore Voting Algorithm: 0169
+Binary Number Reading: 0190
+Masking a binary number: 0191
+Sieve or erasthones: 0204
+Binary Tree BFS, DFS: 0226, 0559, 0563, 0589, 0590, 0637
+Binary Tree BFS: 0671
+Binary Tree DFS Iterative: 0653
+Binary Tree: DFS - Passing info to children: 0257, 0404, 0437, 0637 (dfs), 0687
+Converting Decimal to Hexadecimal: 0405, 0504
+Third Max (variable swapping): 0414, 0628
+Fibonaccci - 0509
+Finite State Machine - 0520
+Basic Loops - 0066, 0067, 0088, 0455, 0605,
+Closing window - 0633
+Sliding window - 0643
+Basic Recursion - 0690
+
+Clean code----
+0203 - ll epic recursion
+0557 - reverse words of a sentence
+
+
+Good Probs---
+0070 - dp
+0108 - bt
+0110 - bt
+0112 - bt
+0119 - pascals triangle get row
+0121 - max profit
+0155 - min stack
+0160 - ll intersection
+0198 - dp
+0234 - ll palindrome
+0235 - bt lowest common ancestor
+0264 - math
+0278 - binary Search
+0283 - array move zeroes
+0409 - construct palindrome
+0415 - add two strings
+0443 - string compression
+0453 - equate all arr elements
+0475 - heaters houses
+0501 - mode of bst
+0543 - diameter of bst
+0566 - reshape matrix
+0594 - longest harmoinious subsequence
+0669 - trim bst
+0687 - bt longest univalue path
+0697 - degree of array
+
+

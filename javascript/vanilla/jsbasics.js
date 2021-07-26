@@ -401,7 +401,7 @@ Engine then sees 'a' during execution, ask Scope if there is a variable called '
 If so, Engine uses that variable. If not, Engine looks elsewhere
 If Engine eventually finds a variable, it assigns the value 2 to it. If not, Engine will raise its hand and yell out an error!
 
-Whenever the engine sees a variable, it either does a LHS or RHS lookup/reference. LHS is for assignment/storage, RHS is for retreival of value.
+core concept: Whenever the engine sees a variable, it either does a LHS or RHS lookup/reference. LHS is for assignment/storage, RHS is for retreival of value.
 console.log(a);  It does RHS lookup, goes and finds a
 a = 2;        It does LHS lookup, to find it and store 2 in it
 foo();        It does RHS lookup for the value in foo and then executes it.
@@ -465,7 +465,7 @@ The eval() modifies the existing lexical scope of foo(). So, eval(..) can at run
 If you do "use strict", then declarations made inside of the eval() do not actually modify the enclosing scope.
 The use-cases for dynamically generating code inside your program are incredibly rare, as the performance degradations are almost never worth the capability.
 
-Why is cheating lexical scope bad?
+core concept: Why is cheating lexical scope bad?
 JS Engine has a number of performance optimizations that it performs during the compilation phase.
 Some of these boil down to being able to essentially statically analyze the code as it lexes, and pre-determine where
 all the variable and function declarations are, so that it takes less effort to resolve identifiers during execution.
@@ -486,27 +486,31 @@ var MyReallyCoolLibrary = {
 	doAnotherThing: function() {  }
 };
 
-Function decleration: function foo() { }  The statement starts with the word function, the name foo is bound in the global scope (next outer level of scope).
+Function decleration: function foo() { }
+The statement starts with the word function, the name foo is bound in the global scope (next outer level of scope).
 In JS you declare variables with either (var,let,const,function,class)
 
-Function expression: (function foo(){ })  The statement does not start with word function, the name foo is now bound only inside of its own function.  (this is not an AFE)
+Function expression: (function foo(){ })
+The statement does not start with word function, the name foo is now bound only inside of its own function.  (this is not an AFE)
 var foo = function bar() { }; this is also FE. Here also, bar is accessible only inside func bar!! In the outer scope, there is no var called bar.   (this is not an AFE)
 Function expressions can also omit the name, but function declerations cannot omit the name.
 Function declerations are hoisted but FE are not hoisted.
 
-Anonymous FE
-setTimeout( function(){ }, 1000 );  -> this is a Anonymous Function Expression.
+Anonymous FE: setTimeout( function(){ }, 1000 );
 >AFE have no name that displays in stack trace
 >You can't call an AFE, if you are trying to some reccursion or unbind it from an event handler
 The best practice is to always name your function expressions:
 setTimeout( function timeoutHandler(){ }, 1000 ); timeoutHandler is accessible only from inside itself
 
-IIFE
-(function foo(){ })(optionalArgs); Adding a (); to the end of the function expression
+Immediately Invoked FE: (function foo(){ })(optionalArgs);
+Adding a (); to the end of the function expression
 These can also have names (if you want to use it inside it)
+Another way to write an IIFE (a way followed by the universal module definition UMD project)
+(function IIFE(f){ f(x)}) (function g(y){ do something})       y is passed to x (but why do you even need both?!)
+So g is the actual function that is run and passed as an argument to the IIFE.
 
-In js you can do:
-undefined = true; This basically makes undefined true! Which wreaks havoc in all of the code.
+In js you can do: undefined = true;
+This basically makes undefined true! Which wreaks havoc in all of the code.
 So in a function, just name a variable called "undefined", never give it a value. So this var will truly be undefined.
 undefined = true;
 (function IIFE( undefined ){      //the fake undefined var whose value is undefined
@@ -516,13 +520,8 @@ undefined = true;
 	}
 })();
 
-Another way to write an IIFE (a way followed by the universal module definition UMD project)
-(function IIFE(f){ f(x)}) (function g(y){ do something})       y is passed to x (but why do you even need both?!)
-So g is the actual function that is run and passed as an argument to the IIFE.
-
 Block Scope
-It's already there, hidden in the language. Since ES3.
-The 'catch' block in a try-catch has block scope
+It's already there, hidden in the language. Since ES3. The 'e' in the catch(e) block has block scope
 try { undefined(); }        // illegal operation to force an exception!
 catch (err) {
 	var b = 35;
@@ -532,7 +531,7 @@ catch (err) {
 console.log(err);           // ReferenceError: err not found
 console.log(b);             //35. b is fine, only err is unique and belongs to the catch block.
 
-LET  A block scoped decleration unlike var
+LET  A block scoped declaration unlike var
 We can create an arbitrary block for let to bind to by simply including a { .. } pair anywhere a statement is valid
 if (foo) {
 	{   // <-- explicit block
@@ -541,7 +540,6 @@ if (foo) {
 		console.log(bar);
 	}
 }
-
 Declarations made with let will not hoist to the entire scope of the block. The compiler does not move them.
 
 block scoping helps save memory. A variable is free as soon as the block is done. i.e garbage collection is done to reclaim memory.
@@ -549,7 +547,6 @@ function process(data) { }
 var bigData = { ... };
 process(bigData);
 someButton.addEventListener( "click", function x(t){ }, false );
-
 So here the function x closes over the current scope. So eventhough, process() finishes using bigData,
 bigData will still remain in memory until the click handler is called. (closure)
 Just create an explicit block to cover the middle two lines to optimize this.
@@ -559,7 +556,7 @@ Not only does it bind the i to the for-loop body, but in fact, it re-binds it to
 making sure to re-assign the value from the end of the previous loop iteration.
 
 CONST  This is also a block scoped decleration.
-You can reassign to another value i.e Its value/reference cannot change.
+You cannot reassign to another value i.e it's value/reference cannot change.
 
 internally, scope is kind of like an object with properties for each of the available identifiers.
 But the scope "object" is not accessible to JavaScript code. It's an inner part of the Engine's implementation.
@@ -824,44 +821,68 @@ You must learn, use and rely on "this"
 
 "this" is not the function object itself ("self" is)
 function foo(num) {
-	console.log(self);
+	console.log(self);  // it is always the window object (i think) (dont use it)
+	console.log(this);  // this depends on call site (explained later)
 	console.log("foo:"+num);
 	this.count++;       //trying to keep count of func calls
 }
 foo.count = 0;          //adding a property, initialize count to zero.
-In a for loop - foo();
-console.log(foo.count);   //this will always be zero
 
-So here "this" is not the function foo, and you are not incrementing foo.count, you are trying to do window.count(=undefined)+1, it will be NaN.
+In a for loop, call foo();
+console.log(foo.count);   //this will always be zero
+So here "this" is not the function foo object, and you are not incrementing foo.count, you are trying to do window.count(=undefined)+1, it will be NaN.
+
 If you want to really count functions invocations, put foo.count++, because inside the function, you can access the function object itself.
 To fix the original code above, you can call, instead of foo(), foo.call(foo,i); Now in the func, "this" is the foo function object, and you are incrementing foo.count
 
-"this" binding has nothing to do with where a function is declared (not lexical scope),
+Core concept: "this" binding has nothing to do with where a function is declared (not lexical scope),
 It has dynamic scope - "this" is actually a binding that is made when a function is invoked, and what it references to is determined entirely by the call-site where the function is called.
-
 When a function is invoked, an execution context is created. It contains info: where the function was called from (the call-stack), how the function was invoked, what parameters were passed, etc.
 One of the properties of this record is the "this" reference which will be used for the duration of that function's execution.
 
-call-site: the location in code where a function is called (not where it's declared)
+call-site: the location in code where a function is called (not where it's declared) (lexical/authored position)
 call-stack: the stack of functions that have been called to get us to the current moment in execution
 The call-site we care about is in the invocation before the currently executing function.
 
 3.2)"this" all makes sense now
-4 RULES of THIS
+4 RULES of THIS: default, implicit, explicit, constructor
 >Default binding: Standalone Function Invocation.
 This is the catch all rule, when none of the next 3 rules apply
-Making a func call from global scope -
-foo();
+Making a func call from global scope (OR any scope!) -
+foo();      //i.e just make a simple call () from ANYwhere in the code, however deep it is. Such a call just means  window.foo().
 So inside foo, "this" will be the window object for non-strict mode, and undefined for strict mode. (i.e "use strict"; is the first line inside foo)
 the strict mode state of the "call-site" of foo() is irrelevant. It has to be there inside the func.
+
+function foo(){
+   let n = 10, self = this;
+	 console.log(n, this);               //10, obj
+	 hoo();                              //non-global call site, BUT 'this' will still be window for it!!!
+	 hoo.call(this);                     //obj
+   return function goo(){
+       let m = 20, self2 = this;
+       console.log(20, this, self, self2);                   //20, window, obj, window
+       return function too(){
+       	    console.log(30, this, self, self2);              //30, window, obj, window
+            let g = 30;
+        }
+   }
+}
+function hoo(){  console.log(this); }
+hoo();                                 //global call site, this will be window
+let obj = {'name':'test'};
+let k = foo.call(obj);
+let t = k();            //global call site
+t();                    //global call site
 
 >Implicit Binding: Call site has a context object
 obj.foo();  Here obj is "this"
 Only the bottom/last level of an object property reference chain matters to the call-site
-obj1.obj2.foo();   Here only obj2 is "this"
+obj1.innerObj2.innerObj3.foo();   Here only innerObj3 is "this"
 
-To be able to do this, obj must have the function foo defined in it. Or else you can't call obj.foo();  (TypeError)
-So for implicit binding, you have to edit the object to include a reference to the function.
+Core concept: To be able to do this, obj MUST have the function foo defined in it!! Or else you can't call obj.foo();  (TypeError). So for implicit binding, you have to edit the object to include a reference to the function.
+Whereas for foo.call(obj), obj does not need the function foo defined inside it. You can do foo.call(anyObj) with any object out there! the foo function will work.
+
+So rule#1 (default binding) is just implicit binding where the obj is window. It's just that window is not specifically written in the func call foo(), but the JS engine reads it as window.foo()
 
 What is the output of -
 function foo() {console.log(this.a);}
@@ -873,8 +894,8 @@ var bar = obj.foo;    // function reference
 var a = "global";
 bar();                //2 or global?
 foo();                //global
-obj.foo();			  //2
-Here the bar appears to be a reference to obj.foo, in fact, it's really just another reference to the actual function value in foo, so the output will be global.
+obj.foo();			      //2
+Here the bar appears to be a reference to obj.foo, in fact, it's really just another reference to the actual function value in foo, so the output will be "global". (window.a)
 Also the call-site makes it default binding.
 
 What is the output of -
@@ -890,14 +911,14 @@ Here the call site is inside the func, doFoo, "this" is undefined, so it default
 Parameter passing is just an implicit assignment, and since we're passing a function, it's an implicit reference. fn is just another reference to the value in the variable foo.
 
 >Explicit Binding:   call/apply/bind
-foo.call(obj);
-foo.apply(obj);
-If you pass a boolean/number/string in call/apply, then JS will "box" them or wrap them to their object form New Boolean(), New String(), New Number()
+foo.call(obj, arg1, arg2, arg3);
+foo.apply(obj, [arg1,arg2,arg3] );
+If you pass a boolean/number/string in call/apply (i.e foo.call(5)), then JS will "box" them or wrap them to their object form New Boolean(), New String(), New Number()
 
 hard binding -
 function bind(fn, obj) {
 	return function (args){
-	 return fn.apply(obj, ars)
+	 return fn.apply(obj, args)
 	};
 }
 var g = bind(foo, people);
@@ -905,21 +926,22 @@ Now whenever you call g, it will call foo where only people is the "this" object
 g is exactly the same same as foo, the only difference is, for it, "this" is people.
 
 ES5 provides this with Function.prototype.bind - this returns a new function. On any function object you can call .bind()
-var g = foo.bind(obj);      //For g alone, you are explicitly binding foo to obj. It creates a COPY of the function defintion! (in memory)
+var g = foo.bind(obj);      //For g alone, you are explicitly binding foo to obj. It creates a COPY of the function definition! (in memory)
 And in ES6, g.name will give you "bound foo"  (new property is set)
 
-Function.prototype.newBind = function(obj){   // ~ pollyfill for bind()
+Function.prototype.bind = function(obj){   // ~ pollyfill for bind()
 	var funcObj = this;            //xyzFunc.bind() means xyzFunc is 'this'
 	return function(args){
-		funcObj.call(obj,args);
+		funcObj.apply(obj,args);
 	}
 }
+var x = someFunc.bind(thisObject,arg1,arg2);
 
 >NEW binding
 In JS, constructors are just functions that happen to be called with the new operator in front of them.
 There are no such thing as "constructor functions", but rather "construction calls" of functions.
 They are not attached to classes, nor are they instantiating a class.
-They're just regular functions that are, in essence, hijacked by the use of new in their invocation.
+They're just regular functions that are, in essence, hijacked by the use of 'new' in their invocation.
 
 When a function is invoked with new in front of it, otherwise known as a constructor call, the following things are done automatically:
 >a brand new object is created (aka, constructed) out of thin air
@@ -962,8 +984,9 @@ console.log( baz.a );          // 3
 Nuances to the 4 rules
 > foo.call(null/undefined) or foo.apply(null/undefined) or foo.bind(null/undefined)
 In all these cases, it resorts to default binding and does not throw an error. (so the window object is used, i.e there will be side-effects)
+i.e somewhere in your code, you had foo.call(xyz);  buy xyz was null, now foo will use window and you won't even know (side effects)
 
-A good use of this is, if the func foo does'nt even care about or use "this" in its definition
+But, A good use of this is, if the func foo does'nt even care about or use "this" in its definition
 function foo (a,b) { console.log(a+b) }
 foo.apply(null,[2,3]);  //gives 5
 var b = foo.bind(null,1);   // (this is called currying, partially locking down args)
@@ -975,8 +998,8 @@ Call/Apply/Bind all 3 need a "this" binder as the first parameter, so you can gi
 Just makes sure that the function never uses the "this" in its definition... for anything.
 
 >If you are not sure about func foo (whether it has "this" in it's definition or not), Just call it with an empty object, that way you are sure that the window object is not affected in any way (sideeffects)
-foo.apply({},[2,3]);
-foo.apply(Object.create(null), [2,3]);  //here it is still { }, but without the delegation to Object.prototype, so in a sense it is more empty than just { }
+foo.apply({},[2,3]);      //here {}.__proto is Object.prototype
+foo.apply(Object.create(null), [2,3]);  //here it is still {}, but without the delegation to Object.prototype, so in a sense it is more empty than just { }
 Use variable name as ø (alt+o) for these kinds of empty objects
 
 >Indirect References
@@ -986,14 +1009,16 @@ var o = { a: 3, foo: foo };
 var p = { a: 4 };
 o.foo();             // 3
 (p.foo = o.foo)();   //this gives 2! not 3, not 4
-The "result value" of the assignment expression p.foo = o.foo is just a reference to just the underlying function object foo.
+The "result value" of the assignment expression p.foo = o.foo is just a reference to the underlying function object foo and not to p.foo, so eventually just foo() is called and not p.foo()
 p.foo();             //4
 
 >Softening the bind function (#ktek come back and read this later)
 
->ES6 arrow function. It does not use any of the above 4 rules, for it "this" is the "this" of its enclosing function definition (completely 100% lexical scope)
+>ES6 arrow function.
+From now on every function definition is either one of these two - legacy,arrow. First identify this whenever you see a func def.
+Arrow does not use any of the above 4 rules, for it "this" is the "this" of its enclosing function definition (arrow is completely 100% lexical scope and never dynamic scope like legacy)
 function foo() {
-	return (a) => {
+	return (k) => {
 		// 'this' here is lexically adopted from foo(). being a closure, it closes on that "this" value
 		console.log( this.a );
 	};
@@ -1005,36 +1030,35 @@ bar(obj2);    //gives 2 (not obj2's 3)
 
 The lexical binding of an arrow-function cannot be overridden (even with new!!!)
 
-function foo() {
-	var self = this;
-	setTimeout( function(){console.log(this.a);}, 1000 );    //in this anonymous function, 'this' is just window
-}
-foo.call({a:2});      // 2
+setTimeout( function(){console.log(this.a);}, 1000 );       //this is accessing window.a, dynamic scope as it is not arrow function, the callsite is in setTimeout() which is in global
 
 function foo() {
-	var self = this;
+	setTimeout( function(){console.log(this.a);}, 1000 );    //first of all, you are just calling window.setTimeout and then inside it, for the anonymous function, 'this' is just window
+}
+foo.call({a:2});      // prints out window.a, which is undefined
+
+function foo() {
+	var self = this;   //here 'this' is {a:2}, so self is also {a:2}
 	setTimeout( function(){console.log(self.a);}, 1000 );    //here the function closes on the variable self
 }
 foo.call({a:2});      // 2
 
 function foo() {
-	setTimeout( () => {console.log(this.a);},  1000);    //static scope, arrow function closes on the "this" object of foo. (lexical scope)
+	setTimeout( () => {console.log(this.a);},  1000);    //static/lexical scope, arrow function closes on the "this" object of foo.
 }
 foo.call({a:2});      // 2
 
 function g(){
-	setTimeout( function(){console.log(this.a);}, 1000 );   //this is accessing window.a, dynamic scope as it is not arrow function =>, the callsite is in setTimeout() which is in global
+	setTimeout( function(){console.log(this.a);}, 1000 );   //this is accessing window.a, dynamic scope as it is not an arrow function =>, the callsite is in setTimeout() which is in global
 }
 g.call({a:5});
 
-setTimeout( function(){console.log(this.a);}, 1000 );       //this is accessing window.a, dynamic scope as it is not arrow function, the callsite is in setTimeout() which is in global
-
 Final question -
 function g(){
-	k.call(this, function t(x){console.log(this.a);});
+	k.call(this, function t(x){console.log(x, this.a);});
 }
 function k(p){
-	p();                  //call site
+	p(20);                  //call site
 }
 g.call({a:10});
 
@@ -1044,9 +1068,10 @@ You need to call p.call(this), then only you will get an output of 10.
 
 To summarise: Determining the "this" binding (to an object) for an executing function requires finding the direct call-site of that function.
 Once examined, four rules can be applied to the call-site, in this order of precedence: New, Explicit, Implicit, Default.
+If it's an arrow defined function, just use closure/lexical scope.
 
 3.3)Objects
-In JS, everything is either an object or a primitive. period.
+In JS, everything is either an object or a primitive (BNS). period.
 Literal syntax: { a: 4 };
 Constructor syntax: var b = new Object(); b.x = 5;  (very rarely people use the constructor syntax)
 Here variable 'b' stores a pointer. That pointer points to an object. That object has a bunch of variables, each storing more pointers, that point to their values.
@@ -1059,8 +1084,8 @@ typeof null incorrectly gives object, this is a bug in JS.
 
 Object subtypes are: normal objects, function (callable object), arrays.
 
-Built-in Objects:
-String, Number, Boolean
+>>)Built-in Objects:
+Boolean, String, Number
 Object
 Function, Array
 Date
@@ -1073,14 +1098,19 @@ The constructed form does offer, in some cases, more options in creation than th
 
 var str = "This is the primitive literal string";
 typeof str;						    // "string"
-str instanceof String;	            // false
+str instanceof String;	  // false
 
 var strObj = new String('this is the object sub-type String');
-typeof strObj;				// "object"
-strObj instanceof String;	        // true
+typeof strObj;				      // "object"
+strObj instanceof String;	  // true
 
 Whenever you do str.length, the JS engine coerces it to the String object.
-The same with 5643.43.toFixed(3); (Number & Boolean)
+The same with 5643.43.toFixed(3); (Number & Boolean) (it calls Number.prototype.toFixed())
+
+var a = new Number(5);
+typeof a;                // "object"   (not "number")
+a instanceOf Number;     //true
+Don't use these primitive function constructors! things like new Number(3) === 3 is FALSE...  object is not equal to number
 
 Boolean,String,Number,Object,Function,Array,Regexp all have literal definition syntax: true,'yes',54,{},function(){},[],//
 Date can only be defined by using the constructor (new Date())
@@ -1089,7 +1119,7 @@ And in the 6 primitives, null and undefined don't have any wrapper objects.
 Error objects are rarely created explicitly in code, but usually created automatically when exceptions are thrown.
 construct them using new Error(..) (but very rare use cases)
 
-Property Access: Two ways-
+>>)Property Access in objects: Two ways-
 property access: obj.a
 key access: obj["a"] or obj[x]  where x is variable with value='a'
 
@@ -1107,8 +1137,8 @@ ES6: this is obj["bar"]='baz'    for es6 a is 'bar'
 For declerations of properties: only ES6 allows dynamic decleration of property name like the above, ES5 does not allow it.
 For access of properties: only key access can be dynamic, property access is never dynamic. Meaning obj.a mean obj["a"].
 
-Methods: Functions inside objects are not methods. Only in some cases, where inside the function there is a "this", and then depending
-on the call site at run time, this "this" could mean that the function does belong to the object. The function's relationship to the object is indirect at best.
+>>)"methods" don't exist in JS, only functions
+Methods: Functions inside objects are not methods. Only in some cases, where inside the function there is a "this", and then depending on the call site at run time, this "this" could mean that the function does belong to the object. The function's relationship to the object is indirect at best.
 Technically, functions never "belong" to objects
 Every time you access a property on an object, that is a property access, regardless of the type of value you get back. (number, function, object etc)
 A function becomes a method, not at definition time, but during run-time just for that invocation, depending on how it's called at its call-site (this is also a bit of a stretch)
@@ -1121,15 +1151,18 @@ In the above, the three variables foo, obj.someFoo, someFoo are all the SAME and
 It does'nt mean foo is a method of obj
 If you do someFoo.count=10, then even foo.count and obj.someFoo.count are both updated to 10.
 
+>>)functions are objects
 Functions Objects -
-A function object can have these properties: primitive values, object as a value, function as a value, some callable code, a name (anonymous ones dont have this). The code is just on of the properties of the object.
+A function object can have these properties: primitive (BNS) values, object as a value, function as a value, some callable code, a name (anonymous ones dont have this). The code is just one of the properties of the object.
 
+>>)arrays are objects
 Arrays-
 var arr = [10, 'bar', 'baz'];
 arr.test = 20;
 arr.length; // it is still 10. Length only counts the number of numeric properties! "0","5","10" etc.
 arr["3"] = 20;  Only now the length changes to 4.
 
+>>)circular references in objects, copying objects
 You can have infinitely deep objects in JS.
 var arr = [5,10];
 var obj = { c:10, b:arr};
@@ -1146,6 +1179,7 @@ newObj is now { a:5, b:6, c:7 }
 
 To do an actual deep clone, do var obj2 = JSON.parse(JSON.stringify(obj1));  //but this will take up a lot of memory, be careful.
 
+>>)object property descriptors
 ES5 introduced property descriptors: value, writable, enumerable, configurable.
 var myObject = { a: 2 };
 Object.getOwnPropertyDescriptor( myObject, "a" );
@@ -1169,7 +1203,7 @@ Configurable: As long as it is true, you can modify the property descriptors usi
   	nuanced exception:even when config is false, you can change writable to false without error, but you cannot change writable to true ever.
   	When configurable is false, you can't even do: delete obj.a (it silently fails)
   	btw delete does not free up memory immediately like in c/c++ it only removes the object property immediately (value is garbage collected later)
-Enumerable: Should this property turn up in object-property enumerations or not (for..in)
+Enumerable: Should this property turn up in object-property enumerations or not (for x in myObj)
 
 Immutable Objects: In JS you can only create shallow immutability. Affect only the object and its direct property characteristics.
 If an object has a reference to another object (array, object, function, etc), the contents of that object are not affected, and remain mutable.
@@ -1185,16 +1219,18 @@ If an object has a reference to another object (array, object, function, etc), t
 	this calls Object.preventExtensions() and changes all the property descriptors to configurable:false.
 	So you can't add/delete any properties or property descriptors, you can only modify property values at best.
 >Object.freeze(obj)
-	this call Object.seal(obj) and changes all property descriptors to writable:false
+	property-descriptors(writable,configurable) set to false, also you can't add/delete properties.
+	i.e this call Object.seal(obj) and changes all property descriptors to writable:false
 	So you can't add/delete any properties or property descriptors, you can't modify property values too.
 because all of the above are shallow, you can call freeze() and then recursively iterate over all the object's references and freeze() them too
 
+>>)ES6 getters and setters in objects
 [[Get]] operation belongs to all objects. obj.a/obj['a'] means obj[[Get]](a); If it doesn't find 'a' in obj, it looksup [[Prototype]] chain
 [[Put]] operation is naunced.
 Getters & Setters
 ES5 introduced a new way to set and get properties. This is not at an object level, but at per-property level.
 For each property: you can either have 4 property descriptors, or 2 property descriptors and 2 property accessors (get and set)
-i.e when a property has an accessor (get or set or both), in either case, then 'writable' and 'value' are invalid/ignored, only 'enumerable' and 'configurable' are valid data descriptors for the property
+i.e when a property has an accessor (get and/or set), in either case, then 'writable' and 'value' are invalid/ignored, only 'enumerable' and 'configurable' are valid data descriptors for the property
 var myObject = {
 	get a() {return 2;}    //a is now a property and it has a getter
 };
@@ -1206,8 +1242,9 @@ var myObject = {
 	set a(val) { this.x = val * 2; }
 };
 myObject.a = 2;  //calls the setter and x is now 4.
-myObject.a; // 4
+myObject.a; // 4 ! MAGIC, you set 2 but got back 4!
 
+>>)property existence in objects - "in", hasOwnProperty
 Existence: How do you distinguish if the property exists in an object
 var myObject = {  a: 2 };
 ("a" in myObject);				 // true   The 'in' operator will check to see if the property is in the object, or if it exists at any higher level of the [[Prototype]] chain object traversal
@@ -1219,17 +1256,32 @@ myObject.hasOwnProperty( "b" );	 // false
 If an object is created via Object.create(null), it does not have a link to prototype, so use Object.prototype.hasOwnProperty.call(myObject,"a")
 All other normally created objects have all of the above functions.
 
+>>)enumeration/iterating through objects
 Enumeration: If enumerable is true, then use that property.
 for (var k in myObject) {
 	console.log( k, myObject[k] );     //only enumerable properties 'k' (look in all its parents too)
 }
-Note: for arrays, even some unwanted properties are marked as 'enumberable:true', so use normal 'for' loops for arrays
-myObject.propertyIsEnumerable("a"); // true or false depending on the enumerable property descriptor of a
+for (var k in myObject) {
+	if (myObject.hasOwnProperty(k)) {
+		console.log( k, myObject[k] );    //now it prints only if the property actually belongs to myObject (and not parents)
+ 	}
+}
+
+myObject.propertyIsEnumerable("a"); // true or false depending on the enumerable property descriptor of 'a'
 
 Object.keys(obj) returns an array of all enumerable properties
 Object.getOwnPropertyNames(obj) returns an array of all properties, enumerable or not.
 Both of these only inspect direct properties! they do not go up the [[Prototype]] chain
 There is no built-in way in JS to get ALL the properties (even by looking up the prototype chain)
+
+>>)enumeration/iterating through arrays - "in", forEach, "of", Symbol.iterator
+Dont use "for-in" for Arrays, it will give you all the new custom made properties of the Array.prototype too.
+a = [10,20,40];
+Array.prototype.temp = 50;
+for(p in a) {console.log(p);};  //gives 0,1,2,temp
+
+For arrays, even some unwanted properties are marked as 'enumberable:true', so just use normal 'for' loops for arrays
+myObject.propertyIsEnumerable("a"); // true or false depending on the enumerable property descriptor of 'a'
 
 Array Iteration from ES5-
 arr.forEach(function(x,i,a,t){ x is the value, i is index, a is arr, this object binder }){}
@@ -1268,8 +1320,8 @@ Object.defineProperty( myObject, Symbol.iterator, {
 		return {
 			next: function() {    //by lexical scope, this func is closing over o,idx,ks.
 				return {
-					value: o[ks[idx++]],
-					done: (idx > ks.length)
+					value: o[ks[idx++]],   //(if idx>ks.length, this should be undefined..)
+					done: idx > ks.length
 				};
 			}
 		};
@@ -1279,47 +1331,41 @@ Now use var it = myObject[Symbol.iterator]();
 or for (var v of myObject) { }
 You can even declare it as myObject[Symbol.iterator]= function(){ } . The reason we used define() was to make the iterator non-enumerable.
 
-Method Chaining:
+Method Chaining: VVVIP fact
 obj1.func1().func2().func3();   //all 3 funcs affect obj1
 To be able to do this, each of the funcs 1,2,3 must return "this". Then only you can chain like this.
 
 3.4)Mixing Class objects
-Procedural programming pattern: code which only consists of procedures (aka, functions) calling other functions, without any higher abstractions
+Procedural programming pattern: code which only consists of procedures (aka, functions) calling other functions, without any higher abstractions.
 Class Design Pattern: Like Java.
 C,C++, PHP give you the option of class design and procedural style
 
+>>)OOP concepts
 Class: a certain form of code organization and architecture -- data intrinsically has behaviour associated with it -
 	a way of modeling real world problem domains in our software.
 	Encapsulate the data and the behavior together. a neatly collected packaging of both the character data and the functionality we can perform on it.
 	Class is just a blue-print of all its instances. You never work with the class, you only work with the instances.
-	Classes will have a constructor function (same name as class) that creates an object and returns it. This is what is called an instance.
+	Classes will have a constructor function (same name as class) that creates an object and returns it. This is what is called an instance. The class itself does not take up any memory, only the instances do.
 		Example: new Car('hyundai');  returns an instance of a Hyundai Car
+Inheritance: we define Car, we indicate that it "inherits" (or "extends") the base definition from Vehicle. The definition of Car is said to specialize the general Vehicle definition.
+	The child class contains an INITIAL copy of the blueprint (data & behavior) from the parent, but can then override any inherited behavior and even define new behavior.
+	There is no 'linking' between the parent and child. The child class blueprint is just a COPY of the parent class blueprint. Class inheritance implies "copies" or "duplicated". So when you use super() it is just accessing within the same class, what is copied (inherited), it is not linking and going up to the parent, there is no link.
+	So further down the line if the parent changes, the child will not be affected (i think)
+	Only child classes 'relatively reference' their parent class. Child instances do not do this to parent instances.
+	JS does not have multiple inheritance at all. (we are lucky)
+Abstract class: A parent class that you would never instantiate. You make child classes of these and then instantiate those.
 Polymorphism: idea that a general behavior from a parent class can be overridden in a child class to give it more specifics.
-    a parent class and a child class share the same method name for a certain behavior, so that the child overrides the parent (differentially)
+	A parent class and a child class share the same method name for a certain behavior, so that the child overrides the parent (differentially)
 	Relative polymorphism: the child class in it's new defintion of an inherited func, first calls the parent class's func and then does its own thing. (using 'super' in func def)
 	This is there in JS! (the idea that any method can reference another method (of the same or different name) at a higher level of the inheritance hierarchy)
 	Put another way, the definition for the method xyz() polymorphs (changes) depending on which class (level of inheritance) you are referencing an instance of.
-Inheritance: we define Car, we indicate that it "inherits" (or "extends") the base definition from Vehicle. The definition of Car is said to specialize the general Vehicle definition.
-	The child class contains an INITIAL copy of the behavior from the parent, but can then override any inherited behavior and even define new behavior
-	There is no 'linking' between the parent and child. The child is just a COPY of the parent. Class inheritance implies "copies". So when you use super() it is just accessing within the same class, what is copied (inherited), it is not linking and going up to the parent, there is no link.
-	So further down the line if the parent changes, the child will not be affected (i think)
-	Only child classes 'relatively reference' their parent class. Child instances do not do this to parent instances.
-Abstract class: A parent class that you would never instantiate. You make child classes of these and then instantiate those.
-	JS does not have multiple inheritance at all. (we are lucky)
 
 JS does NOT have classes. (provides seemingly class-like syntax, but JS engine works differently)
 
-Mixins: JS version of inheritance. Meaning how JS does a copy of the parent to give you a child. (child object that is)
+>>)Mixin Function
+JS version of inheritance. Meaning how JS does a copy of the parent to give you a child. (child object that is)
 There are NO classes in JS, you only have objects. And you can't really make copies of objects. The references of A and B's properties will be the same!
 
-var Vehicle = {
-	engines: 1,
-	ignition: function() {console.log("Turning on my engine");},
-	drive: function() {
-		this.ignition();
-		console.log("Steering and moving forward!");
-	}
-}
 function mixin(sourceObj, targetObj){
 // Mix the source object into the target object (only where allowed). Mix the parent into the child object. (only if the child does not have that property)
 	for(var k in sourceObj){
@@ -1329,13 +1375,23 @@ function mixin(sourceObj, targetObj){
 	}
 	return targetObj
 }
+
+var Vehicle = {
+	engines: 1,
+	ignition: function() {console.log("Turning on my engine");},
+	drive: function() {
+		this.ignition();
+		console.log("Steering and moving forward!");
+	}
+}
 var Car = {
 	wheels: 4,
 	drive: function() {
-		Vehicle.drive.call( this );
+		Vehicle.drive.call( this );   //This calls Car.ignition()
 		console.log( "Rolling on all " + this.wheels + " wheels!" );
 	}
 }
+// right now Car does not have the ignition() function in it at all.
 Car = mixin(parent, Car);
 So car is actually -  {
 	wheels: 4,
@@ -1350,14 +1406,14 @@ Technically, functions are not actually duplicated, but rather references to the
 So, Car now has a property called ignition, which is a copied reference to the ignition() function,
 as well as a property called engines with the copied value of 1 from Vehicle.
 
-The line Vehicle.drive.call(this) is called "explicit pseudo polymorphism". You need to do this in JS because there is no such thing called "class".
+The line Vehicle.drive.call(this) is called "explicit pseudo polymorphism". You need to do this in JS because there is no such thing called "class". The child calls the parent function with .call(me) -> telling it, use "this" as "me" the child.
 In languages that have classes, they take care of the binding.  EPP is what makes classes in JS complex. It leads to ugly and brittle syntax, harder to understand and maintain code!
 
 Remember, the parent and child share their references to the array objects, function objects, and other objects etc! These are NOT COPIES in JS.
-JavaScript functions can't really be duplicated (in a standard, reliable way), so what you end up with instead is a duplicated reference to the same shared function object.
+JavaScript functions can't really be duplicated (in a standard, reliable way) (just like the fact that you can make copies of JS objects), so what you end up with instead is a duplicated reference to the same shared function object.
 In general, faking classes in JS often sets more landmines for future coding than solving present real problems.
 
-Object Oriented Programming
+>>)Factory Techniques - basic, amateur, intermediate, pro.
 Basic object factory:
 function createElf(name, weapon) {
 	return {
@@ -1372,29 +1428,24 @@ const sam = createElf('sam', 'heather');
 In the above, for each elf, in memory, there is going to be it's own attack() function code stored (waste of memory)
 
 Amateur Object Factory:
-function Elf(name,weapon) {
+function Elf(name,weapon) {   //must be a CAPITAL letter!! (constructor functions)
 	this.name = name;
 	this.weapon = weapon;
 }
 Elf.prototype.attack = function() {return 'attack with ' + this.weapon}
+Elf.prototype.setRandomId = function(x,y) {this.id = x*y;}
 const peter = new Elf('peter','stones);
-//peter is automatically a child of the Elf function object, becuase 'new' was used. So peter does not have 'attack', but his proto parent does. peter.__proto__ points to the object at Elf.prototype
-//All elves now share one function code defintion.
+//peter is automatically a child of the Elf function object, because 'new' was used. So peter does not have 'attack', but his proto parent does. peter.__proto__ points to the object at Elf.prototype
+//All elves now share one function code defintion. (no wasting memory)
+peter.attack();    //'attack with stones'
+peter.setRandomId(5,10);   // peter.id is 50
 
-Semi-pro Object Factory
-function HumanMaker (sex,name) {  //must be a CAPITAL letter!! (constructor functions)
-	this.sex = sex;
-	this.name = name;
-}
-HumanMaker.prototype.func1 = function (a,b) { this.a = a};     //All humans share one function code defintion. (no wasting memory)
-HumanMaker.prototype.func2 = function (c,d) { this.c = c};
-var albert = new HumanMaker('male','albert);
-albert.func1('sleep');
 //This is how all the built-in function constructors work - Object, Array, String, Date etc. You can add any new funcs you want to them by doing Obj.prototype = func() {}. But don't do this. Other scripts on the page may break.
 
 Intermediate Object factory:
 const elfFunctions = {
 	attack() {return 'attack with ' + this.weapon}
+	setRandomId(x,y) {this.id = x*y;}
 }
 function createElf(name, weapon) {
 	let newElf = Object.create(elfFunctions);     //Object.create() was invented to stop using new (i.e function constructors)
@@ -1406,12 +1457,6 @@ const peter = createElf('peter','stones);
 Now peter does not have attack function, but using proto chain, it gets the attack function from the elfFunctions object.
 All elves now share one function code defintion.
 
-Note:
-var a = new Number(5);
-typeof a; //this is object!   (not number)
-Don't use these primitive function constructors! things like new Number(3) === 3 is FALSE...  object is not equal to number
-Even for Arrays, dont use for-in, it will give you all the new custom made properties of the Array.prototype too.... just use simple for loops for arrays.
-
 Professional Object factory:
 class Elf {
 	constructor(name, weapon) {
@@ -1419,26 +1464,25 @@ class Elf {
 		this.weapon = weapon;
 	}
 	attack() {return 'attack with ' + this.weapon}
-	//don't put this inside the constuctor, then every instance will now have it's own func definition (waste of memory)
+	//don't put this inside the constructor, then every instance will now have it's own func definition (waste of memory)
 }
 const peter = new Elf('peter','stones);
 peter.__proto__; //this is Elf  (i.e Elf.prototype)
-const fiona = {...ogre}   (just making a copy)
+const fiona = {...peter}   (just making a copy)
 fiona === peter; //false
-fiona.__proto__; //this is Object.prototype, has no relation to Elf.
+fiona.__proto__; //this is Object.prototype, has no relation to Elf. (you just created the literal version of an Object)
 fiona.attack();  //attack() does not exist.
 //So use 'extends' to solve this.
 
 3.5)prototypes
-Prototype chains-
-So __proto__ of any object, actually links to the "prototype" property of it's parent. The value of this property in the parent is an object that has a lot of properties. That parent is normally a function object or just plain object.
-So every object in the chain has a __proto__ property (this ones value is a reference) and a prototype property (this ones value is an object)
+>>)__proto__ i.e prototype chains
+So __proto__ of any object, points to the "prototype" object of it's parent. That parent is normally a function object or just plain object. So every object in the chain has a __proto__ property, it is a reference to an object.
 
 __proto__ ----points--to----> Parent.prototype which is an object {prop1: ,prop2, prop3, prop4}
 
 var a = [10];
-a.__proto__; this is the Array object's prototype property. (this is Array.prototype which has map/reduce/filter/every etc)
-a.__proto__.__proto__;  this is the Object object. (Object.prototype which has stuff like )
+a.__proto__; this is the Array object's prototype property. (the Array.prototype object has map/reduce/filter/every etc)
+a.__proto__.__proto__;  this is the Object object. (Object.prototype which has stuff like hasOwnProperties(), toString() etc)
 
 var b = {x:10; y:20; z:30};
 var c = {w:5};
@@ -1449,6 +1493,8 @@ b.__proto__.__proto__; //null  In the begginning there was nothing, just null. T
 b.isPrototypeOf(c); //true    b does not have func isPrototypeOf, so it goes to object and gets it.
 for (k in c);  this gives b and c props
 c.hasOwnProperty(k);  true only if k really belongs to c and is not inherited
+
+So, this is NOT classical inheritance as the child does not have a "copy" of the parent name-value pair in it, It just has direct acccess to it. This is "prototypal inheritance". 56.tofixed(4).
 
 function f() {}
 f.hasOwnProperty('call/bind/apply');  //all are false
@@ -1463,24 +1509,17 @@ every function has a prototype property and it references to an object used to a
 const obj = {};
 obj.prototype;  //this is undefined. Only functions have this property.  (same with [].prototype,'string'.prototype etc.)
 
-Object.prototype is the real object which is the PARENT of all JS objects.
+Object.prototype is the real object which is the PARENT of ALL JS objects.
 
 To add a new functionality to every Date object
-Data.prototype.newFunc = function() {}
+Date.prototype.newFunc = function() {}
 So now, every child of date, if they don't have newFunc, they will go up the __proto__ chain, reach Date.prototype object, and then use that func.
 You can even overwrite any exisitng function by just redefining it.
 
-var x = someFunc.bind(thisObject,arg1,arg2);
-Function.prototype.bind = function(thisObject) {
-	self = this;
-	return function(args) {
-		return this.apply(thisObject, args);
-	};
-}
-
+>>)[[Prototype]]
 Objects in JavaScript have an internal property, denoted in the specification as [[Prototype]], which is simply a reference to another object.
 Almost all objects are given a non-null value for this property, at the time of their creation.
-Think of [[Prototype]] like the [[Get/Put]] operations.. here you are looking up the protype chain.
+Think of [[Prototype]] like the [[Get/Put]] operations.. here you are looking up the prototype chain.
 the [[Prototype]] mechanism is an internal link that exists on one object which references some other object.
 
 The [[Get]] operation of an object to access a property, uses this [[Prototype]] link.
@@ -1490,8 +1529,7 @@ obj2.a; // it gives 2!
 Even if obj1 did'nt have the property 'a', obj1's [[Prototype]] chain is again consulted and followed. This process continues until either a matching property name is found, or the [[Prototype]] chain ends.
 If no matching property is ever found by the end of the chain, the return result from the [[Get]] operation is undefined
 
-This [[Prototype]] linkage is (primarily) exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the [[Prototype]] linkage tells
-the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its [[Prototype]] is followed, and so on. This series of links between objects forms what is called the "prototype chain".
+This [[Prototype]] linkage is (primarily) exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the [[Prototype]] linkage tells the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its [[Prototype]] is followed, and so on. This series of links between objects forms what is called the "prototype chain".
 
 Same applies for 'for..in'. It looks up any property that is enumerable in the object's entire prototype chain!
 var obj1 = { a:2 };
@@ -1503,14 +1541,14 @@ Even 'in' operator works the same.
 
 So, the [[Prototype]] chain is consulted, one link at a time, when you perform property look-ups in various fashions. The look-up stops once the property is found or the chain ends.
 
-Object.prototype
+>>)Object.prototype
 This 'object' is the top of the prototype chain. This built-in object includes a variety of common utilities used all over JS, because all normal objects are DESCENDANTS of this one.
 .toString() .valueOf() .hasOwnProperty() .isPrototypeOf() : all of these utilities belong to this object
 
 obj1.foo = "bar"
-If foo already exists in obj1, then it just sets a new value.
-If foo does not already exist in obj1, then the entire prototype chain is first looked up, if it is not there, this property is added to obj1
-If foo already exists higher up in the prototype chain, then this is called "shadowing" the property, and If the foo higher up in the chain
+>If foo already exists in obj1, then it just sets a new value.
+>If foo does not already exist in obj1, then the entire prototype chain is first looked up, if it is not there, this property is added to obj1
+>If foo already exists higher up in the prototype chain, then this is called "shadowing" the property, and If the foo higher up in the chain
 	>has writable:true, then a new property called foo is added to obj1
 	>has writable:false, then error is thrown in strict mode or silent fail in non-strict mode. The presence of a read-only (writeable=false) property prevents a property of the same name being implicitly created (shadowed) at a lower level of a [[Prototype]] chain
 	>is a setter, then the setter will be called, no new property will be be added to obj1
@@ -1530,8 +1568,7 @@ obj2.a++; // oops, implicit shadowing! obj2.a = obj2.a + 1, here in the RHS, [[G
 obj1.a; // 2
 obj2.a; // 3
 
-Classes do not exist in JS. Object can be created directly, without a class at all.
-
+>>) .prototype
 All functions by default get a public, non-enumerable property on them called prototype, which points at an otherwise arbitrary object. (weird JS syntax)
 function Foo() {  }
 Foo.prototype;   This is an object (the name prototype is just an arbitrary property name, dont read too much in to it)
@@ -1541,8 +1578,7 @@ So, each object created via new Foo() will end up [[Prototype]]-linked to this "
 var a = new Foo();
 Object.getPrototypeOf(a) === Foo.prototype;   // true
 
-In JavaScript, we don't make fresh new copies from one object to another (a class to its instance, or a parent class to its child class).
-We just make complicated links between existing objects.
+In JavaScript, we don't make fresh new copies from one object to another (a class to its instance, or a parent class to its child class). We just make complicated links between existing objects.
 This mechanism is often called "prototypal inheritance". (often found in dynamic scripting). It is not what "classical inheritance" is at all (class, constructor, instance, polymorphism, etc).
 Its like calling an an apple, a 'red orange'. It should not have been called inheritance at all.
 "Inheritance" implies a copy operation, and JavaScript doesn't copy object properties. Instead, JS creates a link between two objects, where one object can essentially delegate property/function access to another object.
@@ -1558,7 +1594,7 @@ JS developers also give the function name a captial letter to pretend as if it i
 
 In JS, a "constructor" is ANY function called with the new keyword in front of it. Functions aren't constructors, but function calls are "constructor calls" if and only if new is used.
 
-//How JS devs create "classes" -
+>>)How JS devs create "classes" -
 function Foo(name) {
 	this.name = name;
 }
@@ -1569,6 +1605,7 @@ var a = new Foo("a");
 a.myName(); // "a"
 Here myName() does not belong to a at all, it belongs to a's parent. So [[Get]] operation does a look up, a's parent is Foo.prototype and uses that func there.
 
+>>)constructor
 function Foo() {  }
 Foo.prototype = {  }; // create a new prototype object, so this overrides the one JS built in line1
 var a1 = new Foo();
@@ -1608,7 +1645,8 @@ Bar.prototype = Object.create( Foo.prototype ) is different from Bar.prototype =
 	Here you are not making new object called bar.prototype a child of Foo.prototype, you are just creating a new reference for Foo.prototype (a ref call bar.prototype)
 	In ES6 you can do - Object.setPrototypeOf( Bar.prototype, Foo.prototype ); this does not create a whole new object, it just modifies the existing Bar.prototype objects' linkage.
 
-Class Introspection: For a given instance (object), finding out it's ancestory (aka delegation linkage in JS)
+>>)Class Introspection
+For a given instance (object), finding out it's ancestory (aka delegation linkage in JS)
 a = new Foo();
 
 a instanceof Foo;   LHS must be object, RHS must be a function
@@ -1655,7 +1693,7 @@ function createAndLinkObject(o){  //how it is probably implemented
 };
 Object.create = createAndLinkObject;
 
-Dictionaries:
+>>)Dictionaries:
 var d = Object.create(null); d does not have any parent (an empty [[Prototype]] linkage). They are typically used purely for storing data in properties.
 Mostly because they have no possible surprise effects from any delegated properties/functions on the [[Prototype]] chain, and are thus purely flat data storage.
 
@@ -1769,7 +1807,7 @@ Bar.speak = function() {
 	alert( "Hello, " + this.identify() + "." );
 };
 
-var b1 = Object.create( Bar );       // B1.prototype in now Bar
+var b1 = Object.create( Bar );       // b1.prototype in now Bar
 b1.init( "b1" );
 var b2 = Object.create( Bar );
 b2.init( "b2" );
@@ -1778,7 +1816,7 @@ b1.speak();
 b2.speak();
 [[Prototype]] delegation from b1 to Bar to Foo, same as class way. We still have the same 3 objects linked together - b1, Bar.prototype, and Foo.prototype
 BUT we have greatly simplified, there is no confusions like constructor properties (which are not trustable), prototypes and "new" calls.
-You get the sam functionality via OLOO. So it is much better.
+You get the same functionality via OLOO. So it is much better.
 b1 & b2 {
 	me = value
 	.__proto = bar.prototype
@@ -1950,19 +1988,20 @@ Basically, do not use ES6 Class. Just not worth it.
 Chapter 4: Types and Grammar
 
 4.1) Types
-
 JS type: a type is an intrinsic, built-in set of characteristics that uniquely identifies the behavior of a particular value and distinguishes it from other values, both to the engine and to the developer.
 Coerce: Convert from one type to another
 
-In JavaScript, variables don't have types -- values have types. Variables can hold any type of value, at any time. (dynamically typed language as opposed to static type) Java/C/C++ are all static typed languages. You have to mention the typeof var when you declare it. You can't use that var for any other types.
+Dynamically typed
+In JavaScript, variables don't have types -- values have types. Variables can hold any type of value, at any time. Java/C/C++ are all static typed languages. You have to mention the typeof var when you declare it. You can't use that var for any other types.
 
-JS is also weakly typed. You can do 'boo' + 17 , it will give 'boo17'. Meaning JS tries do implicit coercion when it can. Python/ruby/closure are all also dynamically type langs, but they are "strongly" typed. They don't do this coercion for you, but throw an error.
+Weakly typed.
+You can do 'boo' + 17 , it will give 'boo17'. Meaning JS tries do implicit coercion when it can. Python/ruby/closure are all also dynamically type langs, but they are "strongly" typed. They don't do this coercion for you, but throw an error.
 
 7 Built in types: All of these except "object" are called primitives
 boolean, number, string,
 object, null, undefined, symbol
 
-typeof: what's the type of the value in the variable?
+"typeof" - what's the type of the value in the variable?
 typeof operator returns 6 values correctly for 6 of the types: "boolean", "number", "string", "object", "undefined", "symbol".
 one of the types has a bug: typeof null is "object"
 to check for null-> (!a && typeof a === "object") If this is true, then a is null (or just do a === null)
@@ -1973,47 +2012,57 @@ function foo(a,b,c) { }   //foo.length is automatically set to 3. (number of arg
 
 typeof [3,4,5] is "object"
 The typeof operator returns "undefined" even for "undeclared" (or "not defined") variables. Undefined and undeclared are two different things.
-
 On a webpage, to check if a global function/feature is there for you to use -
 var helper = (typeof FeatureXYZ !== "undefined") ? FeatureXYZ : function() { define here };
 var val = helper();
 
 4.2)Values
->Arrays
+>>)Arrays
 Do not use the Delete operation on an array. It deletes the entire slot.
 Sparse Arrays: They have empty values in some slots. The length is always till the last filled slot.
 
 a["13"] = 10   It coerces it to be a[13] = 10
 Use arrays for strictly numerically indexed values. Don't add a['test'] = 10, eventhough you can do this. (arr['push'] = 10)
+Arrays are just objects. They have a length property. Even the indexes are just string properties "0", "1", "10" etc.
+let b = [10,20,30];
+b.push = 40;
+b.push(50);  //TypeError, push is not a function! You have changed the "push" property to become a number 40.
 
-function foo(args){   //args is an "Array-like" object, if you don't pass any args, by default arguments is {} !!!
+function foo(args){   //args is an object with properties "0","1","2","length" etc. If you don't pass any args, by default args is {}
 	var arr = Array.prototype.slice.call(args);   //when slice is called without any arguments, it just creates a copy and returns it
 }
 
->Strings
+>>)Strings
 JavaScript strings are immutable, while arrays are quite mutable. This is not a reference type.
 All string methods return a new string, but almost all array methods modify the same array..
 var a = "foo";
 var b = ["f","o","o"];
-a[1] = 'k'    no effect on a
+a[1] = 'k'    no effect on a, vvip.
 b[1] = 'k'	  b is now 'f','k','o'
+
 To access characters of a string, do not use a[5], use a.charAt(5) !
 
-To reverse a string - s.split('').reverse().join('');   //ugly, but fine for small strings
-
->Numbers
+>>)Numbers
 The implementation of JavaScript's numbers is based on the "IEEE 754" standard, often called "floating-point." JavaScript specifically uses the "double precision" format (aka "64-bit binary") of the standard.
-Numbers in JavaScript include both "integers" and floating-point values.
+Numbers in JavaScript include both integers and floating-point values.
 var b = 42.; is a valid number
-b.toExponenetial();  //gives 5e+10
-b.toFixed(4);  //there must be 4 digits after the decimal point
 
+.toExponenetial(), .toFixed() & .toPrecison() ALL 3 return STRINGS!
+b.toExponenetial();  //gives 5e+10
+b.toFixed(4);  // "42.0000" there must be 4 digits after the decimal point
 b.toPrecison(6);  //how many significant digits should be used to represent the value (rounding off) So the number must have 6 digits in total.
 var a = 42.59;
-a.toPrecision( 1 );  "4e+1"
+a.toPrecision( 1 );  "4e+1"  i.e a string
 a.toPrecision( 2 );  "43"
+For Rounding off: 44.4999->44, 44.50->45, 44->4e+1, 45->5e+1
 
-// these are all valid by Avoid them:
+Get used to the "e" notation.
+4e0=4, 4e+1=40, 4e+2=400, 4e-1=0.4, 4e-3=0.004
+45e2=4500, 45e-1=4.5
+563e+1=5630, 563e-5=0.00563
+5.85e+1=58.5, 5.85e-3=0.00585
+
+// these are all valid but Avoid them:
 (42).toFixed( 3 );	// "42.000"
 42.toFixed(3);  Syntax Error
 0.42.toFixed( 3 );	// "0.420"
@@ -2023,7 +2072,7 @@ octal 0oABC  0o363
 hex 0xABC   0xf3c35
 binary 0bABC   0b11110011;
 
-Like many languages that use IEEE 754
+Like many other languages that use IEEE 754 too, even in JS -
 0.1 + 0.2 === 0.3; // false
 To compare two close numbers, compare their difference to "machine epsilon" -  which is commonly 2^-52 (2.220446049250313e-16)
 if (!Number.EPSILON) {
@@ -2052,7 +2101,7 @@ if (!Number.isInteger) {
 	};
 }
 
->Special Values
+>>)Special Values: null, undefined, void, NaN, +-Infinity, +-0, Object.is()
 For the undefined type, there is one and only one value: undefined.
 For the null type, there is one and only one value: null.
 So for both of them, the label is both its type and its value.
@@ -2083,21 +2132,21 @@ if (!Number.isNaN) {
 }
 
 Infinities
-var a = 1 / 0;	// Infinity or Number.POSITIVE_INFINITY (there is no divide by zero error in JS)
-var b = -1 / 0;	// -Infinity or Number.NEGATIVE_INFINITY
-var a = Number.MAX_VALUE;	// 1.7976931348623157e+308
-a + a;	 // Infinity or Number.POSITIVE_INFINITY
-Infinity / Infinity is NaN (not 1)
-10 / Infinity is 0
-Infinity === -Infinity   //false
+var a = 1 / 0;	            // Infinity or Number.POSITIVE_INFINITY (there is no divide by zero error in JS)
+var b = -1 / 0;	            // -Infinity or Number.NEGATIVE_INFINITY
+var a = Number.MAX_VALUE;	  // 1.7976931348623157e+308
+a + a;	                    // Infinity or Number.POSITIVE_INFINITY
+Infinity / Infinity         // is NaN (not 1)
+10 / Infinity               // 0
+Infinity === -Infinity      //false
 
 Zeros
-var a = 0 / -3; // -0
-var b = 0 * -3; // -0
-JSON.stringify( -0 ) is  "0" but JSON.parse("-0") is -0
-String(-0) is "0"
+var a = 0 / -3;          // -0
+var b = 0 * -3;          // -0
+JSON.stringify( -0 )     //  "0" but JSON.parse("-0") is -0
+String(-0)               // "-0"
 
--0 === 0;	// true
+-0 === 0;	               // true
 So to distinguish -0 from 0
 	function isNegZero(n) {  //
 		n = Number( n );
@@ -2122,7 +2171,8 @@ Object.is(NaN, NaN); //true
 Object.is(-0, -0); //true
 Object.is(0, -0); //false
 
-The value of a variable is always either a primitive value (number/boolean/string/undefined) OR the value is a pointer to a non-primitive (object/array/function) etc.
+>>)Primitives & References
+Core concept: The value of a variable is always either a primitive value (number/boolean/string/undefined) OR the value is a pointer to a non-primitive (object/array/function) etc.
 var a = 10;
 var b = a;  //get the value of a and put into b, so now b has a value of 10 (it has a copy of the value) (if a's value changes, b is not affected)
 var c = {};
@@ -2155,7 +2205,7 @@ change(number, string, obj1, obj2);
 console.log(number);                                         //100
 console.log(string);                                         //jay
 console.log(obj1.value);                                     //a
-
+console.log(obj3.value);                                     //c
 
 Since references point to the values themselves and not to the variables, you cannot use one reference to change where another reference is pointed:
 var a = [1,2,3];
@@ -2181,8 +2231,8 @@ To pass a copy of an array to a func, do abc(x.slice());  //it sends a shallow c
 
 4.3)Natives
 Natives: JavaScript provides object wrappers around primitive values. They are actually built-in functions. ('class' design and not OLOO design)
-Boolean(), Number(), String()
-Object(), Array(), Function()
+Boolean(), Number(), String()   ->try to avoid using these
+Object(), Array(), Function()  ->never use these three
 Regexp(), Date(), Error()
 Symbol()
 
@@ -2192,17 +2242,22 @@ function Number(x){
 	this.toFixed = function() { }
 }
 Number.prototype.toPrecison = function() { }       //a function
+Number.prototype.someNewFunction = function() { }       //your own new function
 Number.NEGATIVE_INFINITY = -Infinity;              //a static property
-var x = new Number(5);
-So protypal inheritance: x -> Number.prototype -> Object.prototype
-Number.__proto__ is Function.prototype
+var x = new Number(5);        (typeof x is 'object') //when you do x+20, JS automatically unboxes the object, gets the value 5 and adds 20 to it.
+So protypal inheritance (__proto__ chain): x -> Number.prototype -> Object.prototype
+Number.__proto__ is Function.prototype (because Number itself has bind,apply,call etc.)
+
+FOR almost.. ALL these 'Natives', the syntax is special, so you don't have to call them with "new", i.e you don't need "new Number(5)", you can just do "Number(5)"
 
 var s = new String( "Hello World!" );   //The result of the constructor form of value creation is an object wrapper around the primitive value.
-typeof s;  //"object" and not "string"
-a instanceof String;  //true  (String - the function)
+typeof s;                               //"object" and not "string"
+a instanceof String;                    //true  (String - the function)
+new String("hello") === "hello";        //false
 
 Internal [[Class]]
 Values that are typeof "object" (such as an array) are additionally tagged with an internal [[Class]] property.
+You will see this whenever you try to convert an Object type to String!!
 This property cannot be accessed directly - but can be seen via
 	Object.prototype.toString.call( [1,2,3] );			// "[object Array]"  this is the internal [[Class]] value
 	Object.prototype.toString.call( /regex-literal/i );   // "[object RegExp]"
@@ -2229,15 +2284,14 @@ var b = new Number(42);
 b.valueOf();              //42
 Implicit unboxing -
 var a = new String("abc");
-var b = a + ""; // typeof b is 'string'
+var b = a + ""; // typeof b is 'string'   (b is not going to be 'object' obviously)
 
->Array() -
-For array, object, function, and regexp values, it is preferred that you use the literal form for creating the values.
-literal form creates the same sort of object as the constructor.
+>Array()
+For array, object, function, and regexp values, it is preferred that you use the literal form for creating the values. Literal form creates the same sort of object as the constructor.
 
 var a = new Array( 1, 2, 3 ) same as a = [1,2,3]
-Array() has two quirks, it does not need 'new' in front of it, if you call it with one argument, it creates an empty array of that size (sparse array)
-var a = Array(5); [5 undefined here]   a.length is 5
+Array() has a quirk, if you call it with one argument, it creates an empty array of that size (sparse array)
+var a = Array(5); [5 undefineds are here]   a.length is 5
 
 var a = new Array( 3 );
 var b = [ undefined, undefined, undefined ];
@@ -2253,10 +2307,8 @@ a; // [ undefined, undefined, undefined ]
 
 >Object() -
 var c = new Object();
-c.foo = "bar";
-c; // { foo: "bar" }
-var d = { foo: "bar" };
-d; // { foo: "bar" }
+c.foo = "bar";             // { foo: "bar" }
+var d = { foo: "bar" };    // d an c are similar
 
 >Function(argNames,body)
 var e = new Function( "a", "return a * 2;" );
@@ -2264,15 +2316,14 @@ var f = function(a) { return a * 2; };
 function g(a) { return a * 2; }
 
 >RegExp(pattern,mode)
-var h = new RegExp( "^a*b+", "g" );
-var i = /^a*b+/g;
+var h = new RegExp( "^a*b+", "gi" );
+var i = /^a*b+/gi;
 
-there is practically no reason to use Object(), Function(), RegExp(), just use literal form.
+There is practically no reason to use Object(), Function(), RegExp(), just use literal form.
 Unless you have use case where in the code, dynamically, you need to define a function's body or define a regExp.
 var b = "return a * 2", c = "return a * 3";
 if (!flag) { g = new Function ("a", c); }
-
-Same for regexp.
+ Same for regexp.
 var name = "Kyle";
 var namePattern = new RegExp( "\\b(?:" + name + ")+\\b", "ig" );
 var matches = someText.match( namePattern );
@@ -2287,6 +2338,10 @@ var b = Date(); returns a string of the format "Fri Jul 18 2014 00:31:02 GMT-050
 Same quirk as Array(), you can call with or without new. The behaviour is same.
 It returns an error object, captures the current execution stack context in it.
 This stack context includes the function call-stack and the line-number where the error object was created, which helps in debugging that error.
+let x = new Error('some error message');
+x.message;  //'some error message'
+x.stack;    // <some call stack>
+x.__proto__ is Error.prototype
 
 throw operator -
 throw new Error( "x wasn't provided" );
@@ -2347,12 +2402,13 @@ var b = new Date;    //it is allowed, but is bad syntax.
 coercion is magical, evil, confusing, and just downright a bad idea. But it is important you don't avoid this feature of JS, and learn how it works, and use it to your advantage.
 type casting: explicitly converting from one type to another (or call it explicit coercion)
 coercion: implicit conversion from one type to another done by the language  (boxing from primitive to object is not coercion)
-JS coercions always result in one of the scalar primitive values, like string, number, or boolean.  (never object, function etc)
+JS coercions always result in one of the scalar primitive: string, number or boolean.  (never object, function etc)
 
 var a = 42;
-var b = a + "";			// implicit coercion
+var b = a + "";			  // implicit coercion
 var c = String( a );	// explicit coercion   (typeof c is not "string" but "object")
 
+>>)ToString, ToNumber, ToBoolean
 Regardless of Explicit or Implicit coercion, first understand the 3 main abstract operations in the ES5 spec - ToString, ToNumber, ToBoolean. JS engine use these behind the scenes.
 
 >ToString operation     (on null, undefined, boolean, number, object, array, function)
@@ -2367,7 +2423,7 @@ true -> "true", false -> "false"
 [null,undefined] is ","  (very weird, it should have been "null, undefined")
 function b(){c=10; d=20;}, b.toString() -> "function b(){c=10; d=20;}"
 
-JSON.stringify can only take JSON safe values (not undefined, function, symbol, malformed object, objects with circular references (infinite loop))
+JSON.stringify() can only take JSON safe values (not undefined, function, symbol, malformed object, objects with circular references (infinite loop))
 JSON.stringify( 42 );	// "42"
 JSON.stringify( "42" );	// ""42"" (a string with a quoted string value in it)
 JSON.stringify( null );	// "null"
@@ -2400,16 +2456,17 @@ null - > 0
 undefined -> NaN
 false -> 0, true -> 1
 any string -> digits or NaN
-"" -> 0
-"0x5423" -> 0   (not treated as octal)
-"-0" is -0   ("0" is 0)
-" 0009  " is 9
-".0" is 0
+	"" -> 0
+	"0x5423" -> 0   (not treated as octal)
+	"-0" is -0   ("0" is 0)
+	" 0009  " is 9
+	".0" is 0
+	"43afsada", "555a4", "asdasd5634" is NaN,
 for an object -> whatever .valueOf() returns
-{} -> NaN
-[] -> 0  (even [""] is 0)
-[1,2,3] -> NaN
-["0"] is 0
+	{} -> NaN
+	[] -> 0  (even [""] is 0)
+	[1,2,3] -> NaN
+	["0"] is 0
 Objects - it tries .valueOf(), if it exists and returns a primitive value (BONS), then converts that to number. then it tries .toString()
 
 >ToBoolean operation       (on null, undefined, string, number, object, array, function)
@@ -2425,7 +2482,8 @@ Some browsers have created quirky objects that are not part of the JS spec. (ign
 "false", "0", " " are all true
 [], {}, function(){} are all true
 
-Explicit Coercion : The more explicit we are, someone later will be able to read our code and understand without undue effort what our intent was.
+>>)Explicit Coercion
+The more explicit we are, someone later will be able to read our code and understand without undue effort what our intent was.
 >string and number
 here you call String() and Number() without the new keyword, they both use the ToString and ToNumber operations
 String(43) or Number("44");
@@ -2450,6 +2508,7 @@ parseInt(a); // 42
 
 ES4 and below, syntax was parseInt(x, base). You had to specify base=10, because it would assume 0675 as an octal number.
 parseInt(1/0,19);  18   base 19 has digits 0-9A-I, so parsing string "Infinity",I is 18. N is not a valid number.
+If you give it a non-string, it will first convert to string and then parse an int from it.
 parseInt( 0.000008 );		// 0   ("0" from "0.000008")
 parseInt( 0.0000008 );		// 8   ("8" from "8e-7")
 parseInt( false, 16 );		// 250 ("fa" from "false")
@@ -2472,7 +2531,7 @@ var someOtherTimestamp = new Date('08-12-2015').getTime();   for any Date object
 
 > ~ | & operators  (BITWISE NOT, OR, AND)
 bitwise operators in JS are defined only for 32-bit operations, which means they force their operands to conform to 32-bit value representations
-first they call the internal toInt32 which inturn first calls Number();
+first they call the internal [toInt32] which inturn first calls Number();
 So ~ operator first "coerces" to a 32-bit NUMBER value, and then performs a bitwise negation (flipping each bit's parity).
 Note: This is very similar to how ! not only coerces its value to boolean but also flips its parity
 ~42;	// -(42+1) ==> -43     (~x is roughly the same as -(x+1)). Now only x=-1 will make ~x as a falsy value! (0)
@@ -2530,16 +2589,15 @@ function onlyOne(args) {
 	}
 	return sum == 1;
 }
-to do it explicitly do - sum += Number(!!args[i]);   convert it to boolean and then convert it to number
+to do it explicitly do: sum += Number(!!args[i]);   convert it to boolean and then convert it to number
 You can obviously edit the abov func to look for only 5 truths or only 10 truths etc.  (just change the sum value ===, part)
 
-|| && are'nt exactly logical operators in JS, they are more like 'operand selector operators', they return one of the two operands.
-ES5 spec: The value produced by &&,|| operator is not necessarily of type Boolean. The value produced will always be the value of one of the two operand expressions.
-42 || "abc"  is 42            42 && "abc"  is "abc"
-null || "abc" is "abc"        null && "abc" is null
+>>) ||,&&
+|| && are'nt exactly logical operators in JS, they are more like 'operand selector operators', they return one of the two operands expressions.
 Both || &&, first perform a boolean test on the first operand: for || if it is true, it returns operand 1. for && if it is true it returns operand 2.
-a || b; is basically a ? a : b
-a && b; is basically a ? b : a
+a || b; is basically a ? a : b,     a && b; is basically a ? b : a
+42 || "abc"  is 42                  42 && "abc"  is "abc"
+null || "abc" is "abc"              null && "abc" is null
 So if(), while() etc, they implicitly coerce the final selected operand value to boolean.
 if (!!a && (!!b || !!c)) {    /this is truly explicit
 	console.log( "yep" );
@@ -2552,7 +2610,7 @@ Short Circuiting (or guarding) (&& is sometimes called the guard operator)
 a && foo(a);  //foo() is called only if a is true, else it will just go to next line.
 foo is guarded by "a &&" before it.    (JS minfiers do this!!, convert if(a){foo()} to a && foo())
 
->Symbol
+>>)Symbol
 to string-
 var s1 = Symbol("cool");
 String( s1 );					// "Symbol(cool)"  Explicit is allowed
@@ -2562,7 +2620,7 @@ s2 + "";						// TypeError   Implicit is not allowed
 to number- not possible, TypeError
 to boolean - always true
 
-Loose EQUALS and strict EQUALS
+>>)Loose EQUALS and strict EQUALS
 == allows coercion in the equality comparison and === disallows coercion. So == does more work than ===. == is just a LOOSE comparison between things
 both of them check the type of the operand and then decide what to do (one tries coercion, the other compares the type with the other side)
 
@@ -2572,11 +2630,11 @@ else
 	If one of them is null and the other is undefined, return true.
 	If one of them is a number and the other is a string, convert string to number
 	If one of them is a boolean, convert the boolean to a number
-	If one of them is object/function/array (not null object) and the other string/number/symbol, convert the object to its primitive
+	If one of them is object/function/array (not null object) and the other string/number/symbol, convert the object to its primitive (array->string, obj->valueOf)
 	Return false.   (you will use this one a lot! because the top 4 comparisons dont cover all combinations)
 
 "42" == 50  //false, it compares 42 and 50
-false == "70" // false, it compares 0 and 70  ("70" is converted to 70, becaase the boolean became a number, so string must now convert to number)
+false == "70" // false, it compares 0 and 70  ("70" is converted to 70, because the boolean became a number, so string must now convert to number)
 true == "abc" //FALSE, it compares 1 and NaN
 
 var a = "42";
@@ -2602,50 +2660,50 @@ if (a==2 && a==3){    // a has to be 2 and 3 !
 	console.log("Passed the test");
 }
 //answer -
-var a = new Number(5345343);
+var a = new Number(5345343);  //random number
 var i = 2;
 Number.prototype.valueOf = function() {return i++}
 
 Comparing the falsy values:
-"0" == null;			// false, so remember null and undefined are true, only when compared to each other...
-"0" == undefined;		// false
-false == null;			// false
-false == undefined;		// false
-"" == null;				// false
-"" == undefined;		// false
-0 == null;				// false
-0 == undefined;			// false
-null == undefined       //true
+"0" == null;			      // false, so remember null and undefined are true, only when compared to each other...
+"0" == undefined;		    // false
+false == null;			    // false
+false == undefined;	    // false
+"" == null;				      // false
+"" == undefined;		    // false
+0 == null;				      // false
+0 == undefined;			    // false
+null == undefined       //true!
 null == null            //true
 undefined == undefined  //true
 
 "0" == false;			// true -- UH OH!    "0"=false to "0"=0 to 0=0
 "0" == NaN;				// false    		"0"=NaN to 0=NaN
-"0" == 0;				// true    			 "0"=0 to 0=0
-"0" == "";				// false    		same type
+"0" == 0;				  // true    			 "0"=0 to 0=0
+"0" == "";				// false    		same type, so no coericion
 false == NaN;			// false    		false=NaN to 0=NaN
 false == 0;				// true -- UH OH!    false=0 to 0=0
 false == "";			// true -- UH OH!    false="" to  0="" to 0=0
 false == [];			// true -- UH OH!    false=[] to 0=[] to 0="" to 0=0
 false == {};			// false     		false={} to 0={} to 0=="[object Object]" to 0==NaN
 "" == NaN;				// false    		""=NaN to 0=NaN
-"" == 0;				// true -- UH OH!    ""=0 to 0=0
-"" == [];				// true -- UH OH!    ""=[] to ""=""
-"" == {};				// false			""={} to ""=="[object Object]"
-0 == NaN;				// false			same type
-0 == [];				// true -- UH OH!   0=[] to 0="" to 0=0
-0 == {};				// false			0=={} to 0==NaN
+"" == 0;				  // true -- UH OH!    ""=0 to 0=0
+"" == [];				  // true -- UH OH!    ""=[] to ""=""
+"" == {};				  // false			""={} to ""=="[object Object]"
+0 == NaN;				  // false			same type, no coercion
+0 == [];				  // true -- UH OH!   0=[] to 0="" to 0=0
+0 == {};				  // false			0=={} to 0==NaN
 
-[] == ![]               // true -- UH OH!   []=![] to []=!true to []=false to []=0 to ""=0 to 0=0  (FIRST, the ! operator applies, coerces to boolean)
-2 == [2];		        // true             2=[2] to 2="2" to 2=2
-"" == [null];	        // true             ""=[null] to ""=""    [null].toString() is ""
-"42" == ["42"];          // true            "42"=["42"] to "42"="42"
+[] == ![]              // true -- UH OH!   []=![] to []=!true to []=false to []=0 to ""=0 to 0=0  (FIRST, the ! operator applies, coerces to boolean)
+2 == [2];		           // true             2=[2] to 2="2" to 2=2
+"" == [null];	         // true             ""=[null] to ""=""    [null].toString() is ""
+"42" == ["42"];        // true            "42"=["42"] to "42"="42"
 
 You can safely use == when one of the operands is "typeof x", because typeof always returns one of 7 strings. You don't need ===
 good tool: https://github.com/dorey/JavaScript-Equality-Table
 
 //Double EQUAL issues
-foo = [];
+let foo = [];
 if(foo);            //true  Empty array is true. Period. It is not on the 'false' list for the toBoolean() function.
 if(foo == false);   //true. == algo says use the to primitive algo, so it does toString(). you get empty string.
 
@@ -2653,14 +2711,14 @@ Relational Comparison > and < Algorithm -
 x > y
 First convert both to do ToPrimitive
 If one of them is not a string, convert both to numbers
-If both are strings, which alphabets/digits came first?
+If both are strings, which alphabets/digits came first? (that one is smaller)
 
 [42] < 43          		// true   [42]<43 to 42<43
 ["42"] < ["043"]   		//false   ["42"]<["043"] to "42"<"043"   "0" is less than "4"
 [4,2] < [0,4,3]    		//false       [4,2]<[0,4,3] to "4,2"<"0,4,3"
-{b:42} < {b:43}         //false    [object Object] < [object Object]
-1 < 2 < 3            //true
-3 < 2 < 1           //also, true! it does false<1 -> 0<1 -> true
+{b:42} < {b:43}       //false    [object Object] < [object Object]
+1 < 2 < 3             //true
+3 < 2 < 1             //also, true! it does false<1 -> 0<1 -> true
 
 Implicit coercion must be used responsibly and consciously. Know why you're writing the code you're writing, and how it works. Strive to write code that others will easily be able to learn from and understand as well.
 
@@ -2669,7 +2727,7 @@ parseInt('08');              //0 it sees 0 and thinks it is octal, so 8 is not t
 parseInt(1/0,19);            //paresInt takes a string and a base and spits out a number. Infinity -> "Infinity" -> I is 18, n does'nt exist in base19, so 18.
 String('abc') instanceof String;                 //false. it is of type string
 (new String ('abc')) instanceof String;          //true, this is a String native object
-String('abc') == (new String('abc'));            //true Comapring string and Object. Object calls .toString() so abc is abc
+String('abc') == (new String('abc'));            //true Comparing string and Object. Object calls .toString() so abc is abc
 3 > 2 > 1;                                       //false  3>2 is true.   True > 1 is : 1>1 is false
 Array(5).join('wat'-1) + "Batman!";              // Empty array of size 5 is joined on NaN, so 4 NaNs in total : NaNNaNNaNNaN Batman!
 
@@ -2677,7 +2735,7 @@ Array(5).join('wat'-1) + "Batman!";              // Empty array of size 5 is joi
 Statements and Expressions
 English: A "sentence" is one complete formation of words, it is comprised of one or more "phrases", each of which can be connected with punctuation marks or conjunction words ("and," "or," etc), just like this whole sentence.
 	A phrase can itself be made up of smaller phrases. Some phrases are incomplete and don't accomplish much by themselves, while other phrases can stand on their own
-JavaScript: Statements are sentences, expressions are phrases, and operators are conjunctions/punctuation.
+JavaScript: (a)Statements are sentences, (b)expressions are phrases, and (c)operators are conjunctions/punctuation.
 var a = 3 * 6;     3 * 6 is an expression.
 var b = a;         a = 3 * 6 and b = a are called assignment expressions...
 b;                 expression b is a statement by itself
@@ -2716,7 +2774,7 @@ The { .. } pair is an "r-value" (aka right-hand value) since it's used just as a
 foo: for (var i=0; i<4; i++) {
 	for (var j=0; j<4; j++) {
 		if (j == i) {            // whenever the loops meet, continue outer loop
-			continue foo;       //jump to the next iteration of the `foo` labeled-loop
+			continue foo;       //jump to the next iteration of the 'foo' labeled-loop
 		}
 		console.log( i, j );
 	}
@@ -2737,7 +2795,7 @@ JSON is truly a subset of JS syntax, but JSON is not valid JS grammar by itself.
 
 >object destructuring
 var { a, b } = getData();       //return {a: 42,b: "foo"};
-function otherData({a,c}) { use a and c values here }
+function otherData({a,c}) { use a and c variables here }
 otherData({a:10,b:20,c:30});
 
 Operator Precedence:  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
@@ -2757,7 +2815,7 @@ a++ a--
 ==  !=  ===  !==
 &&
 ||
-? :
+? : (ternary op)
 =  +=  -=  *=  /=  %=
 ,
 
@@ -2777,6 +2835,7 @@ foo() && goo() && too() is actually evaluated as -
 ?: is right-associative
 a ? b : c ? d : e; is actually -
 a ? b : (c ? d : e);
+a ? b ? c : d : e;   //is  a ? (b ? c : d) : e;
 
 = is right-associative
 a = b = c = 42; is actually -
@@ -2815,11 +2874,11 @@ Function Arguments: Very important
 function foo( a = 42, b = a + 1 ) {
 	console.log( a, b );
 }
-foo();					// 42 43
+foo();					      // 42 43
 foo(undefined);		    // 42 43
-foo(5);				// 5 6
+foo(5);			        	// 5 6
 foo(void 0, 7);		    // 42 7
-foo(null);			    // null 1   (null + 1 is 1)
+foo(null);			      // null 1   (null + 1 is 1)
 
 ES6: When using default values for a function, the arguments[] array of that function is not updated to be the default values. argument array will have what was originally sent to the function.
 foo (a=10, b=20){  }
@@ -2830,7 +2889,7 @@ ES5: function foo(a) {
 	a = 42;
 	console.log( arguments[0] );
 }
-foo(2);	  // 42 (linked) If you pass an argument, the arguments slot and the named parameter are linked to always have the same value.
+foo(2);	  // 42 is printed (linked) If you pass an argument, the arguments slot and the named parameter are linked to always have the same value.
 foo();	  // undefined (not linked) If you omit the argument, no such linkage occurs.
 But in strict mode - there is no linkage, arguments[] is what you send to the func, that's it.
 
@@ -2864,14 +2923,18 @@ function foo() {
 	console.log("never runs!!!!!!!");
 }
 console.log(foo());    Prints out "Hello" followed by Uncaught Exception: 42
-So when it see return42, it determines that the completion time is here, so it runs the finally{} block and THEN returns the completion value of 42
+So when it see throw 42, it determines that the completion time is here, so it runs the finally{} block and THEN returns the completion value of 42
 
 function foo() {
 	try {
+		....
+		....
 		return 42;
 	}
 	finally {  throw "Oops!";  }
-    console.log("never runs");
+  console.log("this never runs");
+	....
+	....
 }
 console.log(foo());  // Uncaught Exception: Oops!
 Here, in the finally{} if an exception is thrown, it will abandon the completion value of the function.
@@ -2928,7 +2991,7 @@ switch (a) {
 	case 4:
 		console.log( "4" );
 }
-This prints- "default" and "3". It first goes over all cases, if none match, it starts executing from case default. Here the default case did not have a break; statment, so there was fall through.
+This prints- "default" and "3". It first goes over all cases, if none match, it starts executing from case default. Here the default case did not have a break; statement, so there was fall through.
 
 4.6)Mixed environment javascript
 ECMAscript is the real name of the language. (follows the ECMA spec)
@@ -2987,8 +3050,7 @@ Synchonous Code: Next line is not executed until the current line is DONE
 JS is a single-threaded language that can be non-blocking.
 
 Asynch console: since console is not part of JS spec, each JS enviroment has it's own implementation.
-On some browsers, sometimes, console.log is async! because I/O is a very slow and blocking part of many programs (not just in JS). So sometimes it runs async in the background
-the browser may feel it needs to defer the console I/O to the background, so the console.log(x) will happen some 1 second later (and that latest value of x will be used)
+On some browsers, sometimes, console.log is async! because I/O is a very slow and blocking part of many programs (not just in JS). So sometimes it runs async in the background. The browser may feel it needs to defer the console I/O to the background, so the console.log(x) will happen some 1 second later (and that latest value of x will be used)
 Note: If you run into this rare scenario, the best option is to use breakpoints in your JS debugger instead of relying on console output. And don't rely on consoleLogs.
 
 Fact: the JS engine has no innate sense of time, but is instead an on-demand execution environment for any chunk of JS.
@@ -3017,14 +3079,15 @@ ES6 now specifies how the event loop works, which means technically it's within 
 Parallel threading:
 async is about the gap between now and later. But parallel is about things being able to occur simultaneously.
 A process can have multiple threads in it. Processes and threads execute independently and may execute simultaneously on separate processors, or even separate computers, but multiple threads can share the memory of a single process.
-An event loop, by contrast, breaks its work into tasks and executes them in serial, disallowing parallel access and changes to shared memory.
+An event loop, by contrast, breaks it's work into tasks and executes them in serial, disallowing parallel access and changes to shared memory.
 
 Non-deterministic: In multi-threading, different statements in different threads are interleaved, outcomes can be unpredictable especially if different threads are accessing the same memory/variables.
 Run-to-completion: Once an event is popped and executed, it is executed till it finishes.
 
-Concurrency: Eventhough events are running one after an other on the event loop, their parent task are kind of running in parallel. JS has concurrency on it's single thread. It does not have parallelism. (well, apart from web-workers that run on other threads)
+Concurrency:
 Concurrency is when two or more chains of events interleave over time, such that from a high-level perspective, they appear to be running simultaneously (even though at any given moment only one event is being processed).
-The single-threaded event loop is one expression of concurrency.
+Eventhough events are running one after an other on the event loop, their parent task are kind of running in parallel. So each parent's child task in interleaved on the event loop.
+JS has concurrency on it's single threaded event loop. It does not have parallelism. (well, apart from web-workers that run on other threads)
 You have only one mouth to chew, but you can feed yourself with two,three hands in parallel. But at any instant, only one hand's food is being chewed. this is concurrency.
 
 Race condition: You don't know which one will run first.
@@ -3073,14 +3136,14 @@ function bar(y) {
 Cooperation: So JS has "run-to-completion", but that doesn't mean your eventLoop event takes a very long time to run. Your event must run in chunks and give back time for other events waiting in the queue.
 Process Interleaving: Take a long-running "process" and break it up into steps or batches so that other concurrent "processes" have a chance to interleave their operations into the event loop queue.
 function ajaxCallback(data) {
+	let res = [];
 	res = res.concat(data.map(x=>x*2));   //it takes an array called data, double each value in the array and returns it
 }
 Now if this callback gets an array of size 10 million, this chunk of code will take a few seconds to run, blocking the whole browser from working.(no other response(..) calls, no UI updates, scrolling, typing, button clicking)
 To make a more cooperatively concurrent system, one that's friendlier and doesn't hog the event loop queue -
-let res = [];
 function ajaxCallback(data) {
 	// data array is in scope for everything
-
+	let res = [];
 	function run() {
 		let chunk = data.splice(0,1000);          //delete and store first 1000 elements
 		res = res.concat( chunk.map(x=>x*2) );    // double each of them and store into res
@@ -3117,8 +3180,8 @@ function someAjaxCall(u,f){
 }
 
 Humans cannot multi-task, you can only do one thing at a time. we fake multitasking by acting as fast context switchers.
-Our brains work kinda like the event loop queue. It might only "appear" as if we are doing two things at at time.
-Human brain think only synchronously. Aysync is not natural to us. So JS code with callbacks is a little tough to follow...
+Our brains work kinda like the event loop queue (concurrency). It might only "appear" as if we are doing two things at at time.
+Human brain think only synchronously. Async is not natural to us. So JS code with callbacks is a little tough to follow...
 
 call-back hell-
 listen( "click", function handler(evt){            cb1
@@ -3158,9 +3221,8 @@ The callback pattern is just ancient.
 ajax( "http://some.url.1", mySuccessFunc, myFailureFunc);
 Note: This split-callback design is what the ES6 Promise API uses.
 
->Error-first callback pattern (NodeJS style) -
-Only one call back is used, the first argument is reserved for an error object. The API will call your callback with the error object in an error scenario
-If success, this argument will be empty/falsy (and any subsequent arguments will be the success data),
+>Single Callback: Error-first pattern (NodeJS style) -
+Only one call back is used, the first argument is reserved for an error object. The API will call your callback with the error object in an error scenario. If success, this argument will be empty/falsy and any subsequent arguments will be the success data.
 if an error result is being signaled, the first argument is set/truthy (and usually nothing else is passed):
 function myCb(err,data) {  }
 ajax( "http://some.url.1", myCb);
@@ -3204,7 +3266,7 @@ Instead of handing the continuation of our program to another party, we expect i
 
 var x, y = 2;
 console.log(x + y);
-Here we are assuming that both x and y are already there (variables are already resolved) and we are just using them.
+Here we are assuming that both x and  y are already there (variables are already resolved) and we are just using them.
 What if x and y are fetched async?
 
 Task -  Add x and y, but if either of them isn't ready yet, just wait until they are. Add them as soon as you can.
@@ -3225,7 +3287,7 @@ task(fetchX, fetchY, add);
 The above won't work because fetchX() and fetchY() are async function, so you need to provide them callbacks,
 Also you can't just add x + y, both x and y may not yet have values.
 
-#solution2
+#solution2: gate
 function task (fx, fy, doSomething) {
 	var x,y;
 	fx(function(data){
@@ -3247,6 +3309,8 @@ Promise syntax -   success-first callback pattern (unlike error-first call back 
 p is a promise object that says, i will run the function you have defined right now and i promise to call ONE of the two callback args of this function at an appropriate later time. Meanwhile, you can store and define your callback funcs inside my .then() and .catch() hooks. I will call them later.
 p is like a neutral third party between the creation code and the listening code.
 
+Promise: Let me start your work right away, here is a hook for now, you may leave. When you have time, just define your success/failure funcs in this hook and we will call your hook as soon we are done.
+
 p = new Promise(function(resolve,reject){
 	// creation phase
 	// do some big sync task
@@ -3263,6 +3327,68 @@ p.then( function(x){console.log(x)} )
  .catch( function(y){console.log(y)} );
 p.then(function(c){console.log(100+c)} );
 
+let t = 20;
+let q = new Promise((res,rej) => {
+	t = 30
+	res(10);
+});
+q.then(x => console.log(x));
+console.log('hello');
+console.log(t);
+// output is hello -> 30 -> 10.
+
+function Promise2(mainF) {
+	this.thenFuncs = []; this.catchFuncs = [];
+	this.promiseResolved = false;
+	this.fulfilled = false; this.rejected = false;
+	let self = this;
+
+	this.catch = function(failFunc) { this.catchFuncs.push(failFunc); return this;}	                  // return 'this' for chaining then.
+	this.then = function(succFunc, failFunc) { this.thenFuncs.push(succFunc); this.catch(failFunc); return this;}
+
+	function fulfillAll(arg) {
+		setTimeout(function() {               // Even if the promise resolves right away, the 'then' functions must run on the next tick. Hence setTimeout-zero
+			if (self.promiseResolved) return;		// Return ASAP i.e do nothing if the promise is already resolved
+			self.promiseResolved = true;
+			while(self.thenFuncs.length>0){			//need 'self' because the callsite is just: res(5), so 'this' will be window. (or use arrow function and avoid 'self')
+				let t = self.thenFuncs.shift();
+				t(arg);                              // write extra logic here to 1)pass the return value of one then function as an arg to the next then function 2)if this throws an exception, you need to reject this promise...
+			}
+			this.fulfilled = true;
+		},0);
+	}
+	function rejectAll(arg) {
+		setTimeout(function() {
+			if (self.promiseResolved) return;
+			self.promiseResolved = true;
+			while(self.catchFuncs.length>0){
+				let c = self.catchFuncs.shift();
+				c(arg);
+			}
+			this.rejected = true;
+		},0);
+	}
+
+	mainF(fulfillAll,rejectAll);
+}
+
+let t = 20;
+let p = new Promise2(function(res,rej) {
+	t = 30;
+	setTimeout(function() {      // Do some big ASYNC task that takes a 3000ms.
+		res(5);
+		rej(100);       // Nothing will happen for this, the promise is already resolved.
+		res(5);         // Nothing will happen for this, the promise is already resolved.
+	}, 3000);
+	// immediately returns, so p is an object. Control is given back to your program right away to run the next line.
+});
+console.log('Hello:' + t);
+p.then(x => console.log('firstThen')).then(y => console.log('secondThen'));
+p.catch(y => console.log('firstCatch'));
+p.then(x => console.log('thirdThen'));
+console.log(p.promiseResolved);
+// The above program outputs: Hello:30, false, firstThen, secondtThen, thirdThen.
+
 >There are two phases to a promise: creation and observation. Creation code chunk runs first, and it calls the observation chunk of the code later on. Here the code inside promise runs first. And then everytime it hits the resolve() call, it executes every then() function out there.
 So here it will print out x=4 and after that 104(100+c)
 >Everytime it hits the reject() call, it executes every catch() function.
@@ -3274,7 +3400,8 @@ So here it will print out x=4 and after that 104(100+c)
 
 Resolution = fulfillment or rejection. Both res and rej resolve the promise.
 >Second argument 'rej', simply rejects the promise, but first arg 'res' can either fulfill the promise or reject it, depending on what is passed to it.
->res(xyz) - If res() is passed an immediate, non-Promise, non-thenable value, then the promise is fulfilled with that value. >But if res() is passed a genuine Promise or thenable value, that value is unwrapped recursively, and whatever its final resolution/state is, will be adopted by the promise. that is why then can take two args .then(success, failure), catch can only take one arg - .catch(failure)
+>res(xyz) - If res() is passed an immediate, non-Promise, non-thenable value, then the promise is fulfilled with that value. DONE right away.
+>But if res() is passed a genuine Promise or thenable value, that value is unwrapped recursively, and whatever its final resolution/state is, will be adopted by this promise. That is why 'then' can take two args .then(success, failure) just incase one of the inner promises fail, catch can only take one arg - .catch(failure)
 
 THEN and CATCH
 Each Promise instance has then() and catch() methods, which allow REGISTERING (LISTENING) of fulfillment and rejection handlers for the Promise.
@@ -3287,7 +3414,7 @@ catch() takes only the rejection callback as a parameter, it is equivalent to .t
 then(..) and catch(..) also create and return a new promise, which can be used to express Promise chain flow control
 
 Promises don't get rid of callbacks at all. They just change where the callback is passed to.
-Instead of passing a callback to foo(..), we get something (hopefully a genuine Promise) back from foo(..), and we pass the callback to that something instead.
+Instead of passing a callback to foo(..), we get a middle man (hopefully a genuine Promise) back from foo(..), and we pass the callback to that middle man instead.
 Completion Event-
 foo(x) {
 	// start doing something that could take a while
@@ -3356,7 +3483,6 @@ Once a Promise is resolved, it stays that way forever -- it becomes an immutable
 	There can be multiple parties observing the resolution of a promise.
 	An individual Promise behaves as a future value
 
-
 Revealing Contructor pattern -
 function foo(x) {
 	//executes immediately
@@ -3412,13 +3538,18 @@ P3 resolves first, then p2 and then p1.
 The specified behavior is to "unwrap p3 into p1, but asynchronously". So in the next tick, is where p1.then() is called i.e p1 is resolved.
 
 >Never calling the callback
-whatever JS error happens either your resolve callback or reject callback WILL BE called.
+whatever JS error happens either your resolve callback or reject callback WILL BE called.  but how?
+let q = new Promise((res,rej) => {
+	30.noFunction();
+	res(10);
+});
+console.log('hello');  //it never comes here, it errors out at 30.noFunction()...
 
 >Callback is being called after toooo long
 setup a timeoutPromise against your orignal promise in a race.
-timeoutPromise(delay){
+timeoutPromise(ms){
 	return new Promise(function(res,rej){
-		setTimeout(function(){rej('timeout!')}, delay);   //this promise resolved in delay ms. (i.e rejects)
+		setTimeout(function(){rej('timeout!')}, ms);   //this promise resolved in ms. (i.e rejects)
 	});
 }
 Promise.race(fetchX(), timeoutPromise(3000)).then(function(){ fetched in under 3000ms}).catch(x => console.log(x));    //either fetchX() failed or it took more than delay ms);
@@ -3458,11 +3589,11 @@ p.then(
 So p.then() itself returns a promise. p.then().then() is where you can catch this foo.bar() error. The original promise was resolved and that status is immutable.
 the exception from foo.bar() really did not get swallowed. In the second then(goo,err). err can be your error handler function.
 
->Trustable promise value returned - Promise.resolve()
-	You call a foo() utility and you are not sure you can trust its return value to be a well-behaving Promise.
-	So for any third party utility, do Promise.resolve(thirdPartAjax(42)).then( function(v){console.log(v);}  );
-	If you pass a non-Promise, non-thenable value to Promise.resolve(..), you get a promise that's fulfilled with that value. It is like an identity function.
-	If you pass a genuine Promise to Promise.resolve(..), you just get the same promise back
+>Trustable promise value returned - Use Promise.resolve()
+	You call a foo() utility and you are not sure you can trust its return value to be a well-behaving Promise. (it could be some fake object with the 'then' and 'catch' properties)
+	So for any third party utility, do Promise.resolve(thirdPartAjax(42)).then( whateverYouwant  );
+	If you pass a non-Promise, non-thenable value to Promise.resolve(..), you get a promise that's fulfilled with that value. It is like an identity function. So even if they give you some fake 'thenable', you will convert it to a proper promise and then only use a .then() on it.
+	If you pass a genuine Promise to Promise.resolve(..), you just get the same promise back.
 	var p1 = new Promise( function(resolve,reject){ resolve(42);} );
 	var p2 = Promise.resolve(42);   //p1 and p2 are same
 	var p3 = Promise.resolve(p1);   //p1,p2 and p3 are the same
@@ -3488,9 +3619,7 @@ So for any third party utility, do Promise.resolve(thirdPartAjax(42)).then( func
 
 Promise.resolve() is async -
 var f = Promise.resolve(42);
-f.then(function(x){
-    console.log(x)
-});
+f.then( x => console.log(x) );
 console.log('done');   //first 'done' is printed and then after that 42.
 
 Resolve, Fulfill and Reject
@@ -3518,7 +3647,7 @@ rejectedPr.then(
 	function rejected(err){  console.log(err); }	// it comes here and prints "oops"
 );
 
-This is how you should name your cbs in then()
+This is how you should name your callbacks in then()
 p.then(fulfilled,rejected);
 
 Shortcut to create an already rejected promise
@@ -3537,21 +3666,20 @@ var rejectedTh = {
 var p1 = Promise.resolve(fulfilledTh);  //p1 will be a resolved fulfilled promise
 var p2 = Promise.resolve(rejectedTh);    //p2 will be a resolved rejected promise
 
-
 Chain Flow: string multiple Promises together to represent a sequence of async steps
 	Key concepts
-	>Every time you call then(..) on a Promise, it creates and returns a new Promise, which we can chain with.
+	>Every time you call then(..) on a Promise, it creates and returns a NEW Promise, which we can chain with.
 	>Whatever value you return from the then(..) call's fulfillment callback, (the first parameter) is automatically set as the fulfillment value of the chained Promise (from the first point).
 
 var p = Promise.resolve(21);
-p.then( function(v){return v*2;} ).then( function(v){console.log(v);} );  //42
+p.then( v=>v*2 ).then( v=>console.log(v) );  //42
 Inside then(), when you do "return x", that means you have fulfilled that promise. Using an immediate return statement, immediately fulfills the chained promise. But this does not happen right away, only on the next tick, it is fullfilled.
 
 var p = Promise.resolve( 21 );
 p.then( function(v){
 	console.log(v);
 	return new Promise( function(resolve,reject){ resolve(v*2); });
-}).then( function(v){console.log(v);} );
+}).then( v=>console.log(v) );
 This will print 21,42. The second then is called when the resolve(v*2) is called
 If your then() code explicitly returns a promise, then the promise automatically created by then() is ignored (actually the two promises are merged)
 
@@ -3559,6 +3687,7 @@ Basically a promise's resolve() func can take only one argument, and that argume
 p1 = fetchX();  //x is 20
 p2 = fetchX();
 p1.then( y => y*2 ).then( y => {console.log(y); return y;} ).then( y => y+2 );    //40 ,40, 42
+pi.then( y=>console.log(y) );     //this is still 20
 p2.then( y => {console.log(y); return y;} ).then( y => y+2 );   //20,22
 In the middle if you don't do return y; then undefined is passed to the next promise of then(). it will do undefined+2 = NaN
 
@@ -3624,10 +3753,6 @@ return New Promise(res,rej){
 	}
 }
 
-Promises use split callbacks, once the promise is resolved.
-p1.then(fulfill,reject);
-Now if your fullfill/reject code over here has an error, then only the next chained .then() can catch it. (p1 is already resolved)
-
 var p2 = new Promise(null);  //on the spot error, that try-catch can actually catch. This is sync!
 If you use the Promise API in an invalid way and an error occurs that prevents proper Promise construction, the result will be an immediately thrown exception, not a rejected Promise.
 If you don't have a second then(), then the error is lost!
@@ -3638,7 +3763,7 @@ No real fix for this right now.
 Promise.all( [] );
 	all must resolve and fulfill. Or else the returned promise will be in a 'reject' state
 	a "gate" (AND gate) is a mechanism that waits on two or more parallel/concurrent tasks to complete before continuing. It doesn't matter what order they finish in, just that all of them have to complete for the gate to open
-	>input: An array of promises. Technically, the array of values can include Promises, thenables, or even immediate values. Each value in the list is internally passed through Promise.resolve(..) to make sure it's a genuine Promise to be waited on
+	>input: An array of promises. Technically, the array of values can include Promises, thenables, or even immediate values. Each value in the list is internally passed through Promise.resolve(..) to make sure it's a genuine Promise to be waited on.
 	>output: a promise which will receive a fulfillment message- an array of all the fulfillment messages from the passed in promises, in the same order as specified (regardless of fulfillment order).
 	The main promise returned from Promise.all([ .. ]) will only be fulfilled if and when all its constituent promises are fulfilled. If any one of those promises instead is rejected, the main Promise.all([ .. ]) promise is immediately rejected, discarding all results from any other promises.
 	note: each promise over here is fulfilled concurrently with the others (probably even interleaved with one an another!)
@@ -3724,19 +3849,16 @@ const promisify = (item, delay) =>
 const a = () => promisify('a', 100);    //i.e if you call a(), you will get a promise, which will resolve with value 'a' after 100ms
 const b = () => promisify('b', 5000);
 const c = () => promisify('c', 3000);
-
 async function parallel() {
   const promises = [a(), b(), c()];     //this runs all three promise defintion codes, i.e all 3 timeouts start in parallel
   const [output1, output2, output3] = await Promise.all(promises);  //the RHS will be done only after all three are done
   return `parallel is done: ${output1} ${output2} ${output3}`
 }
-
 async function race() {
-  const promises = [a(), b(), c()];     //starts all setTimeouts in parallel
-  const output1 = await Promise.race(promises);      //the RHS will be done as soon as one of them is done
+  const promises = [a(), b(), c()];                 //starts all setTimeouts in parallel
+  const output1 = await Promise.race(promises);     //the RHS will be done as soon as one of them is done
   return `race is done: ${output1}`;
 }
-
 async function sequence() {
   const output1 = await a();
   const output2 = await b();
@@ -3824,7 +3946,7 @@ function *bar() {
 	b--;
 	yield;
 	a = (yield 8) + b;
-	b = a * (yield 2);    //it will do [b = a * ] and the yield... so a is now locked with it's current value (even if a is updated somewhere else, this a is locked)
+	b = a * (yield 2);    //it will do [b = a * ] and then yield... so a is now locked with it's current value (even if a is updated somewhere else, this a is locked)
 }
 function step(g){
 	var it = g();
@@ -3861,8 +3983,8 @@ It asks for the object's iterator, and automatically uses it to iterate over obj
 var a = [1,3,5,7,9];
 for (var v of a) {console.log(v);}
 for (var v of anyObjectOutThere) {console.log(v);}
-for (var keys of Object.keys(myObj)) {     }        //Object.keys(..) does not include properties from the [[Prototype]] chain
-for (var keys in myObj) {  }                        //but this one includes all properties, including the ones from prototype chain
+for (var k of Object.keys(myObj)) {     }        //Object.keys(..) does not include properties from the [[Prototype]] chain
+for (var k in myObj) {  }                        //but this one includes all properties, including the ones from prototype chain
 
 Manually loop over iterables -
 var it = myObject[Symbol.iterator]();
@@ -3902,13 +4024,14 @@ function *foo(){
 		yield x++;       //the generator pauses at each yield, the state (scope) of the function *something() is kept around (closure)
 	}
 }
-for (var v of it) {    //for..of needs an iterator, "it" is an iterable! it has a Symbol.iterator function on it.
+for (var v of it) {    //for..of needs an iterable, "it" is an iterable! it has a Symbol.iterator function on it.
 	console.log(v);
 	if (v > 100) {
 		break;
 	}
 }
-it.next(); //this will not give 101, 102 etc.
+it.next(); //now this will not give 101, 102 etc. (the iterator is also closed out)
+
 Here it would seem as if the iterator instance of the for..of loop for the *foo() generator was basically left in a suspended state forever. But is the iterator terminated? Yes it is.
 Yes, the iterator is set to {done:true} at the end of the loop.
 
@@ -3932,7 +4055,7 @@ var it = foo();
 for (var v of it) {
 	console.log(v);
 	if (v > 500) {
-		console.log(it.return( "Hello World" ).value);  //this return will trigger the finally block, value:hello world
+		console.log(it.return( "Hello World" ).value);  //this "it.return()" will trigger the finally block, value:hello world
 		// no break needed here
 		//the generator's iterator is set to done:true
 	}
@@ -3998,12 +4121,12 @@ function foo(x,y) {
 it.next();    // start it all up!
 After this line, it is stuck at yield undefined.
 then the ajax() completes and calls either  it.throw(err) or  it.next(data)  yield=data in this case, so text=data.
-yield lets the assignment statement pause to wait for foo(..) to finish, so that the completed response can be assigned to text.W e can also synchronously catch errors from those async function calls!
+yield lets the assignment statement pause to wait for foo(..) to finish, so that the completed response can be assigned to text. We can also synchronously catch errors from those async function calls!
 
 The code in the generator looks totally synchronous. This is HUGE.
 In essence, we are abstracting the asynchrony away as an implementation detail, so that we can reason synchronously/sequentially about our flow control:
 	"Make an Ajax request, and when it finishes print out the response."
-There is no .then() and all over here.
+There is no .then() etc over here.
 
 Generators AND Promises
 The best of all worlds in ES6 is to combine generators (synchronous-looking async code) with Promises (trustable and composable).
@@ -4012,7 +4135,7 @@ Usual promise way-
 function foo(x,y) {
 	return new Promise(res,rej){
 		ajax("http://some.url.1/?x="+x+"&y="+y, function(rej,res){
-			if(sucess) res(data)
+			if(success) res(data)
 			else rej(err)
 		});
 		console.log('fetching begins');
@@ -4050,7 +4173,7 @@ async function main() {
 		var text = await foo(11,31);
 		console.log( text );
 	}
-	catch (err) {     //asynch-await does'nt have .catch() function, so just use normal sync try-catch blocks
+	catch (err) {     //asynch-await doesn't have .catch() function, so just use normal sync try-catch blocks
 		console.error( err );
 	}
 }
@@ -4102,7 +4225,7 @@ function *bar() {
 var it = bar();
 it.next().value;	// 1
 it.next().value;	// 2
-it.next().value;	// "*foo() starting"
+it.next().value;	// "*foo() starting"  ('it' now becomes the iterator of foo!)
 					// it gives back 3
 it.next().value;	// 4
 it.next().value;	// `*foo()` finished
@@ -4143,9 +4266,9 @@ function *bar() {
 var it = bar();
 console.log( "outside:", it.next().value );      // outside: A
 console.log( "outside:", it.next(1).value );   // inside *bar(): 1       // outside: B
-console.log( "outside:", it.next(2).value );   // inside `*foo()`: 2     // outside: C
-console.log( "outside:", it.next(3).value );   // inside `*foo()`: 3     // inside `*bar()`: D   // outside: E
-console.log( "outside:", it.next(4).value );   // inside `*bar()`: 4     // outside: F
+console.log( "outside:", it.next(2).value );   // inside *foo(): 2     // outside: C
+console.log( "outside:", it.next(3).value );   // inside *foo(): 3     // inside *bar(): D   // outside: E
+console.log( "outside:", it.next(4).value );   // inside *bar(): 4     // outside: F
 
 Yield-delegation can just be directed to a non-generator, general iterable (doesn't even have to be directed to another generator always)
 function *bar() {
@@ -4155,15 +4278,15 @@ function *bar() {
 	return "F";
 }
 var it = bar();
-console.log( "outside:", it.next().value );      // outside: A
+console.log( "outside:", it.next().value );    // outside: A
 console.log( "outside:", it.next(1).value );   // inside *bar(): 1     // outside: B
 console.log( "outside:", it.next(2).value );   // outside: C
 console.log( "outside:", it.next(3).value );   // outside: D
 console.log( "outside:", it.next(4).value );   // inside *bar(): undefined    // outside: E
-console.log( "outside:", it.next(5).value );   // inside `*bar()`: 5         // outside: F
+console.log( "outside:", it.next(5).value );   // inside *bar(): 5         // outside: F
 The default array iterator doesn't care about any messages sent in via next(..) calls, so the values 2, 3, and 4 are essentially ignored.
 Also, because that iterator has no explicit return value (unlike the previously used *foo()), the yield * expression gets an undefined when it finishes.
-s
+
 Even exceptions can be delegated
 function *foo() {
 	try {
@@ -4262,7 +4385,7 @@ Synchronous thunk:
 function foo(x,y) {
 	return x + y;
 }
-function fooThunk() {   -> This is a thunkh on foo
+function fooThunk() {   -> This is a thunk on foo
 	return foo(3,4);
 }
 console.log( fooThunk() );	// 7
@@ -4688,10 +4811,14 @@ let b; is the same as let b = undefined;
 if (typeof a === "undefined") {      //a is not declared so this is true
 	console.log( "cool" );
 }
+var a;
 if (typeof b === "undefined") {		// ReferenceError! gotcha! it never goes to console.log. Code throws an exception now.
 	console.log("cool too");      //b is a TDZ variable, not an undeclared variable
 }
 let b;
+
+IF you did not put the let b; line at the end, a normal "typeof b" will give you undefined. But since you have later declared b with let, the previous line of accessing b is going to through an exception.
+
 Hence, in a block, always move all your "let", to the top. So that you avoid the above unexpected behaviour. It totally avoids the accidental errors of accessing too early. And also visually, you know that these vars are for this block alone.
 
 The let i in the for header declares an i not just for the for loop itself, but it redeclares a new i for each iteration of the loop. That means that closures created inside the loop iteration close over those per-iteration variables the way you'd expect.
@@ -4758,7 +4885,7 @@ function foo(x,y) {   ES5 code
 }
 foo() gives 120, but foo(0,5) gives 105 not 5  (0 is false, so it takes 100)
 
-function foo(x = 100, y = 20) {    ES6 code   The assignment actually does this:    x !== undefined ? x : 11
+function foo(x = 100, y = 20) {    ES6 code   The assignment actually does this: x = x === undefined ? 100 : x
 	console.log( x + y );
 }
 foo() gives 120, foo(0,5) gives 5
@@ -4974,7 +5101,7 @@ o = {x,y,z};  do this instead. Take x var value and put it into x property, take
 
 concise methods
 o = {x:function x(){},   y:function *y(){}};   property x is a function called x, property y is a generator called y
-o = {x(){},  *y(){}};    //in ES6 you can do this, but it is not the same thing though,  o.x is an anonymous function as defined, o.y is an anonymous generator as defined
+o = {x(){},  *y(){}};    //in ES6 you can do this, but it is not the same thing though,  o.x is an anonymous function here as defined, o.y is an anonymous generator as defined
 basically  o = {x(){}} is the same as o = {x:function() {}} -> see, it is anonymous.
 So if your function is recursive, i.e trying to call itself, you can't do that, you need a name. (you'll get a ReferenceError)
 In other words, concise methods imply anonymous function expressions. You are un-naming the function. (which is yuck!) so you cannot use them for recursive functions! Do it the old way for recursive funcs.
@@ -5008,11 +5135,11 @@ obj[d] = 45;  //inside the object you can't do d:45
 var obj = {
 	a,
 	b(){},             //this is lexically anonymous. You can't call it from inside it. //this will appear as b in the stack trace though
-	                   //you can't do the same for c. c needs to have a name to call itself!
+	//you can't do the same for c. c needs to have a name to call itself!
+	*foo(){}
 	[d] : 45,          //now obj['hello'] = 45;
 	[d.toUpperCase()] : 19,      //obj['HELLO'] = 19
 	[d+'fn'](){},               //this is now a concise method
-	*foo(){}
 	*[c+'gn'](){}       //a concise computed generator!
  }
 
@@ -5065,7 +5192,7 @@ function tag(strings, ...values) {
 	}, "" );
 }
 OR
-for(var i=0; i<string.length;i++){
+for(var i=0; i<strings.length;i++){
 		if(i>0) str+= values[i-1];
 		str += strings[i];     // str-(val-str)(val-str)(val-str)
 }
@@ -6385,9 +6512,19 @@ arr.some(g)
 arr.map(g)/filter(g)/reduce(g)
 
 str.charAt(5)
-num.toPrecison(x)
-num.toFixed(x)
+num.toExponential();
+num.toPrecison(5)
+num.toFixed(5)
 
+Number.isInteger(x); //(return typeof num == "number" && num % 1 == 0)
+Number.isNaN(x); //(return n !== n)
+Number.EPSILON;  //(to check if 0.3 === 0.1 + 0.2)
+Number.MAX_VALUE,  Number.MIN_VALUE
+Number.MAX_SAFE_INTEGER,   Number.MIN_SAFE_INTEGER
+infinity, Number.POSITIVE_INFINITY,  Number.NEGATIVE_INFINITY
+
+undefined + 1 === NaN;
+Function.prototype.someNewFunc = ()=>{}; //Add new functionality to built-ins:  Same with Array.prototype, String.prototype etc.
 
 /*
 Others -

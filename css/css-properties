@@ -7,59 +7,73 @@ Common Ones:
 	padding
 			padding-top, padding-right, padding-bottom, padding-left
 	border
+			border-top, border-right, border-bottom, border-left
 			border-width (border-top-width, border-right-width, border-bottom-width, border-left-width)
 			border-style (border-top-style, border-right-style, border-bottom-style, border-left-style)
 			border-color (border-top-color, border-right-color, border-bottom-color, border-left-color)
-			border-top, border-right, border-bottom, border-left
+	border-radius
+			border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius
+
+  -------------------------------------------------------------------------------------------------------------
+	box-sizing
 	width
 		min-width, max-width
 	height
 		min-height, max-height
-	display
-	visibilty
-	box-sizing
+
+	overflow
+		overflow-x, overflow-y
+	-------------------------------------------------------------------------------------------------------------
+	background
+			background-color, background-image, background-origin, background-position, background-repeat, background-clip, background-attachment, background-size
 
 	color
 	font
-			font-style  font-variant  font-weight  font-size   line-height   font-stretch    font-family
+			font-style  font-variant  font-weight  font-size   line-height   font-stretch  font-family
 	text-decoration
 			text-decoration-line, text-decoration-style, text-decoration-color, text-decoration-thickness
-	text-align
-	vertical-align
+	text-shadow
+	text-transform
 
-	background
-			background-color, background-image, background-origin, background-position, background-repeat, background-clip, background-attachment, background-size
-	border-radius
-			border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius
+	direction
+	text-orientation
+	text-align   text-align-last
+		text-justify
+	vertical-align
+	text-indent
+
+	white-space
+	letter-spacing
+	word-spacing
+
+	text-overflow
+	word-break
+	overflow-wrap
+	hyphens
 
 	list-style
 			list-style-type, list-style-image, list-style-postion
 
 	box-shadow
 
+	-------------------------------------------------------------------------------------------------------------
 	cursor
 
 	outline
 		outline-style, outline-width, outline-color
 		outline-offset
 
-	float
+	-------------------------------------------------------------------------------------------------------------
+	display
+	visibilty
 
 	position
 		top, right, bottom, left, z-index
-	overflow
-		overflow-x, overflow-y
 
-	filter
-
-	flex flow
+	flex-flow
 		flex-direction, flex-wrap
 	flex
 		flex-grow, flex-shrink, flex-basis
-
-	align-content, align-items, align-self
-	justify-content, justify-items, justify-self
-
 	order
 
 	grid-template-columns, grid-template-rows
@@ -73,6 +87,19 @@ Common Ones:
 	grid-template-areas
 	grid-auto-flow
 
+	align-content, align-items, align-self
+	justify-content, justify-items, justify-self
+
+	place-items, place-content
+
+	float
+	-------------------------------------------------------------------------------------------------------------
+	filter
+
+	opacity
+
+	object-fit
+
 	transform-origin
 	transform
 	transform-style
@@ -82,8 +109,33 @@ Common Ones:
 
 	transition
 		transition-property, transition-duration, transition-timing-function, transition-delay
-
-
+	-------------------------------------------------------------------------------------------------------------
+	writing-mode
+	inline-size
+		max-inline-size, min-inline-size
+	block-size
+		max-block-size, min-block-size
+	margin-block
+		margin-block-start, margin-block-end
+	margin-inline
+		margin-inline-start, margin-inline-end
+	padding-block
+		padding-block-start, padding-block-end
+	padding-inline
+		padding-inline-start, padding-inline-end
+	border-block
+		border-block-width, border-block-style, border-block-color
+		border-block-start
+			border-block-start-width, border-block-start-style, border-block-start-color
+		border-block-end
+			border-block-end-width, border-block-end-style, border-block-end-color
+	border-inline
+		border-inline-width, border-inline-style, border-inline-color
+		border-inline-start
+			border-inline-start-width, border-inline-start-style, border-inline-start-color
+		border-inline-end
+			border-inline-end-width, border-inline-end-style, border-inline-end-color
+	border-start-start-radius, border-end-start-radius, border-end-end-radius, border-start-end-radius  (tl, tr, bl, br)
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 List Of All Properties
@@ -106,7 +158,8 @@ align-items
 
 align-self
 	single-value overrides a grid or flex item's align-items value. In Grid, it aligns the item inside the grid area. In Flexbox, it aligns the item on the cross axis.
-	auto | normal | stretch
+	auto  (reset it to whatever the container has for align-items)
+	normal | stretch
 	center | start | end | flex-start | flex-end | self-start | self-end
 	baseline | first baseline | last baseline | safe center | unsafe center
 	inherit | initial | unset
@@ -150,21 +203,23 @@ backface-visibilty
 
 BACKGROUND
 	background
-		image color position size repeat clip origin attachment
+		image color position/size repeat clip origin attachment
 		Different backgrounds are seperated by commas.
+		when putting position and size, there must a / between them
 	background-attachment      (applies only to image and not color) (rarely used)
 		sets the scrolling behaviour of the background image
-		whether a background image's "position" is fixed within the viewport, or scrolls with its containing block. If you have multiple backgrounds, you can specify multiple comma seperated values for each background.
-		fixed			 (it is fixed and does not move while the contents are being scrolled in the foreground, it is also fixed to the viewport, even if the viewport scroll, this wont budge)
+		whether a background image's "position" is fixed within the viewport, or scrolls with its containing block. If you have multiple backgrounds, you can specify multiple comma seperated values for each background. Now note there are two scrolls here: scrolling within the content of the box, scroll the entire webpage (the viewport)
+		fixed			 (it is fixed and does not move while the contents are being scrolled in the foreground, it is also fixed to the viewport, even if the viewport scroll, this wont budge, it is stuck to your monitor)
 		scroll     (it is fixed and does not move while the contents are being scrolled in the foreground, if you scroll on the viewport, you scroll though the background too)
 		local			 (complicated)
 	background-blend-mode
 	background-clip       (applies to both image and color)
 		uptill where should the elements background extend?
 		border-box    (it extends to the outside edge of the border but underneath it)
-		padding-box   (it extends to the outside edge of the padding. but nothing is under the actual border)
+		padding-box   (default) (it extends to the outside edge of the padding. but nothing is under the actual border)
 		content-box 	(it is painted within the content box / element)
 		text 					(it is painted within the foreground text)
+		background-clip kinda overrides background-origin
 	background-color
 		only one single <color> allowed  (you can have many images, but only one color!)
 		currentcolor | transparent |
@@ -178,13 +233,15 @@ BACKGROUND
 		border-box
 		padding-box    (the default)
 		content-box
+		background-clip kinda overrides background-origin
 	background-position   (defined by background-origin, applies only to image and not color)
-		top | bottom | left | right | center    (top means no cropping of the top and so on, same as 0% 0%)
+		top | bottom | left | right | center    (top means let the top edge of background touch the top edge of box) (let the bottom edge touch the bottom edge) (and so on)
 		em | cm | %
-		single-value:  distance-from-left-edge   (y is 50%)
+		single-value:  distance-from-left-edge   (y is 50% by default)
 		two-values:    distance-from-left-edge     distance-from-top-edge
 		three-values:  top/bottom/left/right  cropping-for-the-preceding-value
 		four-values:   cropping-for-x  left/right  cropping-for-y  top/bottom
+		When percentages are used: it is what % of that part of the image be cropped out because the whole image does not fit
 	background-repeat         (applies only to image and not color)
 		how to repeat the background within the element?
 		<horizontal value> <vertical value>
@@ -193,18 +250,28 @@ BACKGROUND
 		repeat-x			same as: repeat no-repeat     (only one row of images)
 		repeat-y			same as: no-repeat repeat			(only one column of images)
 		repeat				same as: repeat repeat				(repeat x and repeat y, no spaces in between)
-		space					same as: space space          (first and last imgs are pinned to either side of the element, THEN whitepsace is distibuted evenly)
+		space					same as: space space          (first and last imgs are pinned to either side of the element, THEN whitepsace is distributed evenly)
 		round					same as: round round          (complicated)
 		no-repeat			same as: no-repeat no-repeat   (only one image present, the position defined by background-position)
 		repeat/space/round/no-repeat  repeat/space/round/no-repeat    (either one for horizontal, and either one for veritcal)
 		inherit | initial | unset
 	background-size        (applies only to image and not color)
-		sets the size of the element's background image.
-		cover | contain
+		sets the size of the element's background image. You will no be changing the default aspect ratio
+		cover | contain     (original size as it just covers the whole container box even if needs to zoom-in/crop-out stuff ---OR--- fit pic in the box (without any cropping) by scaling down the resolution maintaining the aspect ratio)
 		single-value:  width <length>    (the height defaults to auto, meaning it maintains the aspect ratio)
 		two-values: 	 width<length>    height<length>     (you might distort the natural aspect ratio of the image)
 		Comma seperated list of the above, each one applies to each background (i.e when you have multiple backgrounds)
 		Note: <length> is em | px | %
+
+block-size
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	depending on the writing-mode, this is the height/width of the box
+	min-content | max-content | fit-content( lengthORpercentageValue ) | auto
+	<length> | <percentage>
+	inherit | initial | unset
+
+	max-block-size	  (accepts same value as block-size)
+	min-block-size   (accepts same value as block-size)
 
 BORDER
 	border
@@ -244,26 +311,27 @@ BORDER
 	border-top, border-right, border-bottom, border-left
 		three values must be set: width  style  color
 
-
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties/Margins_borders_padding
+	Depending on the writing-mode, direction and text-orientation, you can use these generic 'physical properties' for a box. These take the same values as border does -
 	border-block
-	border-block-color, border-block-start-color, border-block-end-color
-	border-block-style, border-block-start-style, border-block-end-style
-	border-block-width, border-block-start-width, border-block-end-width
-	border-block-start
-	border-block-end
-
+		border-block-width, border-block-style, border-block-color
+		border-block-start
+			border-block-start-width, border-block-start-style, border-block-start-color
+		border-block-end
+			border-block-end-width, border-block-end-style, border-block-end-color
 	border-inline
-	border-inline-color, border-inline-start-color, border-inline-end-color
-	border-inline-style, border-inline-start-style, border-inline-end-style
-	border-inline-width, border-inline-start-width, border-inline-end-width
-	border-inline-start
-	border-inline-end
+		border-inline-width, border-inline-style, border-inline-color
+		border-inline-start
+			border-inline-start-width, border-inline-start-style, border-inline-start-color
+		border-inline-end
+			border-inline-end-width, border-inline-end-style, border-inline-end-color
 
 	border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius
 		one-value:    <length> | <percentage>    (it applies to both horizontal and vertical edge)
 		two-values:   <length> | <percentage> for horizontal edge  AND  <length> | <percentage> for veritical edge
 		Percentage - What percentage of the vertical/horizontal edge must be an arc... so 80% for vertical means, 80% of that vertical border will be an arc, only 20% will be straight line.
-		Length - radius of the circle to use for the border in that corner. If there are two values, it becomes an ellipese, one value for horizontal major axis, the other for vartical major axis
+		Length - radius of the circle to use for the border in that corner. If there are two values, it becomes an ellipse, one value for horizontal major axis, the other for vertical major axis
 	border-radius
 		You basically give two values: first radius / second radius  (10px 100px / 120px). Each radius can have one to four values:
 		one-value:     all 4 corners
@@ -271,6 +339,11 @@ BORDER
 		three-values:  topLeft    topRight-bottomLeft   bottomRight
 		four-values:   topLeft   topRight   bottomRight   bottomLeft
 		inherit | initial | unset
+
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties/Margins_borders_padding
+	Depending on the writing-mode, direction and text-orientation, you can use these generic 'physical properties' for a box. These take the same values as border-radius does -
+	border-start-start-radius, border-end-start-radius, border-end-end-radius, border-start-end-radius  (tl, tr, bl, br) (so it is border-<inlineDirection>-<blockDirection>-radius) (tl, tr, bl, br)
 
 	border-collapse
 		sets whether cells inside a <table> have shared or separate borders.
@@ -289,11 +362,6 @@ BORDER
 	border-image-source
 	border-image-width
 
-	border-start-end-radius
-	border-start-start-radius
-	border-end-end-radius
-	border-end-start-radius
-
 box-shadow
 	adds shadow effects around an element's box (i.e content+padding+border)
 	For a box (0,0) lies at the top left. So offsetX means how much to the right?, offsetY means how much to the bottom. If you give negative values, it means left and top..
@@ -310,8 +378,7 @@ box-sizing
 
 color
 	the single color of the element's text and text decorations. It also set the currentcolor value.
-	<color>
-	currentcolor
+	<color> | currentcolor
 
 column-gap
 	the thickness of the CSS grid column line. It creates a gutter/space between two columns.
@@ -328,6 +395,8 @@ cursor
 	all-scroll | col-resize | row-resize | n/e/s/w-resize | ne/ns/nw/es/ew/sw-resize | nesw/nwse-resize
 	zooim-in | zoom-out
 
+direction
+	ltr | rtl
 
 display
 	none | block | inline | inline-block | list-item | flex | inline-flex | grid | inline-grid
@@ -346,77 +415,93 @@ float
 	left | right | none | inline-start | inline-end
 
 FLEX
-	flex
-	flex-basis
-	 single value sets the initial main size of a flex item. It sets the size of the content box unless otherwise set with box-sizing.
-	 <length value> | auto
-	 full | max-content | min-content | fit-content
-	 content
-	 inherit | initial | unset
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout
 	flex-direction
 		single value sets how flex items are placed in the flex container
-		the horizontal direction depends on the 'dir' property of the parent (if it set to ltr/rtl)
+		the horizontal direction depends on the 'direction' property of the parent (if it set to ltr/rtl)
 		row | row-reverse | column | column-reverse
-	flex-flow
-		shorthand for direction and wrap
-		flex-direction  flex-wrap
-	flex-grow
-		single integer/decimal value specifies how much of the remaining space in the flex container should be assigned to the item (the flex grow factor). Main size depends on the flex-direction. Default value is zero.
-		1 | 4 | 5.4 | 9.0 | any-decimal
-	flex-shrink
-		single integer/decimal value specifies how much space must this child lose when the window is shrinking. It depends on the flex-direction. Default value is 1.(i.e all children lose space equally). If the value is zero, it will not shrink AT ALL.
-		1 | 4 | 5.4 | 9.0 | any-decimal
 	flex-wrap
 		single value sets whether flex items are forced onto one line or can wrap onto multiple lines. If wrapping is allowed, it sets the direction that lines are stacked.
 		nowrap | wrap | wrap-reverse
 		inherit | initial | unset
+	flex-flow
+		shorthand for direction and wrap, takes two values
+		flex-direction-value  flex-wrap-value
+
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Controlling_Ratios_of_Flex_Items_Along_the_Main_Ax
+	flex-basis
+		single value sets the initial main size of a flex item. It sets the size of the content box unless otherwise set with box-sizing.
+		<length value> | auto (default)
+		full | max-content | min-content | fit-content
+		content
+		inherit | initial | unset
+	flex-grow
+		single integer/decimal value (a proportion value) specifies how much of the remaining space in the flex container should be assigned to the item (the flex grow factor). Main size depends on the flex-direction. Default value is zero.
+		1 | 4 | 5.4 | 9.0 | any-decimal
+	flex-shrink
+		single integer/decimal value (a proportion value) specifies how much space must this child lose when the window is shrinking. It depends on the flex-direction. Default value is 1.(i.e all children lose space equally). If the value is zero, it will not shrink AT ALL.
+		1 | 4 | 5.4 | 9.0 | any-decimal
+	flex
+		shorthand for flex-grow, flex-shrink and flex-basis
+		initial | auto | none
 
 FONT
 	font
 		It must include font-size and font-family. Others are optional.
-		The order: font-style  font-variant  font-weight  font-size   line-height   font-stretch    font-family
-	@font-face
+		The order: font-style  font-variant  font-weight  font-size   line-height   font-stretch	font-family
+
 	font-family
-		a prioritized comma seperated list of font-family-names for the text in the element. It picks only ONE value, it goes from left to right (whichever is available first).
-		Make sure you mention atleast one font-family-name and one gerneric-family-name  Example: "Gill Sans Extrabold", sans-serif (use quotes for font-family-name to be safe)
+		Comma seperated list, it picks the first available one. Mention atleast one font-family-name and one gerneric-family-name  Example: "Gill Sans Extrabold", sans-serif (use quotes for font-family-name to be safe)
 		generic names: serif, sans-serif, monospace, cursive, fantasy, system-ui (default UI font of the platform), math, emoji, fangsong
-		font family names: Times, Times New Roman, Verdana, Arial, Helvetica, Georgia, Lucida Console, Courier
-	font-family (@font-face)
+		font family names: Times, Times New Roman, Georgia, Arial, Helvetica, Verdana, Lucida Console, Courier, Courier New
+	font-size
+		defines the size of upper-case letters
+		xx-small | x-small | small | medium | larger | x-large | xx-large | xxx-large
+		smaller | larger
+		px | em | rem | % | pt
+		inherit | initial | unset
+	font-size-adjust
+		defines the size of lower-case letters relative to the font-size
+		none
+		0 to 1  (a fraction of font-size)
+		inherit | initial | unset
+	font-stretch
+		ultra-condensed (50%) | extra-condensed (62.5%) | condensed (75%) | semi-condensed (87.5%)| normal (100%) | semi-expanded (112.5%) | expanded (125%) | extra-expanded (150%) | ultra-expanded (200%)
+		50% to 200%
+		inherit | initial | unset
+	font-style
+		normal  | italic  |	oblique
+		oblique <angle>    (-90deg to 90deg)
+	font-weight
+		normal | bold
+		ligther | bolder       (relative to the parent) (it adjusts it to only thin, normal, bold, heavy)
+		thin (100) | extra-light (200) | light (300) | normal (400) | medium (500) | semi bold (600) | bold (700) | extra bold (800) | heavy (900)
+		100 to 900
+		inherit | initial | unset
+
+	@font-face
+		font-family (@font-face)
+		font-feature-settings (@font-face)
+		font-stretch (@font-face)
+		font-variant (@font-face)
+		font-variation-settings (@font-face)
+		font-weight (@font-face)
+		font-style (@font-face)
+
 	font-feature-settings
-	font-feature-settings (@font-face)
 	@font-feature-values
 	font-kerning
 	font-language-override
 	font-optical-sizing
-	font-size
-		TBD
-	font-size-adjust
-	font-stretch
-		TBD
-	font-stretch (@font-face)
-	font-style
-		any single style for the displayed font family text
-		normal  | italic  |	oblique
-		oblique <angle>             (-90 to 90)
-	font-style (@font-face)
 	font-synthesis
 	font-variant
-		TBD
-	font-variant (@font-face)
-	font-variant-alternates
-	font-variant-caps
-	font-variant-east-asian
-	font-variant-ligatures
-	font-variant-numeric
+		shorthand for the below 5 properties
+			font-variant-alternates
+			font-variant-caps
+			font-variant-east-asian
+			font-variant-ligatures
+			font-variant-numeric
 	font-variant-position
-	font-variation-settings (@font-face)
-	font-weight
-		sets the single boldness/weight of the font
-		normal | bold
-		ligther | bolder       (relative to the parent) (only thin, normal, bold and heavy are used for this)
-		100 (thin) | 200 (extra-light) | 300 (light) | 400 (normal) | 500 (medium) | 600 (semi bold)| 700 (bold) | 800 (extra bold)| 900 (heavy)       i.e you can set a value from 1 to 1000
-		inherit | initial | unset
-	font-weight (@font-face)
 
 gap
 	shorthand for row-gap and column-gap (in CSS grid containers)
@@ -424,6 +509,7 @@ gap
 	two-values: row-gap column-gap
 
 GRID
+	https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout
 	grid
 	grid-area
 		shorthand for 4 values in this order. Each is seperated by a forward slash. Apply this to each child of the grid-container.
@@ -482,6 +568,27 @@ GRID
 
 
 height
+	by default - you set the height of the content area (excludes padding, border etc). BUT if box-sizing=border-box, then you are setting the height of the border area.
+	min-content | max-content | fit-content( lengthORpercentageValue ) | auto
+	<length> | <percentage>
+	inherit | initial | unset
+
+	The min-height and max-height properties override height.
+		min-height
+		max-height
+
+hyphens
+	none | manual | auto
+
+inline-size
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	depending on the writing-mode, this is the height/width of the box
+	min-content | max-content | fit-content( lengthORpercentageValue ) | auto
+	<length> | <percentage>
+	inherit | initial | unset
+
+	max-inline-size	  (accepts same value as inline-size)
+	min-inline-size   (accepts same value as inline-size)
 
 justify-content
 	single-value defines how the browser distributes space between and around content items along the main-axis of a flex container, and the inline axis of a grid container. (i.e justify on the x-axis of the grid)
@@ -496,13 +603,14 @@ justify-items
 justify-self
 
 line-height
-	TBD
+	sets the height of a line box
+	normal | <decimal-number> | em | rem | % | px
 
 list-style-type
 	single value to determine the pointer type
 	disc | square | circle
 	none
-	decimal | georgian | kannada
+	decimal | lower-alpha | upper-alpha | lower-roman | upper-roman | decimal-leading-zero | georgian | devangari
 	<any string value>  like '-', '*', "\1F44D"  (thumbsUp sign)
 	inherit | initial | unset
 list-style-position
@@ -532,13 +640,14 @@ MARGIN
 		three-values:  top    left-right    bottom
 		four-values:   top   right   bottom   left
 
-	margin-block
-	margin-block-end
-	margin-block-start
-
-	margin-inline
-	margin-inline-end
-	margin-inline-start
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	Depending on the writing-mode, direction and text-orientation, you can use these generic 'physical properties' for a box. These take the same values as margin.
+	margin-block  (one or two values)
+		margin-block-start
+		margin-block-end
+	margin-inline	(one or two values)
+		margin-inline-start
+		margin-inline-end
 
 min-width
 	single value allowed
@@ -556,6 +665,12 @@ max-height
 	single value allowed
 	<length> | <percentage> | auto | max-content | min-content | fit-content() | fill-available
 	inherit | initial | unset
+
+object-fit
+	none | contain | cover | fill | scale-down
+
+opacity
+0.0 to 1.0 | 0% to 100%
 
 order
 	single-value sets the order to lay out an item in a flex or grid container. Items in a container are sorted by ascending order value and then by their source code order.
@@ -583,14 +698,18 @@ OUTLINE
 		width   style    color      (offset has to mentioned seperately)
 
 overflow-x
-	visible | hidden | clip | scroll | auto
+	visible | hidden | clip | scroll | auto    (scroll will keep the scrollbar 100% of the time, auto will put scrollbar only when needed)
 	inherit | initial | unset
 overflow-y
-	visible | hidden | clip | scroll | auto
+	visible | hidden | clip | scroll | auto    (scroll will keep the scrollbar 100% of the time, auto will put scrollbar only when needed)
 	inherit | initial | unset
 overflow
 	one-value:   applies-to-both-x-and-y
 	two-values:  x-value   y-value
+overflow-wrap
+	applies to inline elements, setting whether the browser should insert line breaks within an otherwise unbreakable string to prevent text from overflowing its line box.
+	normal | break-word | anywhere
+	inherit | initial | unset
 
 
 PADDING
@@ -604,13 +723,14 @@ PADDING
 		three-values:  top    left-right    bottom
 		four-values:   top   right   bottom   left
 
-	padding-block
-	padding-block-end
-	padding-block-start
-
-	padding-inline
-	padding-inline-end
-	padding-inline-start
+	https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions
+	Depending on the writing-mode, direction and text-orientation, you can use these generic 'physical properties' for a box. These take the same values as margin.
+	padding-block  (one or two values)
+		padding-block-start
+		padding-block-end
+	padding-inline	(one or two values)
+		padding-inline-start
+		padding-inline-end
 
 perspective
 	determines the distance between the z=0 plane and the user in order to give a 3D-positioned element some perspective
@@ -678,6 +798,8 @@ TEXT
 		one single value that sets the horizontal alignment of a block element or table-cell box.
 		left | right | center | justify
 		inherit | initial | unset
+	text-align-last
+		auto | start | end | left | right | center | justify
 
 	text-decoration-line
 		one or more values (all of them will apply on the same text)
@@ -693,29 +815,43 @@ TEXT
 		inherit | initial | unset
 	text-decoration-thickness
 		single <length> value that sets the thickness/width of the decoration line
-		em | px
+		em | px | %
 		from-font | auto
 		inherit | initial | unset
 	text-decoration
 		4 values in order: line   style   color   thickness
 		but, thickness is not supported in this shorthand on most browsers
+		none    (special value)
 
-	text-align-last
 	text-combine-upright
 	text-emphasis
-	text-emphasis-color
+		text-emphasis-color
+			<color> | currentcolor
+		text-emphasis-style
+			none | <string>
+			filled | open | dot | circle | double-circle | triangle | sesame
 	text-emphasis-position
-	text-emphasis-style
+		over | under | right | left
 	text-indent
+		<length> | %
 	text-justify
+		none | inter-word | inter-character
 	text-orientation
+		only affects text in vertical mode (when writing-mode is not horizontal-tb).
+		mixed (default value) | upright | sideways | sideways-right | use-glyph-orientation
+		inherit | initial | unset
 	text-overflow
+		sets how hidden overflow content is signaled to users. It can be clipped, display an ellipsis ('…'), or display a custom string.
+		clip | ellipsis | fade
+		<string>
 	text-rendering
+		auto | optimizeSpeed | optimizeLegibility | geometricPrecision
 	text-shadow
-		TBD
+		4 values: offset-x  offset-y  blur-radius  <color>    (first three use px,em,rem etc.)
+		With commas, you can apply multiple such shadows to the text
 	text-transform
-		TBD
-		capitalize
+		specifies how to capitalize an element's text.
+		none | capitalize | uppercase | lowercase | full-width | full-size-kana
 	text-underline-offset
 	text-underline-position
 
@@ -782,6 +918,26 @@ visibilty
 	inherit | initial | unset
 
 width
+	by default - you set the width of the content area (excludes padding, border etc). BUT if box-sizing=border-box, then you are setting the width of the border area.
+	min-content | max-content | fit-content( lengthORpercentageValue ) | auto
+	<length> | <percentage>
+	inherit | initial | unset
+
+	The min-width and max-width properties override width.
+		min-width
+		max-width
 
 white-space
-	TBD
+	sets how white space inside an element is handled
+	normal | pre | nowrap | pre-wrap | pre-line | break-spaces
+
+word-break
+	normal | break-all | keep-all
+
+word-spacing
+	sets the length of space between words and between tags
+	normal | <length>
+
+writing-mode
+	setting the direction in which block-level elements are displayed on the page — either from top-to-bottom, right-to-left, or left-to-right. This then dictates the direction text flows in sentences.
+	horizontal-tb | vertical-lr | vertical-rl

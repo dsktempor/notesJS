@@ -1,0 +1,64 @@
+#div1 {
+	margin: 10px 30px 25px;
+	padding: 5px 10px 8px;
+	border: 10px double green
+}
+#div2 {
+	margin: 20px 30px 40px 20px;
+	padding: 10px 15px 18px;
+	border: 5px dashed green
+}
+
+#span1 {
+	margin: 10px 50px 20px;
+	padding: 5px 10px 8px 15px;
+	border: 10px double red
+}
+
+#span2 {
+	margin: 10px 50px 30px;
+	padding: 5px 10px;
+	border: 10px double red;
+	border-radius: 20% 50%
+}
+#div3 {
+	margin: 20px 30px 35px 20px;
+	padding: 10px 15px 5px;
+	border: 5px ridge green
+}
+
+#parent1 {
+	margin: 10px;
+	padding: 10px;
+	border: 5px ridge blue;
+	/* width: 1000px; */
+	min-width: 800px;
+	max-width: 1500px;
+}
+#child1 {
+	margin: 10px;
+	padding: 10px;
+	border: 5px ridge blue;
+	width: 50%;
+	min-width: 40%;
+	max-width: 80%;
+	min-height: 5%;
+}
+
+#parent2 {
+	margin: 50px;
+	padding: 5px;
+	border: 10px ridge blue;
+}
+#child21 {
+	margin: 5px;
+	border: 20px solid rgba(255, 255, 0, 0.459);
+	box-sizing: content-box;
+	width: 100%;
+}
+#child22 {
+	margin: 5px;
+	border: 20px solid yellowgreen;
+	box-sizing: border-box;
+	width: 100%;
+}
