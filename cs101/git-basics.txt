@@ -1,7 +1,8 @@
 Git was invented for the Linux Kernel Open Source Project. (spring 2005)
 It is a de-centralized version control software
 
-Commands
+-------------------------------------------------------------------------------------------------------
+Commands -
 
 which git
 git --version
@@ -10,14 +11,14 @@ git
 git config
 git init
 git help
-git log
 git rm
 git mv
-git diff
 git status
-git show
+git diff
 git add
 git commit
+git log
+git show
 
 git revert
 git reset
@@ -33,28 +34,23 @@ git cherry-pick
 git gc
 git clean
 
+git clone
 git remote
 git fetch
 git push
 git pull
-git clone
+---------------------------------------------------------------------------------------------------------------
 
 4 stages of git - 3 of them are local
-Working directory (the/project folder)
+Working directory (the / project folder)
 Staging area
 Local Git Repository  (the /.git folder)
 Remote Git Repository
 
-To completely remove git from a folder. Go to the parent: rm -rf .git
-
-Fork: Copying an entire repo from one github account to another github account. Once you fork it, into your account, you can do whatever changes you want.
+Fork: Copying an entire repo from one github account to another github account. Once you fork it, into your account, you can do whatever changes you want (you have write access).
 git ls-files  //gives the list of all tracked files in the entire repo
 
-Once you've made changes to file1 and added it to staging with git add. To go back to original state:
-git reset HEAD file1.js   //this removes the changes from staging. the changes are still there in working directory.
-git checkout -- file.js   //this removes the changes from working directory too.
-
-git rebase master   Do this when you are on a feature branch and want to bring it on all the latest changes from master into your feature branch. (this might have conflicts) (it first removes all your feature commits, applies all the master commits, then applies all your feature commits on top of that, so now the commit logg of your feature branch will look like as if you created your branch just today from the base branch)
+git rebase master   Do this when you are on a feature branch and want to bring it on all the latest changes from master into your feature branch. (this might have conflicts) (it first removes all your feature commits, applies all the master commits, then applies all your feature commits on top of that, so now the commit log of your feature branch will look like as if you created your branch just today from the base branch)
 	git rebase --abort (when it coudn't rebase due to merge conflicts)
 	git rebase --continue (when there were merge conflicts, you resolved and saved each of the filess) (once you do this, the rebase is complete)
 	git pull --rebase origin master  (fetch latest from master, THEN rebase your local master on top of the newly pulled master)
@@ -87,11 +83,18 @@ git clean   (TBD)
 Notes -
 1) There is no such thing as a central branch (no single failure point) Each has their own complete repo.  (distributed version control)
 2) All repos are considered equal. It only depends on what change sets it has. You can pull any change set from any other branch.
-3) Use ls -la to see DOT files. (hidden files, .git is a hidden folder)
-4) which git   (to find where git is installed)
+3) ls -la           to see DOT (hidden) files/folders (.git is a hidden folder)
+4) which git       (to find where git is installed)
 5) git --version
-6) 3 levels of config files: System level (all users of OS- /c/Program Files/git/etc/gitconfig ), User level (~/.gitconfig), project level (prj/.git/config)
-7) For the three levels: git config --system, git config --global (user), git config (local)
+	rm -rf .git     To completely remove git from a folder (in the parent folder)
+6) 3 levels of git config files: 
+	System level (all users of OS- /c/Program Files/git/etc/gitconfig ), 
+	User level (~/.gitconfig), 
+	project level (prj/.git/config)
+7) For the three levels: 
+	git config --system, 
+	git config --global (user), 
+	git config (local)
 	git config --list (to list all configurations of local)
 8) Set your user name, email, text editor and color.ui to true.   (use cat .gitconfig or cat  .git/config to see the file)
 9) git init   (if you remove .git folder, all versions are lost, all versions of folders and subfolders are stored in this one top level folder, unlike in SVN)
@@ -100,41 +103,47 @@ Notes -
 	t12314412 - Fixed admin logout  (use enter key here)
 	Describe problem here
 	Describe the solution here
-12) First see what the changes are "git diff", then add the change set to a forthcoming commit git add <filename>, [maybe make more changes], add again, then commit it.
+12) git diff               First see what the changes are 
+	git add <filename>     then add the change set to a forthcoming commit, [maybe make more changes], add again, then commit it.
 	git commit -m '<message>'
 	Remember: It will only commit what you had last "added". Any changes made without the add, will not be in the commit.
   The commit is the only thing that can be exchanged between repos. So message is very important. It has to be in present tense. So if someone else wants to pull this commit (your feature), your message must be inviting.
-13) sha1 hash algorithm (sha value: 40 hex value) - A checksum generated from each change set. Same data would produce same checksum.
-	sha is generated based on change set + meta data (user name, commit message, parent commit SHA# etc)
+13) sha1 hash algorithm (sha value: 40 hex value) - A checksum generated from each change set. Same data would produce same checksum. sha is generated based on change set + meta data (user name, commit message, parent commit SHA# etc)
 14) HEAD: Like a head pointer in a record player. Whatever it points to… the next time you start recording , it will start recording from there only. Head always points to tip of current branch in repo (never to staging or to working dir). It points to the parent of the next commit. It points to where you last checked out of (whichever branch that is, bcoz that Is where you can commit to anyways) (points to the tip of the currently checked out branch)
    To see which commit HEAD points to , open the file HEAD in .git folder (cat .git/HEAD)
-16) Deleting a file. Just delete it in the file system. Then do git rm <file> (not git add), then just commit it.
+16) Deleting a file. 
+	Just delete it in the file system. Then do git rm <file> (not git add), then just commit it. (git rm already stages the change)
 	If you have done git rm file1.txt, and now you want to back out .. git reset HEAD file1.txt and then git checkout -- file1.txt
 	If you directly do: rm <file> (It will permanently remove the file) Now all you can do is a commit.
-17) Renaming a file. Just rename it in the file system. Then do git add <new-file>, git rm <old-file> , then just commit that.
+17) Renaming a file. 
+	Just rename it in the file system. Then do git add <new-file>, git rm <old-file> , then just commit that.
 	OR use git mv <old-filename> <new-filename> , then just commit that.  (when you do git mv, it automatically adds that change to staging, you just have to commit it now)
-	If you did'nt like the file name change, before you commit, just do git mv newname oldname. DONE. It reverts the changes in the staging and working directory is clean again.
-18) Moving a file, this is same as renaming a file . The new file name is just a path to the new location along with the file name.
+	If you didn't like the file name change, before you commit, just do git mv newname oldname. DONE. It reverts the changes in the staging and working directory is clean again.
+18) Moving a file, this is same as renaming a file . 
+	The new file name is just a path to the new location along with the file name.
 	git mv <old-filename> <newPath/../../../same-file-name> , then just commit that.
-19) git reset HEAD <file> (to unstage a file i.e replace what is in staging with what is in the repo's HEAD) (bcoz default is --mixed) (it means git reset to HEAD)
-	git checkout HEAD <file> (to replace what is in working & staging with what is in repo)
-	git checkout -- <file> code from repo (or staging if it is the same file) to working. (-- ensures you are pulling from current branch)
+19) Unstaging and resetting
+	git reset HEAD <file>       (to unstage a file i.e replace what is in staging with what is in the repo's HEAD) (bcoz default is --mixed) (it means git reset to HEAD) the changes are still there in working directory.
+	git checkout HEAD <file>    (to replace what is in working & staging with what is in repo)
+	git checkout -- <file>      (code from repo (or staging if it is the same file) to working. (-- ensures you are pulling from current branch)
 	When you are not trying to checkout a branch, use "checkout --"
-20) git status : difference between working, repo and staging.
+20) git status       difference between working, repo and staging.
+	git status -s    (short status)
 21) You can't alter an old commit, bcoz its SHA will change, then its child's SHA will also change and so on.
-22) Amend Latest commit: git commit --ammend -m "new msg to overwrite old one" (no need to change and add any file etc)
+22) git commit --ammend -m "new msg to overwrite old one"    Amend Latest commit
 You can change any code too and then do this. It will just rewrite the previous commit.
 23) checkout: it is used to replace contents in your staging and working directory. (it moves HEAD)
 	git checkout <SHA> -- <file> brings a file to your staging & working.   (-- means current branch only)
-	If you commit it right now, it will revert that old <SHA> commit completely.
+	If you commit it right now, it will revert to that old <SHA> commit completely.
 	To get out of this: git reset HEAD <filename>, then git checkout HEAD.
-24) git revert <SHA>  it will then prompt for a message.  (one step, no need to do add/commit). It will revert that particular commit and put a new commit (that reverted that one).
-25) git reset  --<type> <SHA>    (used to move the HEAD and completely overwrite commits from that point onwards)
+24) git revert <SHA>        it will then prompt for a message.  (one step, no need to do add/commit). 
+It will revert that particular commit and put a new commit (that reverted that one).
+25) git reset --<type> <SHA>    (used to move the HEAD and completely overwrite commits from that point onwards)
 	--soft :  Moves head to that SHA. Working and staging are not touched/changed.
 	--mixed:(default)  Moves head to that SHA. Changes staging to match that repo.  Does not change working. (it still has original HEAD's )
 	--hard: Moves head to the SHA. Changes staging and working to that repo. All commits after the SHA are obliterated. (they are just disconnected)
 	For all of these, remember to do a git log and save the SHA of top 10 commits, before you use any kind of reset. You can always reset HEAD back to any of those SHAs and continue recording (committing i.e. overwriting & not branching) from that point.
-	Soft/mixed and hard only decide what goes in staging and in working.
+	Soft, mixed and hard only decide what goes in staging and in working.
 26) To find master
 	cat /git/refs/heads/master
 27) If you want to delete untracked files from you repo
@@ -145,9 +154,9 @@ You can change any code too and then do this. It will just rewrite the previous 
 	temps/ , assets/photoshop/
 	!temp.txt  (don't ignore this guy)
 	!assets/temps/tour_*.mp4
-29) Ignore these files- compiled source code, packages and compressed files, logs and databases, OS generated files, user uploaded assets images videos pdfs. Checkout github article on it. There is also a github repo of  popular git ignores.
+29) Ignore these files- compiled source code, packages and compressed files, logs and databases, OS generated files, user uploaded assets images videos pdfs. Checkout github article on it. There is also a github repo of popular git ignores.
 30) Do an ignore at a user level: git config --global core.excludesfile  ~/some-path/.gitignore_global (put all your ignores in this file)
-31) git rm --cached <filename> To stop tracking an already tracked file.   (this deletes file from staging)
+31) git rm --cached <filename>     To stop tracking an already tracked file.   (this deletes file from staging)
 	Also now add it in the .gitignore file and commit it (one delete+ one modified). Now git will stop tracking that file moving forward.
 32) Git will not track a directory unless there is a file in it. So trick is just put an empty file in there, so at least the directory is tracked. (example: touch .gitkeep)
 33) Tree-ish: A way to refer to a commit. Use SHA1, HEAD, branch, tag.
@@ -175,28 +184,26 @@ You can change any code too and then do this. It will just rewrite the previous 
 	git log --oneline --graph -all --decorate   (all branches)
 36) git show <SHA/tree-ish>   (shows that commit in detail along with diff)   git show HEAD~4
 	git show <SHA of an tree/blob from any commit>   (it should be a SHA)
-37) git diff   (working VS staging)
-	git diff --staged HEAD (staging VS repo i.e the last commit in this branch)  (--cached)
-	git diff HEAD (working VS repo i.e the last commit in this branch)
+37) git diff                      (working VS staging)
+	git diff --staged HEAD        (staging VS repo i.e the last commit in this branch)  (--cached)
+	git diff HEAD                 (working VS repo i.e the last commit in this branch)
 	git diff master origin/master (repo VS remote)
-	git diff --color-words  (shows inline changes only!! )
+	git diff --color-words        (shows inline changes only!! )
 	git diff -- <filename>
-	git diff <SHA>   (diff btw working directory and that commit) (can put a filename too)
+	git diff <SHA>                (diff btw working directory and that commit) (can put a filename too)
 	git diff <old-treeish>..<newer-treeish>   (some subfolder etc)
 	git diff --stat --summary <old-SHA> <newer-SHA>
-	git diff -b  (or --ignore-space-change)
-	git diff -w  (or --ignore-all-space) (i.e all white space)
-	git diff HEAD HEAD^3    (diff of head and head minus three)
+	git diff -b                   (or --ignore-space-change)
+	git diff -w                   (or --ignore-all-space) (i.e all white space)
+	git diff HEAD HEAD^3          (diff of head and head minus three)
 
 
-38) git branch
-	(list all branches in local machine)
+38) git branch      (list all branches in local machine)
 	git branch <new-branch> <optional: where to branch from> (by default it branches from HEAD)
-	(to create a new branch, but you will still be on current branch and new one's SHA is set to current one (even if current one moves on), until your first commit)
+		(to create a new branch, but you will still be on current branch and new one's SHA is set to current one (even if current one moves on), until your first commit)
 	git checkout <branch>
-	(to switch to a branch, HEAD point's to this branch now) Use -- to not switch a branch. Ex: git checkout -- <file> will just replace Working Directory with repo.
-	git checkout -b <new-branch>
-	(to create and switch to new branch in one shot)
+		(to switch to a branch, HEAD point's to this branch now) Use -- to not switch a branch. Ex: git checkout -- <file> will just replace Working Directory with repo.
+	git checkout -b <new-branch>        (to create and switch to new branch in one shot)
 39) Git will not allow you to switch branch if your working directory is not clean.
 40) git diff <branchName1>..<branchName2>
 	(don't need SHAs, it uses recent commits (top commit of each branch))
@@ -204,39 +211,36 @@ You can change any code too and then do this. It will just rewrite the previous 
 41) git branch  --merged
 	(to show all branches that are completely included in this branch)
 	It takes each branch and checks if their final commit is in this branch's log history.
-42) git branch -m <old-name> <new-name>
-	(to rename a branch)
+42) git branch -m <old-name> <new-name>       (to rename a branch)
 	git branch -d <branch-name>
-	(to directly delete a branch that has been merged to current already) (you can't be on this branch obviously) If the branch is not merged to the current branch it will warn you and prompt you to use "-D" instead.
-	git branch -D <branch-name>
-	(to delete a branch forever)
+		(to directly delete a branch that has been merged to current already) (you can't be on this branch obviously) If the branch is not merged to the current branch it will warn you and prompt you to use "-D" instead.
+	git branch -D <branch-name>               (to delete a branch forever)
 43) git merge <branch-to-merge-from>  (be on the receiver, to merge two branches) (use --squash to squash and merge)
-44) Fast Forward Merge: Occurs when the receiver has not moved forward ever since the branch was made. When merging, git takes the branch that needs to be merged and looks for the HEAD pointer of the current branch in It's log. IF the HEAD is indeed there (meaning the current branch did not move forward) it just merges the two without creating a new merge commit. You can now permanently delete the branch.
+44) Fast Forward Merge: Occurs when the receiver has not moved forward ever since the branch was made. When merging, git takes the branch that needs to be merged and looks for the HEAD pointer of the current branch in it's log. IF the HEAD is indeed there (meaning the current branch did not move forward) it just merges the two without creating a new merge commit. You can now permanently delete the branch.
 	You will never have a merge conflict in a fast forward merge.
 45) git merge <branch-name> --no-ff <branch-name>  Forces git to create a new merge commit, if in case a fast-forward merge is indeed possible. (this does not do a squash, what goes on to the base branch is: all the individual branch commits + one merge commit)
 	git merge --ff-only <branch-name>  (do a merge only if a fast-forward merge is possible, or else abort)
 	git merge <branch-name> -m "some message"  - DO this if master has moved ahead, but you want to merge your branch by making a merge commit.
 46) True Merge: Occurs when the branch you are trying to merge does not have the current branch's HEAD in it's log.
 47) Resolving Merge Conflicts
-	Abort: git merge --abort  (this abort the whole merge process and you go back to original state)
-	Manually: edit the file and then git add <file>, git commit  (no file or message required during a merge) (on the vim prompt screen, use Esc + :wq + enter-key)
+	git merge --abort  (this abort the whole merge process and you go back to original state)
+	Manually edit the file and then git add <file>, git commit  (no file or message required during a merge) (on the vim prompt screen, use Esc + :wq + enter-key)
 	Tools: git mergetool tool=XYZ   (use git mergetool to see list of tools)
 48) Strategies to reduce merge conflicts
-	Keep lines of code short
 	Keep commit small and focused (don't fix different things in one single commit)
 	Beware of stray edits to whitespace (spaces, tabs, line-returns)
 	Try to merge as often as possible. (don't try to merge huge features)
-	Tracking: Try to be in sync with master as much as possible. (merge master to YOU!)
-49) The folder .git/refs/heads will also contain the list of all branches in local. (its where HEAD pointer store's it's SHA)
+	Tracking: Try to be in sync with master as much as possible. (merge master into your branch!)
+49) The folder .git/refs/heads will also contain the list of all branches in local. (its where HEAD pointer stores it's SHA)
 	Each branch stores the top SHA in that branch.
 50) git stash save "<a message here>"  (to save unstaged changes and return to a clean directory) (it runs git reset --hard HEAD)
-	git stash list    (will show all stashed stashes across all branches)
+	git stash list              (will show all stashed stashes across all branches)
 	git stash show -p <stash#>  (to show what is in that stash, a diff..)
-	git stash apply <stash#> (it applies those changes to your working directory, if there is a conflict it will tell you. Does not remove from stash)
+	git stash apply <stash#>    (it applies those changes to your working directory, if there is a conflict it will tell you. Does not remove from stash)
 	git stash pop <stash#> (it will remove it from stash permanently and apply it to working directory)
 	You can obviously restash your stashed changes that you just now applied on your working directory.
-	git stash drop <stash#>  (to delete a particular stash)
-	git stash clear   (completely deletes all stashes)
+	git stash drop <stash#>        (to delete a particular stash)
+	git stash clear                (completely deletes all stashes)
 	git stash save -u    (by default stash only saves tracked files, incase you added a new file which is untracked i.e you didn't do git add <file>, this -u will save that untracked file too)
 	git stash branch <new-branch-name>  (this does: git stash save 'temp' + git branch <new-branch-name> + git pop 'temp) (so just moving all of this into a new branch)
 	You can stash changes at any commit point, let the branch move forward, then you can access & apply the stash at a later commit.
@@ -245,25 +249,25 @@ You can change any code too and then do this. It will just rewrite the previous 
 51) Remote Repository: Git is distributed, so no repository is central.
 	Origin/<branch> is just a local branch that is constantly trying to be in sync with remote. (when a fetch is done origin/master is updated to point to the latest commit that came from remote) (a local cached version of the remote repo) (it is just another local branch! you just can't checkout this branch)
 	Workflow: Make your commit to master, do a fetch so that origin/master has the latest. Merge yourself with origin/master, then push your commit to the remote.
-52) git remote (shows the list of all remote branches)
+52) git remote                    (shows the list of all remote branches)
 	git remote add <alias> <URL>  (to create a new remote called <alias> that will point to that server) Often time you set <alias> as "Origin". This command can be done on any branch (it is independent of the branch). You are just declaring a new remote.
-	git remote rm <alias> (to remove a remote)
+	git remote rm <alias>         (to remove a remote)
 53) git push -u <remote-name> <local-branch>  (push a particular branch on to its corresponding branch in remote)
 	git push -u origin master  (means create origin/master in local based on master, also push master to origin. Let origin/master always fetch from origin)
 	(-u is used to ensure that your local origin/master branch is tracking that remote branch you just pushed) (-u creates the origin/master branch) (it means your local branch now has an upstream branch)
 	Your current branch must have an upstream branch to be able to push.
-54) Remember people won't have access to the other branches… only all the commit that are within this branch that you just pushed. You need to push those branches separately.
+54) Remember people won't have access to all your local branches… only all the commits that are within this branch that you just pushed. You need to push those branches separately.
 	The folder .git/refs has
-	1)heads/  ->will have a list of all local branches (each storing their latest SHA)
-	2)remotes/ ->will have a list of all remotes, each having a list of all their branches (in turn each storing their latest SHA)
-	3)tags/ -> ??
-	git fetch <which-remote-repository>  (git fetch origin)  (synchronizes all your local tracking branches with their remote if they are on remote) (the to address is your respective tracking branch and cannot be anything else)
+	1)heads/    -> list of all local branches (each storing their latest SHA)
+	2)remotes/  -> list of all remotes, each having a list of all their branches (in turn each storing their latest SHA)
+	3)tags/     -> ??
+	git fetch <which-remote-repository>  (git fetch origin)  (synchronizes all your local tracking branches with their remote if they are on remote) (the "to" address is your respective tracking branch and cannot be anything else)
 	To fetch only one specific branch: git fetch origin3/devwork
 	>fetch before you work  (see what all changed in the branch while you were absent)
-	>fetch before you push  (resolve merge conflicts locally, ensure no one else fixed it before you)
+	>fetch before you push  (resolve merge conflicts locally, ensure no one else fixed a bug before you)
 	>fetch often (in case you lose internet)
-55) git branch -r  (will show all remote branches that everyone else have also pushed) (requires a git fetch first though)
-	git branch -a (will show remote and local branches)
+55) git branch -r    (all remote branches that everyone else have also pushed) (requires a git fetch first though)
+	git branch -a    (all remote and local branches)
 56) git clone <URL>  <some-new-folder-name> (to initiate a repo and copy any open source remote repo to your machine)
 	When you do a clone, your master is automatically configured to track origin's refs/heads/master.
 57)  cat .git/config     Shows a list of remotes and all tracking branches in your local.
@@ -281,21 +285,24 @@ You can change any code too and then do this. It will just rewrite the previous 
 	create a directory in your local machine
 	git init
 	git remote add ktk URL
-	cat .git/config  (see that remote "ktk" is now defined with a URL)
-	git fetch ktk  (since it does not yet know of any tracking branch)
-	git branch -a (see a list of all local and remote branch names)
-	git log --oneline -5 ktk/master (it has all the remote's commits now!)
-	git merge ktk/master   (DONE)
+	cat .git/config     (see that remote "ktk" is now defined with a URL)
+	git fetch ktk       (since it does not yet know of any tracking branch)
+	git branch -a       (see a list of all local and remote branch names)
+	git log --oneline -5 ktk/master       (it has all the remote's commits now!)
+	git merge ktk/master     (DONE)
 	do a commit
 	git push -u ktk master    (master now setup to track origin/master)
-59) git log --oneline (is for local copy)
-	git log --oneline origin/master  (is for your copy of the remote)
-	git diff origin/master..master   (diff between your local and your local tracking branch) (do this after a fetch)
+59) git log --oneline                 (is for local copy)
+	git log --oneline origin/master   (is for your copy of the remote)
+	git diff origin/master..master    (diff between your local and your local tracking branch) (do this after a fetch)
 60) git push   (no need <remote-name> <local-branch> if the remote name is already a tracking branch)
 	After every push, your current tracking branch will update itself to point to your latest commit. (just like a fetch does the opposite)
 61) git pull  (git fetch + git merge)  (often time if you have not made any recent commits, it will be a FF merge)
 62) Once you have done a fetch, and with git branch -r , you see that someone pushed up a new branch in remote.
-	If you want to use that branch, make updates and push again (contribute to it ) then use git branch <new-branch-name> <which-SHA-to-branch-from>   (git branch <new-branch> HEAD is same as git branch <new-branch>) (like git branch new origin/new) It will now be a local tracking branch of that remote branch. Then do git checkout <new-branch name>
+	If you want to use that branch, make updates and push again (contribute to it) then use 
+	git branch <new-branch-name> <which-SHA-to-branch-from>    ->     git branch new origin/new
+	It will now be a local tracking branch of that remote branch. Then do git checkout new
+	git branch <new-branch> HEAD is same as git branch <new-branch>  
 63) git push origin --delete <branch-name>  (to delete a branch on the repo)  (it still keeps your local version)
 	Or git push origin :<branch-name>
 	That's bcoz the actual way to push is: git push origin myBranch:myBranch  (push local myBranch TO the remote one called myBranch)
@@ -306,7 +313,7 @@ You can change any code too and then do this. It will just rewrite the previous 
 65) Daily workflow:
 	git checkout master
 	git fetch
-	git merge origin/master  (or just do git pull and skip steps 2 and 3)
+	git merge origin/master  (or just do git pull and skip fetch & merge)
 	git checkout -b todays-branch
 	git commit -am "done for the hour"
 	git fetch   (any commits in the remote?)
@@ -322,7 +329,7 @@ You can change any code too and then do this. It will just rewrite the previous 
 	git fetch
 	git push   (it is already tracked)
 
-	then me again
+	then me again:
 	git fetch
 	git log -p todays-branch..origin/todays-branch (my local to co-workers remote patch)
 	git merge origin/todays-branch
@@ -332,17 +339,17 @@ You can change any code too and then do this. It will just rewrite the previous 
 	git merge todays-branch
 	git push
 66) git config --global alias.status sts  (to setup aliases of any command at a user level)
-	or git config --global alias.logg "log --all --oneline --graph --decorate"  - So now "git logg" is an alias
-	To view all aliases: cat ~/.gitconfig (or just use git config --list)
+	git config --global alias.logg "log --all --oneline --graph --decorate"  - So now "git logg" is an alias
+	To view all aliases: cat ~/.gitconfig (or git config --list)
 	co - checkout,  ci - commit, dfs - "diff --staged", logg - "log --all --decorate --graph --oneline"
 67) These two should point to the same SHA  (if you have fetched origin/master)
 	cat .git/refs/heads/master
 	cat .git/refs/remote/origin/master
 
 
-Pending:
+Others:
 fork
-Rebase
+rebase
 cherry picking
 pull request
 reset
