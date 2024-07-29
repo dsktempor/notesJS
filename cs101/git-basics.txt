@@ -1,8 +1,9 @@
 Git was invented for the Linux Kernel Open Source Project. (spring 2005)
-It is a de-centralized version control software
+It is a de-centralized version control software. SCM = Source control management
+Git is software (revision history, accountability), github is a service (collaboration, backup, open source, analyse project)
 
 -------------------------------------------------------------------------------------------------------
-Commands -
+All Commands - https://git-scm.com/docs
 
 which git
 git --version
@@ -19,6 +20,7 @@ git add
 git commit
 git log
 git show
+git alias
 
 git revert
 git reset
@@ -96,6 +98,7 @@ Notes -
 	git config --global (user), 
 	git config (local)
 	git config --list (to list all configurations of local)
+	git config --global core.editor "code --wait"     (to set VSCode as the default code editor)
 8) Set your user name, email, text editor and color.ui to true.   (use cat .gitconfig or cat  .git/config to see the file)
 9) git init   (if you remove .git folder, all versions are lost, all versions of folders and subfolders are stored in this one top level folder, unlike in SVN)
 10) git help <command here>
@@ -105,11 +108,12 @@ Notes -
 	Describe the solution here
 12) git diff               First see what the changes are 
 	git add <filename>     then add the change set to a forthcoming commit, [maybe make more changes], add again, then commit it.
-	git commit -m '<message>'
+	git add .              this adds only all files in this folder. To add all files in repo -> git add -A 
+	git commit -m '<message>'      Message should be present-tense and imperative. Like you are instructing the codebase. "Adds a header functionality", "Fixes the footer" etc.
 	Remember: It will only commit what you had last "added". Any changes made without the add, will not be in the commit.
   The commit is the only thing that can be exchanged between repos. So message is very important. It has to be in present tense. So if someone else wants to pull this commit (your feature), your message must be inviting.
 13) sha1 hash algorithm (sha value: 40 hex value) - A checksum generated from each change set. Same data would produce same checksum. sha is generated based on change set + meta data (user name, commit message, parent commit SHA# etc)
-14) HEAD: Like a head pointer in a record player. Whatever it points to… the next time you start recording , it will start recording from there only. Head always points to tip of current branch in repo (never to staging or to working dir). It points to the parent of the next commit. It points to where you last checked out of (whichever branch that is, bcoz that Is where you can commit to anyways) (points to the tip of the currently checked out branch)
+14) HEAD: Like a casette head (pointer) in a record player. Whatever it points to… the next time you start recording , it will start recording from there only. Head always points to tip of current branch in repo (never to staging or to working dir). It points to the parent of the next commit. It points to where you last checked out of (whichever branch that is, bcoz that Is where you can commit to anyways) (points to the tip of the currently checked out branch)
    To see which commit HEAD points to , open the file HEAD in .git folder (cat .git/HEAD)
 16) Deleting a file. 
 	Just delete it in the file system. Then do git rm <file> (not git add), then just commit it. (git rm already stages the change)
@@ -125,7 +129,8 @@ Notes -
 19) Unstaging and resetting
 	git reset HEAD <file>       (to unstage a file i.e replace what is in staging with what is in the repo's HEAD) (bcoz default is --mixed) (it means git reset to HEAD) the changes are still there in working directory.
 	git checkout HEAD <file>    (to replace what is in working & staging with what is in repo)
-	git checkout -- <file>      (code from repo (or staging if it is the same file) to working. (-- ensures you are pulling from current branch)
+	git checkout -- <file>      (code from repo (or staging if it is the same file) to working. (-- ensures you are pulling from current branch) 
+	git checkout -- . (all files back to normal)
 	When you are not trying to checkout a branch, use "checkout --"
 20) git status       difference between working, repo and staging.
 	git status -s    (short status)
@@ -139,8 +144,8 @@ You can change any code too and then do this. It will just rewrite the previous 
 24) git revert <SHA>        it will then prompt for a message.  (one step, no need to do add/commit). 
 It will revert that particular commit and put a new commit (that reverted that one).
 25) git reset --<type> <SHA>    (used to move the HEAD and completely overwrite commits from that point onwards)
-	--soft :  Moves head to that SHA. Working and staging are not touched/changed.
-	--mixed:(default)  Moves head to that SHA. Changes staging to match that repo.  Does not change working. (it still has original HEAD's )
+	--soft: Moves head to that SHA. Working and staging are not touched/changed i.e. they still have HEAD's content
+	--mixed: (default)  Moves head to that SHA. Changes staging to match that repo.  Does not change working. (it still has original HEAD's content)
 	--hard: Moves head to the SHA. Changes staging and working to that repo. All commits after the SHA are obliterated. (they are just disconnected)
 	For all of these, remember to do a git log and save the SHA of top 10 commits, before you use any kind of reset. You can always reset HEAD back to any of those SHAs and continue recording (committing i.e. overwriting & not branching) from that point.
 	Soft, mixed and hard only decide what goes in staging and in working.
@@ -160,7 +165,8 @@ It will revert that particular commit and put a new commit (that reverted that o
 	Also now add it in the .gitignore file and commit it (one delete+ one modified). Now git will stop tracking that file moving forward.
 32) Git will not track a directory unless there is a file in it. So trick is just put an empty file in there, so at least the directory is tracked. (example: touch .gitkeep)
 33) Tree-ish: A way to refer to a commit. Use SHA1, HEAD, branch, tag.
-	ancestry:   HEAD^ or HEAD~4 (4 generations up from HEAD), master^
+	ancestry: HEAD~4 (4 commits up from HEAD), HEAD~ is previous commit, HEAD~~~ = HEAD~3 
+	If a commit has multiple parents because it is a merge commit, then use SHA^2 (second parent) SHA^3 (third parent) etc. Example: HEAD^3~6 ,SHA^ is just the previous commit
 34) git ls-tree <tree-ish>
 	It will list names of all files in that commit i.e it will give you the top level folder structure. In there - each blob is a file and each tree is a directory.
 	Each blob and tree has its own SHA. If it is a tree, you can use it in the above <tree-ish>
@@ -182,13 +188,15 @@ It will revert that particular commit and put a new commit (that reverted that o
 	git log --summary  (#files changed, total #additions and deletions, plus commit message)
 	git log --format=raw  (gives commit#, tree#, parent# each commit)
 	git log --oneline --graph -all --decorate   (all branches)
+	git log -L 10,40:<filepath>    (will show all commits touching those lines of the file)
 36) git show <SHA/tree-ish>   (shows that commit in detail along with diff)   git show HEAD~4
 	git show <SHA of an tree/blob from any commit>   (it should be a SHA)
-37) git diff                      (working VS staging)
+37) git diff                      (working VS staging)  (a diff compares the exact same file across time/commits) (it is not comparing different files)
 	git diff --staged HEAD        (staging VS repo i.e the last commit in this branch)  (--cached)
 	git diff HEAD                 (working VS repo i.e the last commit in this branch)
 	git diff master origin/master (repo VS remote)
-	git diff --color-words        (shows inline changes only!! )
+	git diff --color-words        (shows inline changes only!! ) 
+	git diff --word-diff
 	git diff -- <filename>
 	git diff <SHA>                (diff btw working directory and that commit) (can put a filename too)
 	git diff <old-treeish>..<newer-treeish>   (some subfolder etc)
@@ -196,6 +204,7 @@ It will revert that particular commit and put a new commit (that reverted that o
 	git diff -b                   (or --ignore-space-change)
 	git diff -w                   (or --ignore-all-space) (i.e all white space)
 	git diff HEAD HEAD^3          (diff of head and head minus three)
+	git diff HEAD..HEAD^3         (same as above) (from..to)
 
 
 38) git branch      (list all branches in local machine)
@@ -211,12 +220,15 @@ It will revert that particular commit and put a new commit (that reverted that o
 41) git branch  --merged
 	(to show all branches that are completely included in this branch)
 	It takes each branch and checks if their final commit is in this branch's log history.
-42) git branch -m <old-name> <new-name>       (to rename a branch)
+42) git branch -m <old-name> <new-name>       (to rename a branch) git branch -M master main
 	git branch -d <branch-name>
 		(to directly delete a branch that has been merged to current already) (you can't be on this branch obviously) If the branch is not merged to the current branch it will warn you and prompt you to use "-D" instead.
 	git branch -D <branch-name>               (to delete a branch forever)
 43) git merge <branch-to-merge-from>  (be on the receiver, to merge two branches) (use --squash to squash and merge)
-44) Fast Forward Merge: Occurs when the receiver has not moved forward ever since the branch was made. When merging, git takes the branch that needs to be merged and looks for the HEAD pointer of the current branch in it's log. IF the HEAD is indeed there (meaning the current branch did not move forward) it just merges the two without creating a new merge commit. You can now permanently delete the branch.
+	When two files merge, at a line level, always "change" overwrites "no change". 
+	If both are "change", then there is a conflict and you have to manually resolve this. 
+	git merge feature1 -m "Adds feature1 functionality" --squash 
+44) Fast Forward Merge: Occurs when the receiver has not moved forward ever since the branch was made. When merging, git takes the branch that needs to be merged and looks for the HEAD pointer of the current branch in it's log. IF the HEAD is indeed there (meaning the current branch did not move forward) it just merges the two without creating a new merge commit. You can now permanently delete the branch. The reciever branch just has to catch up to the feature branch in this case (head is moved forward)
 	You will never have a merge conflict in a fast forward merge.
 45) git merge <branch-name> --no-ff <branch-name>  Forces git to create a new merge commit, if in case a fast-forward merge is indeed possible. (this does not do a squash, what goes on to the base branch is: all the individual branch commits + one merge commit)
 	git merge --ff-only <branch-name>  (do a merge only if a fast-forward merge is possible, or else abort)
