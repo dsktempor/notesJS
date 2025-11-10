@@ -393,17 +393,17 @@ So Promise.resolve('hello') runs faster than setTimeout(f,0);
 
 Every tab in your browser has it's own Runtime (i.e own callstack)
 
-1.3)Into YDKJS  📘📘📘
+📘📘📘 1.3)Into YDKJS
 No person's opinion, no framework's assumptions, and no project's deadline should be the excuse for why you never learn and deeply understand JavaScript.
 It's about taking seriously the task of learning all parts of this great language, and not just whatever minimal amount you need to get your job done at work.
 Serious developers put in the effort to learn all of the language they primarily write in. "You Don't Know JS" isn't a criticism or an insult. It's a realization that all of us, myself included, must come to terms with. Learning JavaScript isn't an end goal but a process.
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Chapter 2 : SCOPE AND CLOSURES  📕📕📕📕📕
+📕📕📕📕📕 Chapter 2 : SCOPE AND CLOSURES  
 Do what you love. Maybe it was something when you were young/school.
 Unfortunately, now you are called a professional and getting paid for it, but you are still doing what you wanted to do.
 
-2.1)What is scope?  📘📘📘
+📘📘📘 2.1)What is scope?
 State: the ability to store values and pull values out of variables in a program.
 Where do variables live? how does our program find them when it needs them?
 
@@ -460,7 +460,7 @@ if it is strict mode, LHS will throw ReferenceError
 ReferenceError is Scope resolution-failure related ("Uncaught ReferenceError: a is not defined")
 TypeError comes only for RHS, it implies that Scope resolution was successful, but that there was an illegal/impossible action attempted against the value. Like null() or undefined.abc.xyz  ("Uncaught TypeError: null is not a function")
 
-2.2)Lexical Scope  📘📘📘
+📘📘📘 2.2)Lexical Scope  
 JS uses Lexical Scope (as opposed to dynamic scope used by other languages)
 lexing: (or tokenising) the first traditional phase of a standard language compiler, examines a string of source code characters and assigns semantic meaning to the tokens as a result of some stateful parsing.
 
@@ -505,7 +505,7 @@ Your code will almost certainly tend to run slower simply by the fact that you i
 
 internally, scope is kind of like an object with properties for each of the available identifiers. But the scope "object" is not accessible to JavaScript code. It's an inner part of the Engine's implementation.
 
-2.3)Function scope and block scope  📘📘📘
+📘📘📘 2.3)Function scope and block scope
 Principle of least privilege PoLP (least authority): in the design of software, such as the API for a module/object, you should expose only what is minimally necessary, and "hide" everything else.
 So, take any arbitrary section of code you've written, and wrap a function declaration around it, which in effect "hides" the code.
 Another benefit of "hiding" variables and functions inside a scope is to avoid unintended collision between two different identifiers with the same name but different intended usages.
@@ -591,7 +591,7 @@ You cannot reassign to another value i.e it's value/reference cannot change.
 internally, scope is kind of like an object with properties for each of the available identifiers.
 But the scope "object" is not accessible to JavaScript code. It's an inner part of the Engine's implementation.
 
-2.4)Hoisting  📘📘📘
+📘📘📘 2.4)Hoisting
 a = 2;
 var a;
 console.log(a);       //2
@@ -686,7 +686,7 @@ function b(){
 b();
 So, only if the var is not in memory for the currently executing execution context, THEN only, it will look at its outer lexical scope, it doesn't matter how many stack frames below, that this var is there, it will get the value from there.  this is lexical scope not dynamic scope. The base stack frame / execution context is the global scope. This process is called going down the scope chain to find a var.
 
-2.5)Scope closure  📘📘📘
+📘📘📘 2.5)Scope closure
 elusive, mythological part of the language: closure.
 understanding closure can seem like a special nirvana that one must strive and sacrifice to attain.
 closure is all around you in JavaScript, you just have to recognize and embrace it.
@@ -831,10 +831,10 @@ console.log(a);    gives ReferenceError
 console.log(k);    //22
 The catch block (ES3) always had block scope. (i.e only for the arguement in the catch() part)
 
----------------------------------------------------------------------------------------------------------------------
-Chapter 3: this and Object Prototypes  📕📕📕📕📕
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+📕📕📕📕📕 Chapter 3: this and Object Prototypes  
 
-3.1)"this" or that?  📘📘📘
+📘📘📘 3.1)"this" or that?
 Do you really need to use and worry about "this"?
 function identify() {
 	return this.name.toUpperCase();
@@ -873,7 +873,7 @@ call-site: the location in code where a function is called (not where it's decla
 call-stack: the stack of functions that have been called to get us to the current moment in execution
 The call-site we care about is in the invocation before the currently executing function.
 
-3.2)"this" all makes sense now  📘📘📘
+📘📘📘 3.2)"this" all makes sense now
 4 RULES of THIS: default, implicit, explicit, constructor
 >Default binding: Standalone Function Invocation.
 This is the catch all rule, when none of the next 3 rules apply
@@ -1099,7 +1099,7 @@ To summarise: Determining the "this" binding (to an object) for an executing fun
 Once examined, four rules can be applied to the call-site, in this order of precedence: New, Explicit, Implicit, Default.
 If it's an arrow defined function, just use closure/lexical scope.
 
-3.3)Objects  📘📘📘
+📘📘📘 3.3)Objects
 In JS, everything is either an object or a primitive (BNS). period.
 Literal syntax: { a: 4 };
 Constructor syntax: var b = new Object(); b.x = 5;  (very rarely people use the constructor syntax)
@@ -1361,7 +1361,7 @@ Method Chaining: VVVIP fact
 obj1.func1().func2().func3();   //all 3 funcs affect obj1
 To be able to do this, each of the funcs 1,2,3 must return "this". Then only you can chain like this.
 
-3.4)Mixing Class objects  📘📘📘
+📘📘📘 3.4)Mixing Class objects
 Procedural programming pattern: code which only consists of procedures (aka, functions) calling other functions, without any higher abstractions.
 Class Design Pattern: Like Java.
 C,C++, PHP give you the option of class design and procedural style
@@ -1500,7 +1500,7 @@ fiona.__proto__; //this is Object.prototype, has no relation to Elf. (you just c
 fiona.attack();  //attack() does not exist.
 //So use 'extends' to solve this.
 
-3.5)prototypes  📘📘📘
+📘📘📘 3.5)prototypes
 >>)__proto__ i.e prototype chains
 So __proto__ of any object, points to the "prototype" object of it's parent. That parent is normally a function object or just plain object. So every object in the chain has a __proto__ property, it is a reference to an object.
 
@@ -1733,7 +1733,7 @@ Object.create = createAndLinkObject;
 var d = Object.create(null); d does not have any parent (an empty [[Prototype]] linkage). They are typically used purely for storing data in properties.
 Mostly because they have no possible surprise effects from any delegated properties/functions on the [[Prototype]] chain, and are thus purely flat data storage. i.e. an object with just user-defined data and zero functionality and extra properties.
 
-3.6)Behaviour Delegation  📘📘📘
+📘📘📘 3.6)Behaviour Delegation
 behavior delegation design pattern is different from class/inheritance design pattern.
 So for JS think in terms of the former, not the latter.
 
@@ -2020,10 +2020,10 @@ Class in JS is dynamic. It's definition can change anytime duing the program. it
 Note: If you use the .bind(..) utility to make a hard-bound function, the function is not subclassable with ES6 extend like normal functions are.
 Basically, do not use ES6 Class. Just not worth it.
 
---------------------------------------------------------------------------------------------------------------
-Chapter 4: Types and Grammar  📕📕📕📕📕
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+📕📕📕📕📕 Chapter 4: Types and Grammar  
 
-4.1) Types 📘📘📘
+📘📘📘 4.1) Types
 JS type: a type is an intrinsic, built-in set of characteristics that uniquely identifies the behavior of a particular value and distinguishes it from other values, both to the engine and to the developer.
 Coerce: Convert from one type to another
 
@@ -2052,7 +2052,7 @@ On a webpage, to check if a global function/feature is there for you to use -
 var helper = (typeof FeatureXYZ !== "undefined") ? FeatureXYZ : function() { define here };
 var val = helper();
 
-4.2)Values 📘📘📘
+📘📘📘 4.2)Values
 >>)Arrays
 Do not use the Delete operation on an array. It deletes the entire slot.
 Sparse Arrays: They have empty values in some slots. The length is always till the last filled slot.
@@ -2265,7 +2265,7 @@ a;                                // [1,2,3,4]  not  [4,5,6,7]. x is just a loca
 
 To pass a copy of an array to a func, do abc(x.slice());  //it sends a shallow copy
 
-4.3)Natives 📘📘📘
+📘📘📘 4.3)Natives
 Natives: JavaScript provides object wrappers around primitive values. They are actually built-in functions. ('class' design and not OLOO design) (DEAR-FBONSS)
 Boolean(), Number(), String()   ->try to avoid using these (typeof value is object)
 Object(), Array(), Function()  ->never use these three
@@ -2431,7 +2431,7 @@ when you do var a = "abc", a.indexOf('c'), it wraps a to it String object wrappe
 Another JS syntax problem: calling any of these Native funcs as a constructor, does not need ().
 var b = new Date;    //it is allowed, but is bad syntax.
 
-4.4)Coercion 📘📘📘
+📘📘📘 4.4)Coercion
 coercion is magical, evil, confusing, and just downright a bad idea. But it is important you don't avoid this feature of JS, and learn how it works, and use it to your advantage.
 > type casting: explicitly converting from one type to another (or call it explicit coercion)
 > coercion: implicit conversion from one type to another done by the language  (boxing from primitive to object is not coercion)
@@ -2766,7 +2766,7 @@ String('abc') == (new String('abc'));            //true Comparing string and Obj
 3 > 2 > 1;                                       //false  3>2 is true.   True > 1 is : 1>1 is false
 Array(5).join('wat'-1) + "Batman!";              // Empty array of size 5 is joined on NaN, so 4 NaNs in total : NaNNaNNaNNaN Batman!
 
-4.5)Grammar  (core JS syntax) 📘📘📘
+📘📘📘 4.5)Grammar  (core JS syntax)
 Statements and Expressions
 English: A "sentence" is one complete formation of words, it is comprised of one or more "phrases", each of which can be connected with punctuation marks or conjunction words ("and," "or," etc), just like this whole sentence.
 	A phrase can itself be made up of smaller phrases. Some phrases are incomplete and don't accomplish much by themselves, while other phrases can stand on their own
@@ -3028,7 +3028,7 @@ switch (a) {
 }
 This prints- "default" and "3". It first goes over all cases, if none match, it starts executing from case default. Here the default case did not have a break; statement, so there was fall through.
 
-4.6)Mixed environment javascript  📘📘📘
+📘📘📘 4.6)Mixed environment javascript
 ECMAscript is the real name of the language. (follows the ECMA spec)
 JavaScript is basically the browser implementation of the spec.
 
@@ -3063,9 +3063,9 @@ etc. etc. It's not very common at all to run into these limits, but limits do ex
 
 JavaScript rarely runs in isolation. It runs in an environment mixed in with code from third-party libraries, and sometimes it even runs in engines/environments that differ from those found in browsers.
 
-----------------------------------------------------------------------------------------------------------------------------------------
-Chapter 5: Aysnc & Performance  📕📕📕📕📕
-5.1)Asynchrony- Now and later  📘📘📘
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+📕📕📕📕📕 Chapter 5: Aysnc & Performance
+📘📘📘 5.1)Asynchrony- Now and later
 Time is an important axis in your program execution
 In your whole .js file, only part of your program runs now, and another part of your program runs later in response to an event -- there's a gap between now and later where your program isn't actively executing.
 Identify which chunks of code run now and which chunks functions/callback run later.
@@ -3209,7 +3209,7 @@ JS by itself has only one call stack and one thread. But the environment (Browse
 Then see this one video before moving on:
 Callbacks, Promises, Async-Await: https://www.youtube.com/watch?v=SrNQS8J67zc
 
-5.2)Callbacks  📘📘📘
+📘📘📘 5.2)Callbacks
 callback: the function that is acting as a "callback," as it serves as the target for the event loop to "call back into" the program, whenever that item in the queue is processed.
 Callback is the most fundamental async pattern in the language.
 
@@ -3302,7 +3302,7 @@ Now if ajax is not async, then callback will print 0
 If ajax is async, the callback will print 1.
 MAKE SURE every 3rd party ajax call you use is only ASYNC.. that way you can expect what the behaviour will be.
 
-5.3)Promises   📘📘📘             Move all your code from legacy callback to promise pattern
+📘📘📘5.3)Promises              Move all your code from legacy callback to promise pattern
 No more inversion of control.
 Instead of handing the continuation of our program to another party, we expect it to immediately return us a capability to know when it's task finishes, and then our code could decide what to do next.
 
@@ -3913,7 +3913,7 @@ parallel().then(console.log)
 race().then(console.log)
 //Guess the outputs
 
-5.4)Generators  📘📘📘
+📘📘📘 5.4)Generators
 Run-to-Completion - once a function starts executing, it runs until it completes, and no other code can interrupt and run in between.
 not true anymore, ES6 introduces a new kind of function. "starred functions" a.k.a generators
 A generator is a special kind of function that can start and stop one or more times, and doesn't necessarily ever have to finish
@@ -4581,7 +4581,7 @@ So we've effectively manually "transpiled" our ES6 generator to pre-ES6 compatib
 Folks at facebook created a generator transpile that works for any kind of generetor. (https://facebook.github.io/regenerator/)
 Generators are so much better at expressing async flow control in a reason-able, sensible, synchronous-looking, sequential fashion.
 
-5.5)Program Performance   📘📘📘   performance at the macro program architecture level
+📘📘📘 5.5)Program Performance     performance at the macro program architecture level
 Two kinds of asynchrony:
 serial - You make the first request and wait to start the second request until the first finishes.
 concurrent - make both requests "in parallel," and express the "gate" to wait on both of them before moving on.
@@ -4645,7 +4645,7 @@ One of the biggest detractors to performance in JS is around memory allocation, 
 asm.js describes a small subset of JavaScript that avoids the hard-to-optimize parts of JS and lets the JS engine recognize and run such code through aggressive optimizations.
 asm.js could be hand authored, but that's extremely tedious and error prone
 
-5.6)Benchmarking and tuning  📘📘📘   performance at the micro level, focusing on single expressions/statements.
+📘📘📘 5.6)Benchmarking and tuning     performance at the micro level, focusing on single expressions/statements.
 How to test performance of a code block?
 var start = Date.now();
 // do some operation
@@ -4820,9 +4820,9 @@ Communicating Sequential Processes (CSP)
 
 All in all, Promises and generators provide the foundational building blocks upon which we can build much more sophisticated and capable asynchrony.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------
-Chapter 6) ES6 & Beyond  📕📕📕📕📕
-6.1) ES? Now and Future  📘📘📘
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+📕📕📕📕📕 Chapter 6) ES6 & Beyond
+📘📘📘 6.1) ES? Now and Future
 
 ECMA Script 1,2 were not used a lot. ES3 (Dec1999) was the first widespread baseline for JS. For political reasons ES4 was never released.
 In Dec2009, ES5 was finalized (later ES5.1 in 2011).
@@ -4836,7 +4836,7 @@ ES7 (ES2016) introduced just two new features: array.includes(), string.includes
 ES8 (ES2017) introduced string.padStart(10), string.padEnd(5), Object.values(someObj), Object.entries(someObj), Async-Await
 ES10 (ES2019) introduced array.flat(howDeepToFlatten), array.flatMap(), string.trimStart(), string.trimEnd(), Object.fromEntries(someArrayOfArrays), catch block in a try-catch need not catch an (error), it can just be: catch { }
 
-6.2) Syntax  📘📘📘
+📘📘📘 6.2) Syntax
 6.2.1)Blocked Scope Decleration     (let = not hoisted, tdz exceptions, forloop closures)
 The only way in ES5 to get block scope was to declare the var in an (IIFE(){})()
 Now you can just use a pair of {} to create a scope.
@@ -5518,7 +5518,7 @@ for (let h of person) {
 	console.log(h);  //gives out sports, cooking, tv.
 }
 
-6.3)Organisation  📘📘📘
+📘📘📘 6.3)Organisation
 code is about communicating to other developers AND feeding the computer instructions.
 Important to learn and utilize common patterns for organization and reuse: Iterators, Generators, Modules, Classes.
 
@@ -6137,7 +6137,7 @@ b.cool;						// undefined
 Symbol.species
 read it in the book
 
-6.4)Aysnc Flow Control  📘📘📘
+📘📘📘 6.4)Aysnc Flow Control
 Async is now the bread and butter of JS. Callbacks was the old way, Promises and generators are the new way.
 
 Promise
@@ -6292,7 +6292,7 @@ run(main).then(
 read the book to see the run() implementation
 This yield-a-promise-resume-the-generator pattern is so popular, that ES7 might introduce async and await keywords in functions.
 
-6.5)Collections  📘📘📘
+📘📘📘 6.5)Collections
 ES5 had only arrays and objects
 ES6 has TypedArrays, Map, Set, WeakMap, WeakSet
 
@@ -6445,7 +6445,7 @@ y = null;						// y is GC-eligible
 Just like the WeakMap, this is not enumerable. You can't loop through its values as JS does not know if some of them exist anymore.
 this has add() and has(). It does not have clear(), size() etc.
 
-6.6)API Additions  📘📘📘
+📘📘📘 6.6)API Additions
 Reflect API: manipulate object metadata. A lot of different object functionalites bundled into one new central namespace called Reflect.
 class Person {
 
