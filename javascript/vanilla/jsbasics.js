@@ -12,10 +12,10 @@ Operator Precedence and Associativity: https://developer.mozilla.org/en-US/docs/
 Underscore JS: Best JS utilis function library! Read them all!!! https://underscorejs.org/#once, Same with Lodash: https://lodash.com/
 Use Moment.js to work with Date() stuff
 Try to read and understand the entire jQuery.js file. It is pretty easy.
-
-
 */
-#ktek - further reading
+
+// ktek - further reading
+
 /*
 Out there funcs-
 typeof a;  (returns FBONUSS)
@@ -35,86 +35,101 @@ Array.isArray(); Array.from(some non-array)
 */
 
 /*
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 YOU DON'T KNOW JS - Kyle Simpson
-No person's opinion, no framework's assumptions, and no project's deadline should be the excuse for why you never learn and deeply understand JavaScript.
-it's about taking seriously the task of learning all parts of JavaScript, not just some subset of the language, and not just whatever minimal amount you need to get your job done at work.
-Serious developers put in the effort to learn all of the language they primarily write in.
-
-✅ = Re-read the final version of the first edition and updated the notes. It is DONE.
-
+This is a series of books diving deep into the core mechanisms of the JavaScript language. The first edition of the series is now complete.
+✅ = Re-read the final version of the first edition and updated the notes. It is DONE DONE.
    Index
-1: Up and going 
-	1.1:Into Programming 🚧
-	1.2:Into Javascript 🚧
-2. Scope and Closures 
-	2.1:What is scope 🚧
-	2.2:Lexical Scope 🚧
-	2.3:Function scope and block scope 🚧
-	2.4:Hoisting 🚧
-	2.5:Scope closure 🚧
-3. this and Object Prototypes 
-	3.1:"this" or that 🚧
-	3.2:"this" all makes sense now 🚧
-	3.3:Objects 🚧
-	3.4:Mixing Class objects 🚧
-	3.5:prototypes 🚧
-	3.6:Behaviour Delegation 🚧
-4. Types and Grammar 
-	4.1:Types 🚧 
-	4.2:Values 🚧
-	4.3:Natives 🚧
-	4.4:Coercion 🚧
-	4.5:Grammer 🚧
-	4.6:Mixed environment JS 🚧
-5. Aysnc & Performance
-	5.1:Asynchrony- Now and later 🚧
-	5.2:Callbacks
-	5.3:Promises
-	5.4:Generators
-	5.5:Program Performance
-	5.6:Benchmarking and tuning
-6. ES6 & beyond
-	6.1:ES? Now and Future
-	6.2:Syntax
-	6.3:Organisation
-	6.4:Aysnc Flow Control
-	6.5:Collections
-	6.6:API Additions
-
+📕1: Up and going 
+	📘1.1: Into Programming ✅
+	📘1.2: Into Javascript ✅
+	📘1.3: Into YDKJS ✅
+📕2. Scope and Closures 
+	📘2.1: What is scope 🚧
+	📘2.2: Lexical Scope 🚧
+	📘2.3: Function scope and block scope 🚧
+	📘2.4: Hoisting 🚧
+	📘2.5: Scope closure 🚧
+📕3. this and Object Prototypes 
+	📘3.1: "this" or that 🚧
+	📘3.2: "this" all makes sense now 🚧
+	📘3.3: Objects 🚧
+	📘3.4: Mixing Class objects 🚧
+	📘3.5: prototypes 🚧
+	📘3.6: Behaviour Delegation 🚧
+📕4. Types and Grammar 
+	📘4.1: Types 🚧 
+	📘4.2: Values 🚧
+	📘4.3: Natives 🚧
+	📘4.4: Coercion 🚧
+	📘4.5: Grammer 🚧
+	📘4.6: Mixed environment JS 🚧
+📕5. Aysnc & Performance
+	📘5.1: Asynchrony- Now and later 🚧
+	📘5.2: Callbacks
+	📘5.3: Promises
+	📘5.4: Generators
+	📘5.5: Program Performance
+	📘5.6: Benchmarking and tuning
+📕6. ES6 & beyond
+	📘6.1: ES? Now and Future
+	📘6.2: Syntax
+	📘6.3: Organisation
+	📘6.4: Aysnc Flow Control
+	📘6.5: Collections
+	📘6.6: API Additions
 /*
-CHAPTER 1: UP AND GOING  📕📕📕📕📕
-1.1)Into Programming  📘📘📘
-statement  ;
-variable   a,b  (programs need to track a value as it changes over the course of the program) (assign a value to a symbolic container) 
-literal   5,'rt'
-operator
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+📕📕📕📕📕 CHAPTER 1: UP AND GOING
+JS is the heartbeat of the internet boom. Easy to learn partially, hard to learn completely. It is a misunderstood language, due to lack of effort by developers. It has roots in C & Lisp. JavaScript awaits you.
 
+📘📘📘 1.1)Into Programming
+Code/Computer-program - Instructions to tell the computer what to do. Every program has a purpose.
+Syntax - Rules for valid formats and combinations of instructions
+
+< statement  ; (group of variables, operators, literals that perform a specific task)
+< variable   a,b  (programs need to track a value as it changes over the course of the program) (assign a value to a symbolic container) (purpose is to store "state" of the program)
+< literal   5,'rt'
+< operator
 that's it. At a high level every line of code is the above 4.
 
 expressions (An expression is any reference to a variable or value, or a set of variable(s) and value(s) combined with operators)
-a = b * 2; this has 4 expressions: a,b,b*2,a=b*2
+a = b * 2; this has 4 expressions: 2 (literal value expression), b (variable expression to retrieve a value), b*2 (arithmetic expression), a=b*2 (assignment expression) 
+b * 2; this is an expression statement (it's really not doing anything as the result is not used anywhere, this is rare)
+alert(a), prompt("Whats your name"); a call expression statement
+An expression is a unit of code that returns a value. A statement is made up of expressions.
 
-b * 2; this is an expression statement (it's really not doing anything)
-alert(a); another expression statement
-An expression is a unit of code that returns a value
+Interpreter - translation of statements line-by-line while the program is running. This is done every time the program is run. If it faces a syntax or semantic error, it stops executing. It does not produce any output file, as program is run directly. Ex: Python, JS, Ruby, PHP.
+Compilation - pre-translating all statements before the program is ever run. Compiled code is then run later which makes this one faster at run time. It shows all syntax & semantic errors before program is run. It produces and executable file (like .exe). Ex: C, C++, Rust, Go, Swift.
+The JavaScript engine actually compiles the entire program on the fly and then immediately runs the compiled code. (its not exactly an interpreted language). It does this each time the JS program is run. 
 
-The JavaScript engine actually compiles the program on the fly and then immediately runs the compiled code. (its not exactly an interpreted language)
-
-operators (assignment, math, compound assignment, object property access, equality, comparison/relational, logical, conditional)
+operators 
+	assignment = 
+	math +,-,/,* 
+	compound assignment +=,-=,*=,/=
+	increment/decrement ++,--
+	object property access .,["a"]
+	equality ==,===,!=,!== 	
+	comparison/relational >,<,>=,<= 
+	logical &&,||,!
+	conditional 
 
 primitive types - boolean, number, string
 
-coercion
-implicit coercion (avoid it, == triggers it, + sign for string concats, console.log(), truthy/falsy in conditional blocks, etc)
-explicit coercion (there are different funcs for these)
+coercion (conversion between types)
+implicit coercion (avoid it, == triggers it, + sign for string concats, console.log(), truthy/falsy in conditional blocks, etc) Ex: "42"*2 is 84
+explicit coercion (there are different funcs for these, Number(x), String(x) etc.)
 
-comments (they must explain why/how, not what)
+comments (they must explain why/how, not what) (use // or /* & it's opposite) Interpreter will always ignore comments. ANYTHING can be put in the comments.
+A multiline comment can appear even in the middle - var a = /* some comment * / 4324; 
+Comments are to help your fellow-authors/developers and yourself! There are infinite solutions to a problem, comments can describe why this solution has been chosen. ALso, select meaningful names for variables.
 
-JS is a weakly typed language (dynamic typing). Variables can hold values of any type without any type enforcement.
+JS is a weakly typed language (dynamic typing). Variables can hold values of any type without any type enforcement. These can be implicitly/explicitly converted to another type at runtime.
+C is a static typed language. This prevents unintended conversions.
 
-declare constants as var TAX_RATE or const TAX_RATE  (uppercase, underscores)
+Constants - variables whose value is not itended to change during runtime. Declare constants as var TAX_RATE or const TAX_RATE  (uppercase, underscores), and at the top of the scope or in one centralized/shared place. 
 
-Blocks { }  (series of statements) (a block statement does not need a semicolon ; to conclude it)
+Blocks { }  (a series of statements) A block statement does not need a semicolon ; to conclude it. Typically attached to if/loop/function statements.
 
 Conditionals -
 if (boolean)   (boolean means truthy or falsy, here also there is implicit coercion)
@@ -122,24 +137,27 @@ if (boolean) else
 if (boolean) else if (boolean) else if (boolean) else
 switch {case break case break case break default }
 
-Loops (repeating a set of actions until a certain condition fails )
-iteration of a loop
+Loops (repeating a set of actions until a certain condition fails)
+iteration of a loop - each time a loop executes
 while (boolean) { }
 do { } while (boolean);
-for (initialization, conditional, updation) { }
+for (initialization, conditional, updation) { } (Typically programming counts start from 0, not 1, just tradition)
 Uses break; to get out of a loop
 
-functions - named piece of code.
+functions - named piece of code that is callable & reusable 
 function (parameters/arguments) { }
 the return statement is optional
 
 Lexical scope (or scope) - its all about accessability of variables. JS has function scope.
 a variable name has to be unique within a scope
-a scope can be nested inside another scope - code in the innermost scope can access the outer ones. not the other way around.
+a scope can be nested inside another scope - code in the innermost scope can access the outer ones. not the other way around. This is how a function can access any global variables.
 
-1.2)Into Javascript  📘📘📘
+Essential programming building blocks - operators, values & types, variables, conditionals, loops, functions, comments & lots of practice! Go ahead & build tall towers. 
+
+📘📘📘 1.2)Into Javascript
+📗Values & types
 JS has typed values, not typed variables
-These are the 7 built-in types: boolean, number, string, null, undefined, object, symbol
+These are the 7 built-in types: boolean, number, string, null, undefined, object, symbol (BONNUSS)
 
 'typeof xyz' means what is the type of the value in var xyz, it is not asking for the type of the variable xyz
 'typeof xyz' will ONLY return one of the above 6. (apart from 'function')
@@ -147,11 +165,16 @@ one bug: typeof null is object (it should have been null)     (typeof returns F-
 
 in place of undefined, you can also use "void 0", example: (x !== void 0)  (void is a keyword)
 
-Object - a compound type
-property access - dot notation or bracket notation
+Object - a compound value
+var obj = {
+	a: "hello world",
+	b: 42,
+	c: true
+}
+property access - dot notation (obj.a) or bracket notation (obj["a"]). Bracket notation can be used when the key is a variable or a complex key-name like "hell!o wor!d"
 array and function should be considered as subtypes of objects
 
-array - an object where the properties are numerically indexed postions. They also have a default 'length' property
+array - an object where the properties are numerically indexed postions. They also have a default 'length' property. Starting index is 0, not 1.
 typeof arr is 'object'
 In theory you can do arr['desi'] = 'berserk', but use arrays only for 'numeric' properties and objects for 'named' properties.
 
@@ -168,10 +191,10 @@ JS automatically "boxes" the value to its object wrapper counterpart (hidden und
 EQUALITY
 Falsy/Truthy: You get these two ONLY when a non-boolean value is coerced (implicity or explicitly) into a boolean value.
 Only these values are 'falsy' in JS, everything else is 'truthy':
->false
->0, -0, NaN
->""
->null, undefined
+> false
+> 0, -0, NaN
+> ""
+> null, undefined
 This is useful when you do if(x){ }  it coerces x, if x is not in the above list, it is truthy.
 
 == checks for value equality with coercion allowed
@@ -179,8 +202,8 @@ This is useful when you do if(x){ }  it coerces x, if x is not in the above list
 So you must know what coerces to what. Also, you must know which one the JS engine is coercing, the LHS or the RHS?!
 JS engine algo for "==" :  http://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
 If Type(x) is the same as Type(y), then
-	If Type(x) is Undefined, return true.        (means undefined==undefined)
-	If Type(x) is Null, return true.             (means null==null)
+	If Type(x) is Undefined, return true.        (means undefined==undefined is true)
+	If Type(x) is Null, return true.             (means null==null is true)
 	If Type(x) is Number, then
 			If x or/and y is NaN, return false.     (so no number is equal to NaN, even NaN itself)
 			If x is the same Number value as y, return true. Also, 0 and -0 are the same value. (i.e 0 === 0)
@@ -200,30 +223,31 @@ For objects, it checks if they reference the same location. For arrays, they con
 So [1,2,3] == "1,2,3", but a=[1,2,3] != b=[1,2,3] (they don't refer to the same thing)
 
 INEQUALITY < > <= >= (relational comparison)
-Kinda works with the same rules as ==, but not exactly.
+Kinda works with the same rules as ==, but not exactly. There is no such thing called strict relational comarison like - >==, <==
+42 < foo  // false   "foo" is converted to NaN, and NaN is neither greater than nor less than any number.
+"alpha" < "zoo" // true
 
-Variable
+📗Variables
 name must not start with digit, can only contain [a-zA-Z0-9_$].
 same rules applies to object 'property' names too
 Reserved words cannot be used as variable names but can be used as property names. var obj = {else :10}; obj.else=10; is allowed
 
-hoisting: when a var declaration is conceptually "moved" to the top of its enclosing scope
+hoisting: when a var declaration is conceptually "moved" to the top of its enclosing scope. Same applies to a function decleration.
 When you declare a variable, it is available anywhere in that scope, as well as any lower/inner scopes.
 If you try to access a variable's value in a scope where it's not available, you'll get a ReferenceError thrown. ("Uncaught ReferenceError: a is not defined")
-
-There is implicit auto-global variable declaration when you omit the keyword var
+There is implicit auto global variable declaration when you omit the keyword "var". Be careful with this.
 
 Let - works in the same way as var. Scoping is at a block level, there is no hoisting for these variables!
 
+📗Conditonals 
 switch - if there is no break for a case, there will be 'fall through'
 conditional operator --  boolean ? statement : statement ;
 
-"use strict";
+📗Strict Mode - add this pragma - "use strict";
 put this inside any function or on top of the file. If you put this in global scope, then it applies to every script on the page.
-It tightens the rules for certain behaviors.
-It makes your code generally more optimizable by the engine
+It tightens the rules for certain behaviors. It makes your code generally more optimizable by the engine. It was introduced in ES5. If strict mode causes issues in your program, almost certainly it's a sign that you have things in your program you should fix.
 
-Functions are values, this is unique to JS.
+📗Functions are values, this is unique to JS.
 function foo() { }
 foo is basically just a variable in the outer enclosing scope that's given a reference to the function being declared.
 The function itself is a value, just like 42 or [1,2,3] would be.
@@ -234,7 +258,7 @@ var x = function bar() { } This function expression is named bar, also, a refere
 IIFE - Immediately Invoked Function Expressions
 ( function iife(){ } )();
 These are often good places to declare variables that won't affect the surrounding code outside the IIFE. (private scope hidden from outer global)
-var x = iife();  your iife can also return a value.
+var x = iife();  your iife can also return a value. This is a useful pattern if the initialization requires complex code.
 
 Closure - a way to "remember" and continue to access a function's scope (its variables) even once the function has finished running.
 function makeAdder(x) {
@@ -246,7 +270,7 @@ function makeAdder(x) {
 }
 The function "add" has a stack frame that has the local variable "y". It also has an "access link", a pointer to the "makeAdder" stack frame which contains the "x" variable.  A Stack Frame = Function Parameters + Local Variables + Return Address + Access Link
 
-Module Pattern- define private implementation details (variables, functions) that are hidden from the outside world, as well as a public API that is accessible from the outside.
+Module Pattern- Most coomon use of closure. Define private implementation details (variables, functions) that are hidden from the outside world, as well as a public API that is accessible from the outside.
 function User(){
 	var username, password;
 
@@ -266,11 +290,10 @@ var x = User();    //x is now an instance, an object {login: func}
 x.login( "fred", "12Battery34!" );
 
 User() is just a function, not a class to be instantiated. No need to say var y = new User()
-Executing User() creates an instance of the User module -- a whole new scope is created, and thus a whole
-new copy of each of these inner variables/functions. We assign this instance to x.
+Executing User() creates an instance of the User module -- a whole new scope is created, and thus a whole new copy of each of these inner variables/functions. We assign this instance to x.
 If we run User() again, we'd get a new instance entirely separate from fred.
 
-THIS
+📗THIS - to understand what "this" points to, you have to examine how the function in question was called.
 function foo() {
 	console.log( this.bar );
 }
@@ -287,16 +310,15 @@ obj1.foo();			// "obj1"
 foo.call(obj2);		// "obj2"
 new foo();			// undefined (it creates a brand new empty object)
 
-Prototype
-When you reference a property on an object, if that property doesn't exist, JavaScript will automatically use that
-object's internal prototype reference to find another object to look for the property on.
-You could think of this almost as a fallback if the property is missing. The internal prototype reference linkage
-from one object to its fallback happens at the time the object is created.
+📗Prototype
+When you reference a property on an object, if that property doesn't exist, JavaScript will automatically use that object's internal prototype reference to find another object to look for the property on.
+You could think of this almost as a fallback if the property is missing. The internal prototype reference linkage from one object to its fallback happens at the time the object is created.
 var foo = {a:42};
 var bar = Object.create(foo);
-bar.b = "hello world";  // here 'b' belongs to bar, but
+bar.b = "hello world";  // here 'b' belongs to bar
 bar.a;  //42    'a' actually belongs to bar's prototype - foo, but now even bar has a reference (access) to it. If foo.a changes, then even bar.a changes automatically. (same reference)
 
+📗Old & New
 Polyfilling/Shim
 A polyfill is a piece of code that provides the functionality that you, the developer, expect the browser to provide natively.
 Taking the definition of a newer feature and producing a piece of code that's equivalent to the behavior (functionally)
@@ -322,17 +344,17 @@ function foo() {     //transpiled code
 Dont' wait for browsers to update, start using the latest JS and features.
 Two good transpilers: babelJS, Traceur.
 
-Non-JavaScript JavaScript - DOM api, alert(), console.x() etc.
+📗Non-JavaScript JavaScript - DOM api, alert(), console.x() etc.
 var el = document.getElementById( "foo" );
 The document element is not part of the JS spec. (it is a c/c++ interface part of the browser)
 alert() and console.log() are again provide by the browser.
 Your browser provides such mechanisms and hooks them up to the developer tools.
 
-JS Compiler Basics -
+📗JS Compiler Basics -
 JS Engine = Compiler + Call Stack + Memory Heap
 JS Engine: Translates JS to binary. There are over 50 different JS engines. Anyone can build one, it is just a program.
 Chrome V8 is a common JS engine wrote in C++ by the Chromium Project at google. (in 2008 they initially wrote it for google maps)
-Brendan Eich (creator of JS) wrote the first JS engine, SpiderMonkey. (mozilla uses it)
+Brendan Eich (creator of JS) wrote the first JS engine 'SpiderMonkey', mozilla uses it.
 Engine = Parser -> Abstract Syntax Tree -> Interpreter -> Profiler -> Compiler -> Bytecode (optimized binarycode)
 The browser converts byte code to machine code. "Web Assembly" is now the agreed upon standard machine code format.
 Interpreter is about translating to byte code, Compiler is about optimizing the code...
@@ -366,12 +388,17 @@ Any asynchronous callbacks are first placed on the callback queue, and then brou
 
 NodeJS is a JS runtime! Like a browser. NodeJS is a c++ program (node.exe). So you can install node on your server and run js code that access's your file system, do http stuff etc. Even node has v8 engine + event loop + it's own APIs.
 
-With ES6 Promises, when these resolve they go into the Job Queue. Things in the job queue have higher precedence over the callbackqueue.So event loop picks up things from here first and then puts it on to the call stack.
+With ES6 Promises, when these resolve they go into the Job Queue. Things in the job queue have higher precedence over the callbackqueue. So event loop picks up things from here first and then puts it on to the call stack.
 So Promise.resolve('hello') runs faster than setTimeout(f,0);
 
 Every tab in your browser has it's own Runtime (i.e own callstack)
 
----------------------------------------------------------------------------------------------------------------
+1.3)Into YDKJS  📘📘📘
+No person's opinion, no framework's assumptions, and no project's deadline should be the excuse for why you never learn and deeply understand JavaScript.
+It's about taking seriously the task of learning all parts of this great language, and not just whatever minimal amount you need to get your job done at work.
+Serious developers put in the effort to learn all of the language they primarily write in. "You Don't Know JS" isn't a criticism or an insult. It's a realization that all of us, myself included, must come to terms with. Learning JavaScript isn't an end goal but a process.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Chapter 2 : SCOPE AND CLOSURES  📕📕📕📕📕
 Do what you love. Maybe it was something when you were young/school.
 Unfortunately, now you are called a professional and getting paid for it, but you are still doing what you wanted to do.
